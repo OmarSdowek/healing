@@ -29,16 +29,15 @@ class HomeScreen extends StatelessWidget {
                 context.verticalSpace(20),
 
                 /// Search Bar
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, Routes.search);
-                  },
-                  child: CustomTextFormField(
+                CustomTextFormField(
                     hintText: "Search for specialty, doctor",
                     controller: TextEditingController(),
                     prefixIcon: Icon(Icons.search, color: AppColors.grey),
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.search);
+                  },
                   ),
-                ),
+
 
                 context.verticalSpace(20),
 

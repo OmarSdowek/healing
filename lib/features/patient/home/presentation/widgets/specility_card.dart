@@ -29,6 +29,8 @@ class SpecialityCard extends StatelessWidget {
           Text(
             title,
             style: AppTextStyles.semiBold16Black,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
