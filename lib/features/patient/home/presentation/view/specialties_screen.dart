@@ -25,7 +25,7 @@ class SpecialtiesScreen extends StatelessWidget {
       {"title": "Orthopedic", "icon": "assets/images/13.png"},
       {"title": "General Surgery", "icon": "assets/images/16.png"},
       {"title": "Dermatology", "icon": "assets/images/15.png"},
-      {"title": "Obstetrics & Gynecology", "icon": "assets/images/17.png"},
+      {"title": "Obstetrics", "icon": "assets/images/17.png"},
     ];
 
     return Scaffold(

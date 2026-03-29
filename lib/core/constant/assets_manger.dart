@@ -38,4 +38,12 @@ class AssetsManger {
 
 
 
+  // payment
+
+static const String applePay = "assets/images/applepay.png";
+static const String masterCard = "assets/images/mastercard.png";
+static const String visa = "assets/images/visa.png";
+static const String paypal = "assets/images/paypal.png";
+
+
 }

@@ -14,6 +14,9 @@ import '../../features/patient/doctors/presentation/view/doctors_screen.dart';
 import '../../features/patient/doctors/presentation/view/favourite_doctor.dart';
 import '../../features/patient/home/layout_screen.dart';
 import '../../features/patient/home/presentation/view/specialties_screen.dart';
+import '../../features/patient/payment/presenatation/view/selected_card.dart';
+import '../../features/patient/payment/presenatation/view/add_new_card.dart';
+import '../../features/patient/payment/presenatation/view/payment_methods.dart';
 import '../../features/patient/profile/presentation/view/personal_information.dart';
 import '../../features/patient/search/presentation/view/search.dart';
 import '../../features/patient/settings/presenatation/views/mange_password_screen.dart';
@@ -82,7 +85,19 @@ class AppRouter {
         case Routes.personalInformation:
         return MaterialPageRoute(builder: (_) => PersonalInformationScreen());
 
+       // patient payment
 
+      case Routes.paymentMethod:
+        return MaterialPageRoute(builder: (_) => const PaymentMethodScreen());
+      case Routes.addNewCard:
+        return MaterialPageRoute(builder: (_) => const AddNewCardScreen());
+      case Routes.selectedCard:
+        return MaterialPageRoute(builder: (_) => const SelectedCardScreen());
+
+      // patient appointment
+
+      // case Routes.myAppointments:
+      //   return MaterialPageRoute(builder: (_) => const MyAppointmentsScreen());
 
 
 

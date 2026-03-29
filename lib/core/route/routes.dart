@@ -38,6 +38,17 @@ class Routes {
 
 
 
+  //payment
+  static const String paymentMethod = "/payment_method";
+  static const String addNewCard = "/add_new_card";
+  static const String selectedCard = "/selected_card";
+
+  // appointment
+
+  static const String myAppointments = "/my_appointments";
+
+
+
 
 
 

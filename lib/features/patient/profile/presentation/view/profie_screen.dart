@@ -82,7 +82,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileOptionItem(
                 icon: Icons.payment,
                 title: "Payment Method",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.selectedCard);
+                },
               ),
               ProfileOptionItem(
                 icon: Icons.description,
@@ -97,7 +99,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileOptionItem(
                 icon: Icons.calendar_today,
                 title: "My Appointment",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.myAppointments);
+                },
               ),
               ProfileOptionItem(
                 icon: Icons.logout,

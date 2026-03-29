@@ -70,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                 /// Available Doctors Title
                 Text(
                   "Available Doctors",
-                  style: AppTextStyles.semiBold24dark.copyWith(
+                  style: AppTextStyles.reg20black.copyWith(
                     color: AppColors.black,
                   ),
                 ),
