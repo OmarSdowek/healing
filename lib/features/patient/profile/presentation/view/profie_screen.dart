@@ -68,7 +68,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileOptionItem(
                 icon: Icons.person,
                 title: "Personal information",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.personalInformation);
+                },
               ),
               ProfileOptionItem(
                 icon: Icons.settings,

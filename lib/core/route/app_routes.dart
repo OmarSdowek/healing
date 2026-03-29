@@ -14,6 +14,7 @@ import '../../features/patient/doctors/presentation/view/doctors_screen.dart';
 import '../../features/patient/doctors/presentation/view/favourite_doctor.dart';
 import '../../features/patient/home/layout_screen.dart';
 import '../../features/patient/home/presentation/view/specialties_screen.dart';
+import '../../features/patient/profile/presentation/view/personal_information.dart';
 import '../../features/patient/search/presentation/view/search.dart';
 import '../../features/patient/settings/presenatation/views/mange_password_screen.dart';
 import '../../features/patient/settings/presenatation/views/settings_screen.dart';
@@ -76,8 +77,11 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => FaqsScreen());
         case Routes.privacyPolicy:
         return MaterialPageRoute(builder: (_) => PrivacyPolicyScreen());
-      case Routes.mangePassword:
+        case Routes.mangePassword:
         return MaterialPageRoute(builder: (_) => ManagePasswordScreen());
+        case Routes.personalInformation:
+        return MaterialPageRoute(builder: (_) => PersonalInformationScreen());
+
 
 
 

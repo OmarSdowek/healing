@@ -34,6 +34,8 @@ class Routes {
   static const String payment = "/payment";
   static const String faqs = "/faqs";
   static const String privacyPolicy = "/privacy_policy";
+  static const String personalInformation = "/personal_information";
+
 
 
 
