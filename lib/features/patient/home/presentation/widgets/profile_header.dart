@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constant/app_text_style.dart';
+import '../../../../../core/route/routes.dart';
 
 
 
@@ -24,7 +25,9 @@ class ProfileHeader extends StatelessWidget {
           const Spacer(),
           IconButton(
             icon: const Icon(Icons.favorite_border),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.favorites);
+            },
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none),

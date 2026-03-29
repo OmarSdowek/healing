@@ -4,14 +4,16 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/features/patient/home/presentation/manger/layout_cubit/layout_cubit.dart';
 import 'package:healing/features/patient/home/presentation/view/home_screen.dart';
 
+import '../profile/presentation/view/profie_screen.dart';
+
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   static const List<Widget> screens = [
     HomeScreen(),
-    Scaffold(body: Center(child: Text("schedule"))),
-    Scaffold(body: Center(child: Text("booking"))),
     Scaffold(body: Center(child: Text("profile"))),
+    Scaffold(body: Center(child: Text("booking"))),
+    ProfileScreen(),
   ];
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healing/features/patient/home/presentation/widgets/specility_card.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
+import '../../../../../core/route/routes.dart';
 
 class SpecialitiesSection extends StatelessWidget {
   final List<Map<String, String>> specialities;
@@ -24,7 +25,9 @@ class SpecialitiesSection extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.specialties);
+                },
                 child: Text(
                   "View all",
                   style: AppTextStyles.semiBold16Black.copyWith(

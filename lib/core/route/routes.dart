@@ -17,7 +17,26 @@ class Routes {
   // patient Home
   static const String patientHome = "/patient_home";
   static const String search = "/search";
+  static const String specialties = "/specialties";
+  static const String doctors = "/doctors";
+  static const String favorites = "/favorites";
   static const String doctorDetails = "/doctor_details";
   static const String booking = "/booking";
+
+
+  // pateint profile
+
+  static const String settings = "/settings";
+  static const String profile = "/profile";
+  static const String editProfile = "/edit_profile";
+  static const String mangePassword = "/mangePassword";
+  static const String notifications = "/notifications";
+  static const String payment = "/payment";
+  static const String faqs = "/faqs";
+  static const String privacyPolicy = "/privacy_policy";
+
+
+
+
 
 }

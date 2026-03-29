@@ -129,7 +129,7 @@ class PatientSignIn extends StatelessWidget {
                 text: "Login",
 
                 onPressed: () {
-                  // Handle Login
+                  Navigator.pushNamed(context, Routes.patientHome);
                 },
               ),
             ),
@@ -147,7 +147,6 @@ class PatientSignIn extends StatelessWidget {
                     textColor: AppColors.primary,
                     outlined: false,
                     onPressed: () {
-                      Navigator.pushNamed(context, Routes.patientHome);
                     },
                   ),
                   const SizedBox(height: 12),

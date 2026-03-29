@@ -35,7 +35,6 @@ extension ResponsiveExt on BuildContext {
 
   //  Responsive Height
 
-
   double h(double value) {
     final scaled = value * _scaleHeight;
     return scaled.clamp(value * 0.8, value * 1.4);
@@ -65,7 +64,6 @@ extension ResponsiveExt on BuildContext {
   }
 
   //  Spacing Helper
-
 
   SizedBox verticalSpace(double value) =>
       SizedBox(height: h(value));
