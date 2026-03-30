@@ -57,22 +57,24 @@ class CustomButton extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center, // 🔥 توسيط
-      children: [
-        if (icon != null) ...[
-          icon!,
-          SizedBox(width: 8),
-        ],
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center, // 🔥 توسيط
+        children: [
+          if (icon != null) ...[
+            icon!,
+            SizedBox(width: 8),
+          ],
 
-        Text(
-          text,
-          style: AppTextStyles.semiBold16Black.copyWith(
-            color: textColor ?? Colors.white,
-            fontSize: 14, // 🔥 مظبوط للـ UI
+          Text(
+            text,
+            style: AppTextStyles.semiBold16Black.copyWith(
+              color: textColor ?? Colors.white,
+              fontSize: 14, // 🔥 مظبوط للـ UI
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

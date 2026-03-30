@@ -3,6 +3,9 @@ class AssetsManger {
   // Logos
   static const String logo = "assets/logo/logo.svg";
   static const String authLogo = "assets/logo/authlogo.png";
+  static const String googleLogo = "assets/logo/google.png";
+  static const String facebookLogo = "assets/logo/facebook.png";
+
 
 
   // Images onboarding

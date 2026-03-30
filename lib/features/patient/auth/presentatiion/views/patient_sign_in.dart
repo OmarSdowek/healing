@@ -18,7 +18,6 @@ class PatientSignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -148,6 +147,8 @@ class PatientSignIn extends StatelessWidget {
                     outlined: false,
                     onPressed: () {
                     },
+                    icon: Image.asset(AssetsManger.googleLogo),
+
                   ),
                   const SizedBox(height: 12),
                   CustomButton(
@@ -158,6 +159,7 @@ class PatientSignIn extends StatelessWidget {
                     onPressed: () {
                       // Facebook Login
                     },
+                    icon: Image.asset(AssetsManger.facebookLogo),
                   ),
                 ],
               ),
