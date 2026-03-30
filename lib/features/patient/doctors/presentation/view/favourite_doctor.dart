@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healing/core/helper/extentions/media_query.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../widgets/doctor_favourite_item.dart';
 
@@ -42,7 +43,7 @@ class FavoritesDoctorsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const CustomHeader(title: "Favorites Doctors"),
-              const SizedBox(height: 20),
+              context.verticalSpace(20),
 
               Expanded(
                 child: GridView.builder(
@@ -51,7 +52,7 @@ class FavoritesDoctorsScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.65, // 🔥 أهم حاجة
+                    childAspectRatio: 0.60,
                   ),
                   itemBuilder: (_, i) {
                     final d = doctors[i];

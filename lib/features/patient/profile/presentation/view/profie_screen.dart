@@ -94,7 +94,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileOptionItem(
                 icon: Icons.medication,
                 title: "My Prescription",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.prescriptionDetails);
+                },
               ),
               ProfileOptionItem(
                 icon: Icons.calendar_today,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
-import '../../../../../core/widgets/custom_button.dart';
 
 class DoctorFavoriteItem extends StatelessWidget {
   final String name;
@@ -26,124 +26,170 @@ class DoctorFavoriteItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.all(10.w),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 6,
-                offset: const Offset(0, 3),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        ],
+      ),
+      child: Column(
+        children: [
+          /// 🔥 Image + Favorite
+          Stack(
             children: [
-              /// 🖼️ Image
               ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(20.r),
+                ),
                 child: Image.asset(
                   image,
-                  height: 110.h,
+                  height: 120.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
 
-              SizedBox(height: 8.h),
-
-              /// 👨‍⚕️ Name
-              Text(
-                name,
-                style: AppTextStyles.semiBold16Black,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              Positioned(
+                top: 8,
+                right: 8,
+                child: _favoriteIcon(),
               ),
+            ],
+          ),
 
-              /// تخصص
-              Text(
-                speciality,
-                style: AppTextStyles.semiBold16Black.copyWith(
-                  color: AppColors.primary,
-                ),
-              ),
-
-              /// 💰 Price
-              Text(
-                price,
-                style: AppTextStyles.semiBold16Black,
-              ),
-
-              SizedBox(height: 8.h),
-
-              /// Buttons Row
-              Row(
+          /// 🔥 Content
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(10.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: "Details",
-                      onPressed: onDetails,
-                      outlined: true,
-                      height: 30.h,
-                      textColor: Colors.black,
+                  /// Name
+                  Text(
+                    name,
+                    style: AppTextStyles.semiBold16Black,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  SizedBox(height: 4.h),
+
+                  /// Speciality
+                  Text(
+                    speciality,
+                    style: AppTextStyles.semiBold16Black.copyWith(
+                      color: AppColors.primary,
+                      fontSize: 13.sp,
                     ),
                   ),
-                  SizedBox(width: 6.w),
-                  Expanded(
-                    child: CustomButton(
-                      text: "Book",
-                      onPressed: onBook,
-                      height: 30.h,
-                      backgroundColor: AppColors.primary,
-                      textColor: Colors.white,
+
+                  SizedBox(height: 4.h),
+
+                  /// Price
+                  Text(
+                    price,
+                    style: AppTextStyles.semiBold16Black.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  const Spacer(),
+
+                  /// Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 36.h,
+                          child: OutlinedButton(
+                            onPressed: onDetails,
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primary),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.r),
+                              ),
+                            ),
+                            child: Text(
+                              "Details",
+                              style: TextStyle(color: AppColors.primary, fontSize: 10.sp),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 8.w),
+
+                      Expanded(
+                        child: SizedBox(
+                          height: 36.h,
+                          child: ElevatedButton(
+                            onPressed: onBook,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.r),
+                              ),
+                            ),
+                            child: Text(
+                            "Book Now",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.sp, // 🔥 كبرناه
+                              fontWeight: FontWeight.w600,
+                            ),
+                              maxLines: 1,
+                          ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 8.h),
+
+                  /// Chat Button
+                  InkWell(
+                    onTap: onChat,
+                    borderRadius: BorderRadius.circular(20.r),
+                    child: Container(
+                      height: 40.h,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.chat_bubble_outline),
+                      ),
                     ),
                   ),
                 ],
               ),
-
-              SizedBox(height: 6.h),
-
-              /// Chat Button
-              CustomButton(
-                text: "Chat",
-                onPressed: onChat,
-                height: 30.h,
-                backgroundColor: Colors.grey.shade100,
-                textColor: Colors.black,
-              ),
-            ],
-          ),
-        ),
-
-        /// ❤️ Favorite Icon
-        Positioned(
-          top: 10,
-          right: 10,
-          child: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.favorite,
-              color: Colors.red,
-              size: 18,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Widget _favoriteIcon() {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(
+        Icons.favorite,
+        color: Colors.red,
+        size: 18,
+      ),
     );
   }
 }

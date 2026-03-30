@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healing/features/patient/prescription/presentation/view/prescription_screen.dart';
 import 'package:healing/features/patient/settings/presenatation/views/faqs_screen.dart';
 import 'package:healing/features/patient/settings/presenatation/views/privacy_polices_screen.dart';
 import '../../features/auth/presentation/view/sign_up_as.dart';
@@ -102,6 +103,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const MyAppointment());
       case Routes.upComingOppointment:
         return MaterialPageRoute(builder: (_) => const UpComingOppointment());
+      case Routes.prescriptionDetails:
+        return MaterialPageRoute(builder: (_) => const PrescriptionScreen());
+
 
 
 

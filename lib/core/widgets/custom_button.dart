@@ -11,6 +11,7 @@ class CustomButton extends StatelessWidget {
   final double? height;
   final double? width;
   final bool outlined;
+  final Widget? icon; // 🔥 بدل IconData
 
   const CustomButton({
     super.key,
@@ -21,6 +22,7 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.width,
     this.outlined = false,
+    this.icon,
   });
 
   @override
@@ -31,34 +33,46 @@ class CustomButton extends StatelessWidget {
       child: outlined
           ? OutlinedButton(
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.primary, width: 2),
+          side: BorderSide(color: AppColors.primary, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(context.r(12)),
           ),
         ),
         onPressed: onPressed,
-        child: Text(
-          text,
-          style: AppTextStyles.semiBold16Black.copyWith(
-            color: textColor ?? AppColors.primaryDark,
-          ),
-        ),
+        child: _buildContent(context),
       )
           : ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? AppColors.primaryDark,
+          elevation: 0,
+          backgroundColor:
+          backgroundColor ?? AppColors.primaryDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(context.r(12)),
           ),
         ),
         onPressed: onPressed,
-        child: Text(
+        child: _buildContent(context),
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center, // 🔥 توسيط
+      children: [
+        if (icon != null) ...[
+          icon!,
+          SizedBox(width: 8),
+        ],
+
+        Text(
           text,
           style: AppTextStyles.semiBold16Black.copyWith(
             color: textColor ?? Colors.white,
+            fontSize: 14, // 🔥 مظبوط للـ UI
           ),
         ),
-      ),
+      ],
     );
   }
 }
