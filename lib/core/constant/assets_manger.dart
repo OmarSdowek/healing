@@ -12,8 +12,8 @@ class AssetsManger {
   // home
 
   static const String doctorImage = "assets/images/doctor1.png";
-  static const String doctor2Image = "assets/images/doctor1.png";
-  static const String doctor3Image = "assets/images/doctor1.png";
+  static const String doctor2Image = "assets/images/doctor2.png";
+  static const String doctor3Image = "assets/images/doctor3.png";
   static const String home = "assets/images/home.png";
   static const String person = "assets/images/person.png";
 

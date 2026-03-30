@@ -46,6 +46,7 @@ class Routes {
   // appointment
 
   static const String myAppointments = "/my_appointments";
+  static const String upComingOppointment = "/up_coming_oppointment";
 
 
 

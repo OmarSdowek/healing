@@ -3,6 +3,8 @@ import 'package:healing/features/patient/settings/presenatation/views/faqs_scree
 import 'package:healing/features/patient/settings/presenatation/views/privacy_polices_screen.dart';
 import '../../features/auth/presentation/view/sign_up_as.dart';
 import '../../features/on_boarding/presentation/views/on_boarding.dart';
+import '../../features/patient/appointment/presentation/view/my_appointemetn.dart';
+import '../../features/patient/appointment/presentation/view/up_coming_oppointment.dart';
 import '../../features/patient/auth/presentatiion/views/new_password.dart';
 import '../../features/patient/auth/presentatiion/views/patient_forget_password.dart';
 import '../../features/patient/auth/presentatiion/views/patient_otp_email.dart';
@@ -96,8 +98,11 @@ class AppRouter {
 
       // patient appointment
 
-      // case Routes.myAppointments:
-      //   return MaterialPageRoute(builder: (_) => const MyAppointmentsScreen());
+      case Routes.myAppointments:
+        return MaterialPageRoute(builder: (_) => const MyAppointment());
+      case Routes.upComingOppointment:
+        return MaterialPageRoute(builder: (_) => const UpComingOppointment());
+
 
 
 

@@ -41,6 +41,7 @@ class UpcomingAppointmentSection extends StatelessWidget {
           onReschedule: () {
             // Reschedule logic
           },
+          status: AppointmentStatus.upcoming,
         ),
       ],
     );

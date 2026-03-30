@@ -4,6 +4,14 @@ import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
+import 'package:flutter/material.dart';
+import 'package:healing/core/helper/extentions/media_query.dart';
+import '../../../../../core/constant/app_colors.dart';
+import '../../../../../core/constant/app_text_style.dart';
+import '../../../../../core/widgets/custom_button.dart';
+
+enum AppointmentStatus { upcoming, completed, canceled }
+
 class AppointmentCard extends StatelessWidget {
   final String date;
   final String doctorName;
@@ -11,6 +19,7 @@ class AppointmentCard extends StatelessWidget {
   final String image;
   final VoidCallback onCancel;
   final VoidCallback onReschedule;
+  final AppointmentStatus status;
 
   const AppointmentCard({
     super.key,
@@ -20,14 +29,41 @@ class AppointmentCard extends StatelessWidget {
     required this.image,
     required this.onCancel,
     required this.onReschedule,
+    required this.status,
   });
+
+  Color _statusColor() {
+    switch (status) {
+      case AppointmentStatus.upcoming:
+        return AppColors.primary;
+      case AppointmentStatus.completed:
+        return Colors.green;
+      case AppointmentStatus.canceled:
+        return Colors.red;
+    }
+  }
+
+  String _statusText() {
+    switch (status) {
+      case AppointmentStatus.upcoming:
+        return "Upcoming";
+      case AppointmentStatus.completed:
+        return "Completed";
+      case AppointmentStatus.canceled:
+        return "Canceled";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(
+        horizontal: context.screenWidth * 0.04,
+        vertical: context.screenHeight * 0.01,
+      ),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -43,14 +79,16 @@ class AppointmentCard extends StatelessWidget {
                   color: Colors.grey.shade700,
                 ),
               ),
-               Text(
-                "Upcoming",
-                style: AppTextStyles.semiBold16Black.copyWith(color: AppColors.primary),
+              Text(
+                _statusText(),
+                style: AppTextStyles.semiBold16Black.copyWith(
+                  color: _statusColor(),
+                ),
               ),
             ],
           ),
           const Divider(thickness: 1),
-          const SizedBox(height: 8),
+          context.verticalSpace(8),
 
           /// اسم الدكتور + التخصص
           Row(
@@ -59,8 +97,9 @@ class AppointmentCard extends StatelessWidget {
                 radius: 28,
                 backgroundImage: _getImageProvider(),
               ),
-              const SizedBox(width: 12),
+              context.horizontalSpace(12),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     doctorName,
@@ -68,7 +107,7 @@ class AppointmentCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  context.verticalSpace(4),
                   Text(
                     speciality,
                     style: AppTextStyles.semiBold16Black.copyWith(color: Colors.grey),
@@ -80,37 +119,31 @@ class AppointmentCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
+          context.verticalSpace(12),
 
-
-
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        text: "Cancel",
-                        textColor: AppColors.primary,
-                        onPressed: onCancel,
-                        outlined: true,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: CustomButton(
-                        text: "Reschedule",
-                        onPressed: onReschedule,
-                        outlined: false,
-                        backgroundColor: AppColors.primary,
-                      ),
-                    ),
-                  ],
+          /// الأزرار (تظهر بس في Upcoming و Canceled)
+          if (status != AppointmentStatus.completed)
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    text: "Cancel",
+                    textColor: AppColors.primary,
+                    onPressed: onCancel,
+                    outlined: true,
+                  ),
                 ),
-              ),
-            ],
-          ),
+                context.horizontalSpace(10),
+                Expanded(
+                  child: CustomButton(
+                    text: "Reschedule",
+                    onPressed: onReschedule,
+                    outlined: false,
+                    backgroundColor: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -125,3 +158,4 @@ class AppointmentCard extends StatelessWidget {
     }
   }
 }
+
