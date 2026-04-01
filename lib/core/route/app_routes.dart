@@ -13,6 +13,10 @@ import '../../features/patient/auth/presentatiion/views/sign_up_screen.dart';
 import '../../features/patient/doctors/presentation/view/doctors_screen.dart';
 import '../../features/patient/doctors/presentation/view/favourite_doctor.dart';
 import '../../features/patient/home/layout_screen.dart';
+import '../../features/doctor/appointments/presentation/view/today_appointments_screen.dart';
+import '../../features/doctor/home/doctor_layout_screen.dart';
+import '../../features/doctor/notifications/presentation/view/doctor_notifications_screen.dart';
+import '../../features/doctor/prescription/presentation/view/add_prescription_screen.dart';
 import '../../features/patient/home/presentation/view/specialties_screen.dart';
 import '../../features/patient/profile/presentation/view/personal_information.dart';
 import '../../features/patient/search/presentation/view/search.dart';
@@ -57,35 +61,54 @@ class AppRouter {
 
       case Routes.patientHome:
         return MaterialPageRoute(builder: (_) => MainScreen());
+
+      // doctor home
+      case Routes.doctorHome:
+        return MaterialPageRoute(builder: (_) => DoctorMainScreen());
+
+      case Routes.doctorNotifications:
+        return MaterialPageRoute(
+          builder: (_) => const DoctorNotificationsScreen(),
+        );
+
+      case Routes.todayAppointments:
+        return MaterialPageRoute(
+          builder: (_) => const TodayAppointmentsScreen(),
+        );
+
+      case Routes.addPrescription:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => AddPrescriptionScreen(
+            patientName: args['patientName'] as String,
+            patientAge: args['patientAge'] as int,
+            patientMrn: args['patientMrn'] as String,
+            patientBloodType: args['patientBloodType'] as String,
+            patientWeight: args['patientWeight'] as String,
+            patientImage: args['patientImage'] as String,
+          ),
+        );
       case Routes.search:
         return MaterialPageRoute(builder: (_) => SearchScreen());
       case Routes.specialties:
         return MaterialPageRoute(builder: (_) => SpecialtiesScreen());
-        case Routes.doctors:
-      return MaterialPageRoute(builder: (_) => DoctorsScreen());
+      case Routes.doctors:
+        return MaterialPageRoute(builder: (_) => DoctorsScreen());
       case Routes.favorites:
         return MaterialPageRoute(builder: (_) => FavoritesDoctorsScreen());
 
+      // patient settings
 
-
-
-        // patient settings
-
-        case Routes.settings:
+      case Routes.settings:
         return MaterialPageRoute(builder: (_) => SettingsScreen());
-        case Routes.faqs:
+      case Routes.faqs:
         return MaterialPageRoute(builder: (_) => FaqsScreen());
-        case Routes.privacyPolicy:
+      case Routes.privacyPolicy:
         return MaterialPageRoute(builder: (_) => PrivacyPolicyScreen());
-        case Routes.mangePassword:
+      case Routes.mangePassword:
         return MaterialPageRoute(builder: (_) => ManagePasswordScreen());
-        case Routes.personalInformation:
+      case Routes.personalInformation:
         return MaterialPageRoute(builder: (_) => PersonalInformationScreen());
-
-
-
-
-
 
       default:
         return MaterialPageRoute(
