@@ -4,16 +4,31 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/utils/vaidation.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 
-class PatientSignIn extends StatelessWidget {
+class PatientSignIn extends StatefulWidget {
   PatientSignIn({super.key});
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  @override
+  State<PatientSignIn> createState() => _PatientSignInState();
+}
+
+class _PatientSignInState extends State<PatientSignIn> {
+  late TextEditingController nameController ;
+
+  late TextEditingController passwordController ;
+
+
+  @override
+  void initState() {
+    nameController = TextEditingController();
+    passwordController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +95,7 @@ class PatientSignIn extends StatelessWidget {
                   CustomTextFormField(
                     hintText: "Enter your name",
                     controller: nameController,
+                    validator: (name) => AppValidators.emailValidator(name),
                   ),
 
                   context.verticalSpace(20),
@@ -97,6 +113,7 @@ class PatientSignIn extends StatelessWidget {
                     hintText: "Enter your password",
                     controller: passwordController,
                     isPassword: true,
+                    validator: (pass) => AppValidators.passwordValidator(pass),
                   ),
                 ],
               ),

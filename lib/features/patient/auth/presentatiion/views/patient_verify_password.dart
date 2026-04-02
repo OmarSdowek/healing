@@ -8,10 +8,22 @@ import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 import '../../../../../core/route/routes.dart';
 
-class PatientVerifyPassword extends StatelessWidget {
+class PatientVerifyPassword extends StatefulWidget {
   PatientVerifyPassword({super.key});
 
-  final TextEditingController emailController = TextEditingController();
+  @override
+  State<PatientVerifyPassword> createState() => _PatientVerifyPasswordState();
+}
+
+class _PatientVerifyPasswordState extends State<PatientVerifyPassword> {
+  late TextEditingController emailController ;
+
+
+  @override
+  void initState() {
+    emailController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

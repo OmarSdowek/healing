@@ -70,7 +70,7 @@ class CustomButton extends StatelessWidget {
             text,
             style: AppTextStyles.semiBold16Black.copyWith(
               color: textColor ?? Colors.white,
-              fontSize: 14, // 🔥 مظبوط للـ UI
+              fontSize: 15,
             ),
           ),
         ],

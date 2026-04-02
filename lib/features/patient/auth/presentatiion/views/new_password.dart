@@ -9,11 +9,25 @@ import '../../../../../core/widgets/alart_dailog.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 
-class PatientSetNewPassword extends StatelessWidget {
+class PatientSetNewPassword extends StatefulWidget {
   PatientSetNewPassword({super.key});
 
-  final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  @override
+  State<PatientSetNewPassword> createState() => _PatientSetNewPasswordState();
+}
+
+class _PatientSetNewPasswordState extends State<PatientSetNewPassword> {
+   late TextEditingController newPasswordController ;
+
+  late TextEditingController confirmPasswordController;
+
+
+  @override
+  void initState() {
+    newPasswordController  = TextEditingController();
+    confirmPasswordController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

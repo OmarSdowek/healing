@@ -10,10 +10,23 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_header.dart';
 
 
-class PatientOtpEmail extends StatelessWidget {
-  final TextEditingController pinController = TextEditingController();
+class PatientOtpEmail extends StatefulWidget {
 
    PatientOtpEmail({super.key});
+
+  @override
+  State<PatientOtpEmail> createState() => _PatientOtpEmailState();
+}
+
+class _PatientOtpEmailState extends State<PatientOtpEmail> {
+  late TextEditingController pinController ;
+
+
+  @override
+  void initState() {
+    pinController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

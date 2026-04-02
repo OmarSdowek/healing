@@ -8,10 +8,22 @@ import '../../../../../core/constant/assets_manger.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/route/routes.dart';
 
-class PatientResetPassword extends StatelessWidget {
+class PatientResetPassword extends StatefulWidget {
   PatientResetPassword({super.key});
 
-  final TextEditingController pinController = TextEditingController();
+  @override
+  State<PatientResetPassword> createState() => _PatientResetPasswordState();
+}
+
+class _PatientResetPasswordState extends State<PatientResetPassword> {
+  late TextEditingController pinController ;
+
+
+  @override
+  void initState() {
+    pinController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

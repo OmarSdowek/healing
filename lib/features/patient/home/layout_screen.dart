@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/features/patient/home/presentation/manger/layout_cubit/layout_cubit.dart';
 import 'package:healing/features/patient/home/presentation/view/home_screen.dart';
-
 import '../appointment/presentation/view/up_coming_oppointment.dart';
+import '../booking/presentation/views/booking_screen.dart';
 import '../profile/presentation/view/profie_screen.dart';
 
 class MainScreen extends StatelessWidget {
@@ -13,7 +13,7 @@ class MainScreen extends StatelessWidget {
   static final List<Widget> screens = [
     const HomeScreen(),
     UpComingOppointment(),
-    const Scaffold(body: Center(child: Text("booking"))),
+    BookAppointmentScreen(),
     const ProfileScreen(),
   ];
 

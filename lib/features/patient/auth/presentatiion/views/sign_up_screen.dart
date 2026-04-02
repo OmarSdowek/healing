@@ -18,19 +18,31 @@ class PatientSignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<PatientSignUpScreen> {
-  final TextEditingController nameController = TextEditingController();
+  late TextEditingController nameController;
 
-  final TextEditingController emailController = TextEditingController();
+  late TextEditingController emailController;
 
-  final TextEditingController idController = TextEditingController();
+  late TextEditingController idController;
 
-  final TextEditingController phoneController = TextEditingController();
+  late TextEditingController phoneController;
 
-  final TextEditingController bloodController = TextEditingController();
+  late TextEditingController bloodController;
 
-  final TextEditingController passwordController = TextEditingController();
+  late TextEditingController passwordController;
 
-  final TextEditingController confirmPasswordController = TextEditingController();
+  late TextEditingController confirmPasswordController;
+
+  @override
+  void initState() {
+    nameController = TextEditingController();
+    emailController = TextEditingController();
+    idController = TextEditingController();
+    phoneController = TextEditingController();
+    bloodController = TextEditingController();
+    passwordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +70,9 @@ class _SignUpScreenState extends State<PatientSignUpScreen> {
                   const SizedBox(width: 8),
                   Text(
                     "Healing",
-                    style: AppTextStyles.headline1.copyWith(color: AppColors.primary),
+                    style: AppTextStyles.headline1.copyWith(
+                      color: AppColors.primary,
+                    ),
                   ),
                 ],
               ),
@@ -104,11 +118,26 @@ class _SignUpScreenState extends State<PatientSignUpScreen> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Expanded(child: CustomTextFormField(hintText: "Day", controller: TextEditingController())),
+                  Expanded(
+                    child: CustomTextFormField(
+                      hintText: "Day",
+                      controller: TextEditingController(),
+                    ),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: CustomTextFormField(hintText: "Month", controller: TextEditingController())),
+                  Expanded(
+                    child: CustomTextFormField(
+                      hintText: "Month",
+                      controller: TextEditingController(),
+                    ),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: CustomTextFormField(hintText: "Year", controller: TextEditingController())),
+                  Expanded(
+                    child: CustomTextFormField(
+                      hintText: "Year",
+                      controller: TextEditingController(),
+                    ),
+                  ),
                 ],
               ),
 

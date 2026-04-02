@@ -13,6 +13,7 @@ import '../../features/patient/auth/presentatiion/views/patient_sign_in.dart';
 import '../../features/patient/auth/presentatiion/views/patient_verify_password.dart';
 import '../../features/patient/auth/presentatiion/views/reset_password.dart';
 import '../../features/patient/auth/presentatiion/views/sign_up_screen.dart';
+import '../../features/patient/booking/presentation/views/pay_booking_screen.dart';
 import '../../features/patient/doctors/presentation/view/doctors_screen.dart';
 import '../../features/patient/doctors/presentation/view/favourite_doctor.dart';
 import '../../features/patient/home/layout_screen.dart';
@@ -25,6 +26,7 @@ import '../../features/patient/search/presentation/view/search.dart';
 import '../../features/patient/settings/presenatation/views/mange_password_screen.dart';
 import '../../features/patient/settings/presenatation/views/settings_screen.dart';
 import '../../features/splash/presentation/view/splash_screen.dart';
+import '../constant/assets_manger.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -96,6 +98,14 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const AddNewCardScreen());
       case Routes.selectedCard:
         return MaterialPageRoute(builder: (_) => const SelectedCardScreen());
+      case Routes.pay:
+        return MaterialPageRoute(builder: (_) => PaymentScreen(
+          doctorName: "Mohamed Saeed",
+          speciality: "Physical Therapy",
+          image: AssetsManger.doctor3Image,
+          appointmentDate: DateTime(2024, 7, 17, 16, 0), // 4:00 PM
+        ));
+
 
       // patient appointment
 
