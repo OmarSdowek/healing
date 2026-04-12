@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
-
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/constant/assets_manger.dart';
@@ -33,10 +32,10 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
               CircleAvatar(
                 radius: context.r(80),
-                backgroundImage: AssetImage(AssetsManger.person),
+                backgroundImage: AssetImage(AssetsManger.doctor2Image),
               ),
               context.verticalSpace(12),
-              Text("Ahmed Mohamed", style: AppTextStyles.reg20black),
+              Text("Rahma Ahmed", style: AppTextStyles.reg20black),
 
               context.verticalSpace(20),
 
@@ -69,40 +68,21 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 icon: Icons.person,
                 title: "Personal information",
                 onTap: () {
-                  Navigator.pushNamed(context, Routes.personalInformation);
+                  Navigator.pushNamed(context, Routes.doctorPersonalInformation);
                 },
               ),
               ProfileOptionItem(
                 icon: Icons.settings,
                 title: "Settings",
                 onTap: () {
-                  Navigator.pushNamed(context, Routes.settings);
+                  Navigator.pushNamed(context, Routes.doctorSettings);
                 },
               ),
               ProfileOptionItem(
-                icon: Icons.payment,
-                title: "Payment Method",
+                icon: Icons.lock,
+                title: "Manage Password",
                 onTap: () {
-                  Navigator.pushNamed(context, Routes.selectedCard);
-                },
-              ),
-              ProfileOptionItem(
-                icon: Icons.description,
-                title: "Medical Report",
-                onTap: () {},
-              ),
-              ProfileOptionItem(
-                icon: Icons.medication,
-                title: "My Prescription",
-                onTap: () {
-                  Navigator.pushNamed(context, Routes.prescriptionDetails);
-                },
-              ),
-              ProfileOptionItem(
-                icon: Icons.calendar_today,
-                title: "My Appointment",
-                onTap: () {
-                  Navigator.pushNamed(context, Routes.myAppointments);
+                  Navigator.pushNamed(context, Routes.doctorManagePassword);
                 },
               ),
               ProfileOptionItem(
@@ -112,6 +92,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 onTap: () {
                   showDialog(
                     builder: (context) => LogoutDialog(
+                      btnText: "Logout",
                       onCancel: () {
                         Navigator.pop(context);
                       },

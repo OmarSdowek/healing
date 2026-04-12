@@ -52,6 +52,16 @@ class Routes {
   static const String patientNotification = "/patient_notification";
 
 
+  // doctor profile
+
+  static const String doctorProfile = "/doctor_profile";
+  static const String doctorPersonalInformation = "/doctor_personal_information";
+  static const String doctorManagePassword = "/doctor_manage_password";
+  static const String doctorFaqs = "/doctor_faqs";
+  static const String doctorPrivacyPolicy = "/doctor_privacy_policy";
+  static const String doctorSettings = "/doctor_settings";
+
+
 
   //payment
   static const String paymentMethod = "/payment_method";

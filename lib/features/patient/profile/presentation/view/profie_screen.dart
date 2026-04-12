@@ -118,6 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onConfirm: () {
 
                       },
+                      btnText: "Logout",
                       subtitle: "Are you sure you want to logout?",
                     ),
                     context: context,

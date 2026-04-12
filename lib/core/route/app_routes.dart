@@ -10,6 +10,12 @@ import '../../features/doctor/auth/presentatiion/views/doctor_reset_password.dar
 import '../../features/doctor/auth/presentatiion/views/doctor_sign_in.dart';
 import '../../features/doctor/auth/presentatiion/views/doctor_sign_up_screen.dart';
 import '../../features/doctor/auth/presentatiion/views/doctor_verify_password.dart';
+import '../../features/doctor/profile/presentation/view/doctor_mange_password_screen.dart';
+import '../../features/doctor/profile/presentation/view/doctor_personal_information.dart';
+import '../../features/doctor/profile/presentation/view/doctor_profile_screen.dart';
+import '../../features/doctor/settings/presenatation/views/doctor_faqs_screen.dart';
+import '../../features/doctor/settings/presenatation/views/doctor_privacy_polices_screen.dart';
+import '../../features/doctor/settings/presenatation/views/doctor_settings_screen.dart';
 import '../../features/on_boarding/presentation/views/on_boarding.dart';
 import '../../features/patient/appointment/presentation/view/my_appointemetn.dart';
 import '../../features/patient/appointment/presentation/view/up_coming_oppointment.dart';
@@ -178,6 +184,21 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const UpComingOppointment());
       case Routes.prescriptionDetails:
         return MaterialPageRoute(builder: (_) => const PrescriptionScreen());
+
+        // doctor profile
+
+      case Routes.doctorProfile:
+        return MaterialPageRoute(builder: (_) => DoctorProfileScreen());
+        case Routes.doctorPersonalInformation:
+        return MaterialPageRoute(builder: (_) => DoctorPersonalInformation());
+        case Routes.doctorManagePassword:
+        return MaterialPageRoute(builder: (_) => DoctorManagePasswordScreen());
+        case Routes.doctorFaqs:
+        return MaterialPageRoute(builder: (_) => DoctorFaqsScreen());
+        case Routes.doctorPrivacyPolicy:
+        return MaterialPageRoute(builder: (_) => DoctorPrivacyPolicyScreen());
+        case Routes.doctorSettings:
+        return MaterialPageRoute(builder: (_) => DoctorSettingsScreen());
 
       default:
         return MaterialPageRoute(

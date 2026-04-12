@@ -8,12 +8,14 @@ class LogoutDialog extends StatelessWidget {
   final VoidCallback onConfirm;
   final VoidCallback onCancel;
   final String subtitle;
+  final String btnText;
 
   const LogoutDialog({
     super.key,
     required this.onConfirm,
     required this.onCancel,
-    required this.subtitle
+    required this.subtitle,
+    required this.btnText
   });
 
   @override
@@ -49,20 +51,21 @@ class LogoutDialog extends StatelessWidget {
             Column(
               children: [
                 CustomButton(
+                  text: btnText,
+                  onPressed: onConfirm,
+                  height: context.h(45),
+                  backgroundColor: AppColors.primary,
+                  textColor: Colors.white,
+                ),
+                context.verticalSpace(12),
+                CustomButton(
                   text: "Cancel",
                   onPressed: onCancel,
                   height: context.h(45),
                   outlined: true,
                   textColor: AppColors.primary,
                 ),
-                context.verticalSpace(12),
-                CustomButton(
-                  text: "Logout",
-                  onPressed: onConfirm,
-                  height: context.h(45),
-                  backgroundColor: AppColors.primary,
-                  textColor: Colors.white,
-                ),
+
               ],
             ),
           ],
