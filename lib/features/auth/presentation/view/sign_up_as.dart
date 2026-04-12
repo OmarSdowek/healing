@@ -70,7 +70,7 @@ class SignUpAsScreen extends StatelessWidget {
                       backgroundColor: AppColors.white,
                       textColor: AppColors.primary,
                       onPressed: () {
-                        Navigator.pushNamed(context, Routes.doctorHome);
+                        Navigator.pushNamed(context, Routes.doctorLogin);
                       },
                     ),
                   ),

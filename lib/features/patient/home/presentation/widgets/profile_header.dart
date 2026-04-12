@@ -31,7 +31,9 @@ class ProfileHeader extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.patientNotification);
+            },
           ),
         ],
       ),

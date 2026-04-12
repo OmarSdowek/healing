@@ -5,17 +5,15 @@ import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
 class LogoutDialog extends StatelessWidget {
-  final String title;
-  final String subtitle;
   final VoidCallback onConfirm;
   final VoidCallback onCancel;
+  final String subtitle;
 
   const LogoutDialog({
     super.key,
     required this.onConfirm,
     required this.onCancel,
-    required this.title,
-    required this.subtitle,
+    required this.subtitle
   });
 
   @override
@@ -25,53 +23,45 @@ class LogoutDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(context.r(20)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            /// العنوان
-            Text(
-              title,
-              style: AppTextStyles.reg20black,
+            Container(
+              padding: EdgeInsets.all(context.r(16)),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.logout, color: Colors.white, size: 32),
             ),
-            context.verticalSpace(12),
-
-            Divider(),
-
-            context.verticalSpace(12),
+            context.verticalSpace(20),
 
             /// النص
             Text(
               subtitle,
-              style: AppTextStyles.semiBold16Black.copyWith(color: AppColors.grey),
+              style: AppTextStyles.reg20black,
               textAlign: TextAlign.center,
             ),
-
-            context.verticalSpace(20),
+            context.verticalSpace(25),
 
             /// زرارين Cancel / Logout
-            Row(
+            Column(
               children: [
-                Expanded(
-                  child: CustomButton(
-                    text: "Cancel",
-                    onPressed: onCancel,
-                    height: 40,
-                    width: context.screenWidth,
-                    outlined: true,
-                    textColor: AppColors.primary,
-                  ),
+                CustomButton(
+                  text: "Cancel",
+                  onPressed: onCancel,
+                  height: context.h(45),
+                  outlined: true,
+                  textColor: AppColors.primary,
                 ),
-                context.verticalSpace(15),
-                Expanded(
-                  child: CustomButton(
-                    text: "Logout",
-                    onPressed: onConfirm,
-                    height: 40,
-                    width: context.screenWidth,
-                    backgroundColor: AppColors.primary,
-                    textColor: Colors.white,
-                  ),
+                context.verticalSpace(12),
+                CustomButton(
+                  text: "Logout",
+                  onPressed: onConfirm,
+                  height: context.h(45),
+                  backgroundColor: AppColors.primary,
+                  textColor: Colors.white,
                 ),
               ],
             ),

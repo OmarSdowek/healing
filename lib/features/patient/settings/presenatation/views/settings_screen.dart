@@ -58,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
                       onConfirm: () {
                         Navigator.pop(context);
                         // 🔹 هنا تعمل لوجيك حذف الحساب
-                      }, title: 'Delete Account',
+                      },
                       subtitle: 'Are you sure you want to delete your account?',
                     ),
                   );

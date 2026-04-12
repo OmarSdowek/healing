@@ -12,6 +12,17 @@ class Routes {
   static const String setNewPassword = "/set_new_password";
   static const String verifyCode = "/verify_code";
 
+
+  // doctor Auth
+  static const String doctorLogin = "/doctor_login";
+  static const String doctorRegister = "/doctor_register";
+  static const String doctorVerifyEmail = "/doctor_verify_email";
+  static const String doctorForgotPassword = "/doctor_forgot_password";
+  static const String doctorResetPassword = "/doctor_reset_password";
+  static const String doctorSetNewPassword = "/doctor_set_new_password";
+  static const String doctorVerifyCode = "/doctor_verify_code";
+
+
   // patient Home
   static const String patientHome = "/patient_home";
   static const String search = "/search";
@@ -38,6 +49,7 @@ class Routes {
   static const String faqs = "/faqs";
   static const String privacyPolicy = "/privacy_policy";
   static const String personalInformation = "/personal_information";
+  static const String patientNotification = "/patient_notification";
 
 
 

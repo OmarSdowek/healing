@@ -10,14 +10,14 @@ import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 
-class PatientSignIn extends StatefulWidget {
-  PatientSignIn({super.key});
+class DoctorSignIn extends StatefulWidget {
+  DoctorSignIn({super.key});
 
   @override
-  State<PatientSignIn> createState() => _PatientSignInState();
+  State<DoctorSignIn> createState() => _DoctorSignInState();
 }
 
-class _PatientSignInState extends State<PatientSignIn> {
+class _DoctorSignInState extends State<DoctorSignIn> {
   late TextEditingController nameController ;
 
   late TextEditingController passwordController ;
@@ -126,7 +126,7 @@ class _PatientSignInState extends State<PatientSignIn> {
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, Routes.forgotPassword);
+                    Navigator.pushNamed(context, Routes.doctorForgotPassword);
                   },
                   child: Text(
                     "Forget Password?",
@@ -145,7 +145,7 @@ class _PatientSignInState extends State<PatientSignIn> {
                 text: "Login",
                 backgroundColor: AppColors.primary,
                 onPressed: () {
-                  Navigator.pushNamed(context, Routes.patientHome);
+                  Navigator.pushNamed(context, Routes.doctorHome);
                 },
               ),
             ),
@@ -196,7 +196,7 @@ class _PatientSignInState extends State<PatientSignIn> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, Routes.patientRegister);
+                      Navigator.pushNamed(context, Routes.doctorRegister);
                     },
                     child: Text(
                       "Sign up",

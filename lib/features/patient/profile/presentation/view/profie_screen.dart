@@ -112,7 +112,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () {
                    showDialog(
                     builder: (context) => LogoutDialog(
-                      title: "Logout",
                       onCancel: () {
                         Navigator.pop(context);
                       },

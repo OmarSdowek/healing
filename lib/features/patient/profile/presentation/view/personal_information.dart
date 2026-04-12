@@ -6,19 +6,29 @@ import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 
-class PersonalInformationScreen extends StatelessWidget {
+class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-    final emailController = TextEditingController();
-    final genderController = TextEditingController();
-    final bloodController = TextEditingController();
-    final idController = TextEditingController();
-    final addressController = TextEditingController();
+  State<PersonalInformationScreen> createState() => _PersonalInformationScreenState();
+}
 
+class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final bloodController = TextEditingController();
+  final idController = TextEditingController();
+  final addressController = TextEditingController();
+
+  // ✅ الجنس
+  String? selectedGender;
+
+  // ✅ الميلاد
+  DateTime? selectedBirthday;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -58,58 +68,67 @@ class PersonalInformationScreen extends StatelessWidget {
               ),
               context.verticalSpace(16),
 
-              /// Birthday (Dropdowns)
+              /// Birthday (DatePicker)
               Text("Your birthday", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(6),
-              Row(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: DropdownButtonFormField<int>(
-                      decoration: const InputDecoration(border: OutlineInputBorder()),
-                      items: List.generate(
-                        31,
-                            (i) => DropdownMenuItem(value: i + 1, child: Text("${i + 1}")),
-                      ),
-                      onChanged: (_) {},
-                    ),
-                  ),
-                  context.horizontalSpace(6),
-
-                  Flexible(
-                    flex: 2, // الشهر بياخد مساحة أكبر
-                    child: DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(border: OutlineInputBorder()),
-                      items: [
-                        "January","February","March","April","May","June",
-                        "July","August","September","October","November","December"
-                      ].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
-                      onChanged: (_) {},
-                    ),
-                  ),
-                  context.horizontalSpace(6),
-
-                  Flexible(
-                    flex: 1,
-                    child: DropdownButtonFormField<int>(
-                      decoration: const InputDecoration(border: OutlineInputBorder()),
-                      items: List.generate(
-                        50,
-                            (i) => DropdownMenuItem(value: 1980 + i, child: Text("${1980 + i}")),
-                      ),
-                      onChanged: (_) {},
-                    ),
-                  ),
-                ],
+              CustomButton(
+                text: selectedBirthday == null
+                    ? "Select your birthday"
+                    : "${selectedBirthday!.day}/${selectedBirthday!.month}/${selectedBirthday!.year}",
+                onPressed: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime(2000, 1, 1),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                  );
+                  if (picked != null) {
+                    setState(() => selectedBirthday = picked);
+                  }
+                },
+                height: 48,
+                backgroundColor: AppColors.primary.withOpacity(0.1),
+                textColor: AppColors.primaryDark,
               ),
               context.verticalSpace(16),
 
-              /// Gender
+              /// Gender (زرارين)
               Text("Gender", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(6),
-              CustomTextFormField(
-                hintText: "Write your gender",
-                controller: genderController,
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      text: "Male",
+                      onPressed: () {
+                        setState(() => selectedGender = "Male");
+                      },
+                      height: 45,
+                      backgroundColor: selectedGender == "Male"
+                          ? AppColors.primary
+                          : AppColors.cardBackground,
+                      textColor: selectedGender == "Male"
+                          ? Colors.white
+                          : AppColors.primaryDark,
+                    ),
+                  ),
+                  context.horizontalSpace(12),
+                  Expanded(
+                    child: CustomButton(
+                      text: "Female",
+                      onPressed: () {
+                        setState(() => selectedGender = "Female");
+                      },
+                      height: 45,
+                      backgroundColor: selectedGender == "Female"
+                          ? AppColors.primary
+                          : AppColors.cardBackground,
+                      textColor: selectedGender == "Female"
+                          ? Colors.white
+                          : AppColors.primaryDark,
+                    ),
+                  ),
+                ],
               ),
               context.verticalSpace(16),
 
@@ -144,7 +163,14 @@ class PersonalInformationScreen extends StatelessWidget {
               CustomButton(
                 text: "Save",
                 onPressed: () {
-                  // 🔹 هنا تعمل لوجيك حفظ البيانات
+                  print("Name: ${nameController.text}");
+                  print("Phone: ${phoneController.text}");
+                  print("Email: ${emailController.text}");
+                  print("Gender: $selectedGender");
+                  print("Birthday: $selectedBirthday");
+                  print("Blood: ${bloodController.text}");
+                  print("ID: ${idController.text}");
+                  print("Address: ${addressController.text}");
                 },
                 height: 48,
                 backgroundColor: AppColors.primary,

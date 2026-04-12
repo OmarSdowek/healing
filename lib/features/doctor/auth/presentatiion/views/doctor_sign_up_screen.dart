@@ -9,14 +9,14 @@ import 'package:healing/core/widgets/custom_header.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 
-class PatientSignUpScreen extends StatefulWidget {
-  const PatientSignUpScreen({super.key});
+class DoctorSignUpScreen extends StatefulWidget {
+  const DoctorSignUpScreen({super.key});
 
   @override
-  State<PatientSignUpScreen> createState() => _PatientSignUpScreenState();
+  State<DoctorSignUpScreen> createState() => _DoctorSignUpScreenState();
 }
 
-class _PatientSignUpScreenState extends State<PatientSignUpScreen> {
+class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final idController = TextEditingController();
@@ -48,7 +48,11 @@ class _PatientSignUpScreenState extends State<PatientSignUpScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(AssetsManger.logo, height: 50, color: AppColors.primary),
+                  SvgPicture.asset(
+                    AssetsManger.logo,
+                    height: 50,
+                    color: AppColors.primary,
+                  ),
                   const SizedBox(width: 8),
                   Text("Healing", style: AppTextStyles.headline1.copyWith(color: AppColors.primary)),
                 ],
@@ -86,7 +90,7 @@ class _PatientSignUpScreenState extends State<PatientSignUpScreen> {
                 onPressed: () async {
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime(2000, 1, 1),
+                    initialDate: DateTime(1990, 1, 1),
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
                   );
@@ -175,7 +179,7 @@ class _PatientSignUpScreenState extends State<PatientSignUpScreen> {
                   print("Phone: ${phoneController.text}");
                   print("Blood: ${bloodController.text}");
                   print("Password: ${passwordController.text}");
-                  Navigator.pushNamed(context, Routes.verifyEmail);
+                  Navigator.pushNamed(context, Routes.doctorVerifyEmail);
                 },
               ),
 
@@ -187,7 +191,7 @@ class _PatientSignUpScreenState extends State<PatientSignUpScreen> {
                 children: [
                   Text("Already have an account? ", style: AppTextStyles.reg20black),
                   GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, Routes.patientLogin),
+                    onTap: () => Navigator.pushNamed(context, Routes.doctorLogin),
                     child: Text("Login", style: AppTextStyles.semiBold16Black.copyWith(color: AppColors.primary, fontSize: context.sp(20))),
                   ),
                 ],

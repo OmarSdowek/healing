@@ -3,6 +3,13 @@ import 'package:healing/features/patient/prescription/presentation/view/prescrip
 import 'package:healing/features/patient/settings/presenatation/views/faqs_screen.dart';
 import 'package:healing/features/patient/settings/presenatation/views/privacy_polices_screen.dart';
 import '../../features/auth/presentation/view/sign_up_as.dart';
+import '../../features/doctor/auth/presentatiion/views/doctor_forget_password.dart';
+import '../../features/doctor/auth/presentatiion/views/doctor_new_password.dart';
+import '../../features/doctor/auth/presentatiion/views/doctor_otp_email.dart';
+import '../../features/doctor/auth/presentatiion/views/doctor_reset_password.dart';
+import '../../features/doctor/auth/presentatiion/views/doctor_sign_in.dart';
+import '../../features/doctor/auth/presentatiion/views/doctor_sign_up_screen.dart';
+import '../../features/doctor/auth/presentatiion/views/doctor_verify_password.dart';
 import '../../features/on_boarding/presentation/views/on_boarding.dart';
 import '../../features/patient/appointment/presentation/view/my_appointemetn.dart';
 import '../../features/patient/appointment/presentation/view/up_coming_oppointment.dart';
@@ -22,6 +29,7 @@ import '../../features/doctor/home/doctor_layout_screen.dart';
 import '../../features/doctor/notifications/presentation/view/doctor_notifications_screen.dart';
 import '../../features/doctor/prescription/presentation/view/add_prescription_screen.dart';
 import '../../features/patient/home/presentation/view/specialties_screen.dart';
+import '../../features/patient/notifications/presentation/view/patient_notifications_screen.dart';
 import '../../features/patient/payment/presenatation/view/selected_card.dart';
 import '../../features/patient/payment/presenatation/view/add_new_card.dart';
 import '../../features/patient/payment/presenatation/view/payment_methods.dart';
@@ -44,6 +52,8 @@ class AppRouter {
       case Routes.signUpAs:
         return MaterialPageRoute(builder: (_) => SignUpAsScreen());
 
+      // patient auth
+
       case Routes.patientLogin:
         return MaterialPageRoute(builder: (_) => PatientSignIn());
 
@@ -64,6 +74,29 @@ class AppRouter {
 
       case Routes.verifyCode:
         return MaterialPageRoute(builder: (_) => PatientVerifyPassword());
+
+      // doctor auth
+
+      case Routes.doctorLogin:
+        return MaterialPageRoute(builder: (_) => DoctorSignIn());
+
+      case Routes.doctorRegister:
+        return MaterialPageRoute(builder: (_) => DoctorSignUpScreen());
+
+      case Routes.doctorVerifyEmail:
+        return MaterialPageRoute(builder: (_) => DoctorOtpEmail());
+
+      case Routes.doctorForgotPassword:
+        return MaterialPageRoute(builder: (_) => DoctorForgotPassword());
+
+      case Routes.doctorResetPassword:
+        return MaterialPageRoute(builder: (_) => DoctorResetPassword());
+
+      case Routes.doctorSetNewPassword:
+        return MaterialPageRoute(builder: (_) => DoctorSetNewPassword());
+
+      case Routes.doctorVerifyCode:
+        return MaterialPageRoute(builder: (_) => DoctorVerifyPassword());
 
       // patienthome
 
@@ -117,8 +150,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ManagePasswordScreen());
       case Routes.personalInformation:
         return MaterialPageRoute(builder: (_) => PersonalInformationScreen());
-
-       // patient payment
+      case Routes.patientNotification:
+        return MaterialPageRoute(builder: (_) => PatientNotificationsScreen());
+      // patient payment
 
       case Routes.paymentMethod:
         return MaterialPageRoute(builder: (_) => const PaymentMethodScreen());
@@ -127,13 +161,14 @@ class AppRouter {
       case Routes.selectedCard:
         return MaterialPageRoute(builder: (_) => const SelectedCardScreen());
       case Routes.pay:
-        return MaterialPageRoute(builder: (_) => PaymentScreen(
-          doctorName: "Mohamed Saeed",
-          speciality: "Physical Therapy",
-          image: AssetsManger.doctor3Image,
-          appointmentDate: DateTime(2024, 7, 17, 16, 0), // 4:00 PM
-        ));
-
+        return MaterialPageRoute(
+          builder: (_) => PaymentScreen(
+            doctorName: "Mohamed Saeed",
+            speciality: "Physical Therapy",
+            image: AssetsManger.doctor3Image,
+            appointmentDate: DateTime(2024, 7, 17, 16, 0), // 4:00 PM
+          ),
+        );
 
       // patient appointment
 
@@ -143,12 +178,6 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const UpComingOppointment());
       case Routes.prescriptionDetails:
         return MaterialPageRoute(builder: (_) => const PrescriptionScreen());
-
-
-
-
-
-
 
       default:
         return MaterialPageRoute(
