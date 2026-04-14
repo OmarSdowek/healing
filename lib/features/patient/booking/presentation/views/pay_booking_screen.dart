@@ -7,6 +7,7 @@ import 'package:dotted_border/dotted_border.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../widgets/appointment_confirmation_section.dart';
 import '../widgets/doctor_profile.dart';
+import '../widgets/payment_option.dart';
 import '../widgets/price_pay_section.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -81,7 +82,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               context.verticalSpace(15),
 
               /// Credit Card
-              _PaymentOption(
+              PaymentOption(
                 title: "Credit Card",
                 icons: [AssetsManger.visa, AssetsManger.masterCard],
                 isSelected: selectedIndex == 0,
@@ -89,7 +90,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
 
               /// PayPal
-              _PaymentOption(
+              PaymentOption(
                 title: "PayPal",
                 icons: [AssetsManger.paypal],
                 isSelected: selectedIndex == 1,
@@ -97,7 +98,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
 
               /// Apple Pay
-              _PaymentOption(
+              PaymentOption(
                 title: "Apple Pay",
                 icons: [AssetsManger.applePay],
                 isSelected: selectedIndex == 2,
@@ -138,19 +139,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
         ),
       ),
-      bottomNavigationBar:
-      PriceAndPaySection(
-          text: "Pay",
-          price: 350,
-        onPressed: () {
-          showConfirmationDialog(
-            context,
-            "Mohamed Saeed",
-            DateTime(2026, 7, 30, 10, 0),
-          );
-        },
-
-      ),
+      // bottomNavigationBar:
+      // PriceAndPaySection(
+      //     text: "Pay",
+      //   onPressed: () {
+      //     showConfirmationDialog(
+      //       context,
+      //       "Mohamed Saeed",
+      //       DateTime(2026, 7, 30, 10, 0) as String,
+      //     );
+      //   },
+      //
+      // ),
     );
   }
 
@@ -166,62 +166,5 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final minute = date.minute.toString().padLeft(2, '0');
     final suffix = date.hour >= 12 ? "pm" : "am";
     return "$hour:$minute$suffix";
-  }
-}
-class _PaymentOption extends StatelessWidget {
-  final String title;
-  final List<String> icons;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _PaymentOption({
-    required this.title,
-    required this.icons,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: context.h(8)),
-        padding: EdgeInsets.all(context.r(12)),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(context.r(12)),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : Colors.grey.shade300,
-          ),
-        ),
-        child: Row(
-          children: [
-            /// Radio
-            Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected ? AppColors.primary : Colors.grey,
-            ),
-
-            context.horizontalSpace(10),
-
-            /// Title
-            Text(title, style: AppTextStyles.reg20black),
-
-            const Spacer(),
-
-            /// Icons
-            Row(
-              children: icons
-                  .map((icon) => Padding(
-                padding: EdgeInsets.only(left: context.w(8)),
-                child: Image.asset(icon, height: context.h(24)),
-              ))
-                  .toList(),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

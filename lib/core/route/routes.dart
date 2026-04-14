@@ -50,6 +50,9 @@ class Routes {
   static const String privacyPolicy = "/privacy_policy";
   static const String personalInformation = "/personal_information";
   static const String patientNotification = "/patient_notification";
+  static const String patientMedicalReport = "/patient_medical_report";
+  static const String patientMedicalReportDetails = "/patient_medical_report_details";
+
 
 
   // doctor profile
@@ -75,6 +78,9 @@ class Routes {
 
   static const String myAppointments = "/my_appointments";
   static const String upComingOppointment = "/up_coming_oppointment";
+  static const String appointmentConfirmation = "/appointment_confirmation";
+
+
 
   //prescription
 

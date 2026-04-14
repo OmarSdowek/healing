@@ -89,7 +89,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileOptionItem(
                 icon: Icons.description,
                 title: "Medical Report",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.patientMedicalReport);
+                },
               ),
               ProfileOptionItem(
                 icon: Icons.medication,

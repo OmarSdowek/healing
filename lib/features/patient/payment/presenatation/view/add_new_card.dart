@@ -7,6 +7,8 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 
+import '../../../booking/presentation/widgets/appointment_confirmation_section.dart';
+
 class AddNewCardScreen extends StatefulWidget {
   const AddNewCardScreen({super.key});
 
@@ -84,12 +86,30 @@ class _AddNewCardScreenState extends State<AddNewCardScreen> {
               CustomButton(
                 text: "Save",
                 onPressed: () {
-                  setState(() {});
+                  setState(() {
+                    // أي لوجيك للحفظ
+                  });
+
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (ctx) {
+                      return showConfirmationDialog(
+                        context,
+                        "Mohamed Samee",
+                        "Physical Therapy",
+                        DateTime(2028, 6, 13, 10, 0),
+                        "400",
+                        "Credit Card",
+                      );
+                    },
+                  );
                 },
                 height: 48,
                 backgroundColor: AppColors.primary,
                 textColor: Colors.white,
               ),
+
             ],
           ),
         ),

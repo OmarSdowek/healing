@@ -84,12 +84,10 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
         ),
       ),
 
-      /// Price & Pay Section ثابت تحت
       bottomNavigationBar: PriceAndPaySection(
         text: "Continue Pay",
-        price: 285,
         onPressed: () {
-        Navigator.pushNamed(context, Routes.pay);
+        Navigator.pushNamed(context, Routes.appointmentConfirmation);
       },),
     );
   }
