@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_colors.dart';
+import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/features/doctor/home/presentation/manger/layout_cubit/doctor_layout_cubit.dart';
 import 'package:healing/features/doctor/home/presentation/view/doctor_home_screen.dart';
 import 'package:healing/features/doctor/profile/presentation/view/doctor_profile_screen.dart';
@@ -24,10 +25,10 @@ class DoctorMainScreen extends StatelessWidget {
           return Scaffold(
             body: _screens[currentIndex],
             bottomNavigationBar: Container(
-              padding: const EdgeInsets.symmetric(vertical: 6),
+              padding: EdgeInsets.symmetric(vertical: context.h(6)),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(context.r(20)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.08),
@@ -45,8 +46,8 @@ class DoctorMainScreen extends StatelessWidget {
                 elevation: 0,
                 selectedItemColor: AppColors.primary,
                 unselectedItemColor: Colors.grey,
-                selectedFontSize: 16,
-                unselectedFontSize: 15,
+                selectedFontSize: context.sp(14),
+                unselectedFontSize: context.sp(13),
                 showUnselectedLabels: true,
                 items: const [
                   BottomNavigationBarItem(

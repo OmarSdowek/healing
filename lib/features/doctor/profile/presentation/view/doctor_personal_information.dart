@@ -11,7 +11,8 @@ class DoctorPersonalInformation extends StatefulWidget {
   const DoctorPersonalInformation({super.key});
 
   @override
-  State<DoctorPersonalInformation> createState() => _DoctorPersonalInformationState();
+  State<DoctorPersonalInformation> createState() =>
+      _DoctorPersonalInformationState();
 }
 
 class _DoctorPersonalInformationState extends State<DoctorPersonalInformation> {
@@ -33,7 +34,10 @@ class _DoctorPersonalInformationState extends State<DoctorPersonalInformation> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.w(12),
+            vertical: context.h(12),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healing/core/helper/extentions/media_query.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
 
@@ -19,8 +20,8 @@ class DoctorFaqItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(vertical: context.h(6)),
+      padding: EdgeInsets.all(context.w(12)),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
@@ -40,14 +41,13 @@ class DoctorFaqItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  question,
-                  style: AppTextStyles.semiBold16Black,
-                ),
+                child: Text(question, style: AppTextStyles.semiBold16Black),
               ),
               IconButton(
-                icon: Icon(isExpanded ? Icons.remove : Icons.add,
-                    color: AppColors.primary),
+                icon: Icon(
+                  isExpanded ? Icons.remove : Icons.add,
+                  color: AppColors.primary,
+                ),
                 onPressed: onToggle,
               ),
             ],
@@ -55,10 +55,12 @@ class DoctorFaqItem extends StatelessWidget {
 
           /// الإجابة لو Expanded
           if (isExpanded) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: context.h(8)),
             Text(
               answer,
-              style: AppTextStyles.semiBold16Black.copyWith(color: AppColors.grey),
+              style: AppTextStyles.semiBold16Black.copyWith(
+                color: AppColors.grey,
+              ),
             ),
           ],
         ],

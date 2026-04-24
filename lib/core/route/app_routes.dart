@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healing/core/route/auth_guard.dart';
 import 'package:healing/features/patient/prescription/presentation/view/prescription_screen.dart';
 import 'package:healing/features/patient/settings/presenatation/views/faqs_screen.dart';
 import 'package:healing/features/patient/settings/presenatation/views/privacy_polices_screen.dart';
@@ -49,86 +50,121 @@ import '../../features/splash/presentation/view/splash_screen.dart';
 import '../constant/assets_manger.dart';
 import 'routes.dart';
 
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+Route<dynamic> _doctor(Widget screen) =>
+    MaterialPageRoute(builder: (_) => AuthGuard(isDoctor: true, child: screen));
+
+Route<dynamic> _patient(Widget screen) =>
+    MaterialPageRoute(builder: (_) => AuthGuard(child: screen));
+
+Route<dynamic> _public(Widget screen) =>
+    MaterialPageRoute(builder: (_) => screen);
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      // ── Public ──────────────────────────────────────────────────────────────
       case Routes.splash:
-        return MaterialPageRoute(builder: (_) => SplashScreen());
+        return _public(const SplashScreen());
       case Routes.onboarding:
-        return MaterialPageRoute(builder: (_) => OnBoarding());
-
+        return _public(OnBoarding());
       case Routes.signUpAs:
-        return MaterialPageRoute(builder: (_) => SignUpAsScreen());
+        return _public(const SignUpAsScreen());
 
-      // patient auth
-
+      // ── Patient Auth (public) ────────────────────────────────────────────────
       case Routes.patientLogin:
-        return MaterialPageRoute(builder: (_) => PatientSignIn());
-
+        return _public(PatientSignIn());
       case Routes.patientRegister:
-        return MaterialPageRoute(builder: (_) => PatientSignUpScreen());
-
+        return _public(PatientSignUpScreen());
       case Routes.verifyEmail:
-        return MaterialPageRoute(builder: (_) => PatientOtpEmail());
-
+        return _public(PatientOtpEmail());
       case Routes.forgotPassword:
-        return MaterialPageRoute(builder: (_) => PatientForgotPassword());
-
+        return _public(PatientForgotPassword());
       case Routes.resetPassword:
-        return MaterialPageRoute(builder: (_) => PatientResetPassword());
-
+        return _public(PatientResetPassword());
       case Routes.setNewPassword:
-        return MaterialPageRoute(builder: (_) => PatientSetNewPassword());
-
+        return _public(PatientSetNewPassword());
       case Routes.verifyCode:
-        return MaterialPageRoute(builder: (_) => PatientVerifyPassword());
+        return _public(PatientVerifyPassword());
 
-      // doctor auth
-
+      // ── Doctor Auth (public) ─────────────────────────────────────────────────
       case Routes.doctorLogin:
-        return MaterialPageRoute(builder: (_) => DoctorSignIn());
-
+        return _public(const DoctorSignIn());
       case Routes.doctorRegister:
-        return MaterialPageRoute(builder: (_) => DoctorSignUpScreen());
-
+        return _public(const DoctorSignUpScreen());
       case Routes.doctorVerifyEmail:
-        return MaterialPageRoute(builder: (_) => DoctorOtpEmail());
-
+        return _public(DoctorOtpEmail());
       case Routes.doctorForgotPassword:
-        return MaterialPageRoute(builder: (_) => DoctorForgotPassword());
-
+        return _public(const DoctorForgotPassword());
       case Routes.doctorResetPassword:
-        return MaterialPageRoute(builder: (_) => DoctorResetPassword());
-
+        return _public(DoctorResetPassword());
       case Routes.doctorSetNewPassword:
-        return MaterialPageRoute(builder: (_) => DoctorSetNewPassword());
-
+        return _public(const DoctorSetNewPassword());
       case Routes.doctorVerifyCode:
-        return MaterialPageRoute(builder: (_) => DoctorVerifyPassword());
+        return _public(DoctorVerifyPassword());
 
-      // patienthome
-
+      // ── Patient Protected ────────────────────────────────────────────────────
       case Routes.patientHome:
-        return MaterialPageRoute(builder: (_) => MainScreen());
+        return _patient(MainScreen());
+      case Routes.search:
+        return _patient(SearchScreen());
+      case Routes.specialties:
+        return _patient(SpecialtiesScreen());
+      case Routes.doctors:
+        return _patient(DoctorsScreen());
+      case Routes.favorites:
+        return _patient(FavoritesDoctorsScreen());
+      case Routes.settings:
+        return _patient(SettingsScreen());
+      case Routes.faqs:
+        return _patient(FaqsScreen());
+      case Routes.privacyPolicy:
+        return _patient(PrivacyPolicyScreen());
+      case Routes.mangePassword:
+        return _patient(ManagePasswordScreen());
+      case Routes.personalInformation:
+        return _patient(PersonalInformationScreen());
+      case Routes.patientNotification:
+        return _patient(PatientNotificationsScreen());
+      case Routes.patientMedicalReport:
+        return _patient(MedicalReportListScreen());
+      case Routes.patientMedicalReportDetails:
+        final report = settings.arguments as MedicalReport;
+        return _patient(MedicalReportDetailScreen(report: report));
+      case Routes.addNewCard:
+        return _patient(const AddNewCardScreen());
+      case Routes.pay:
+        return _patient(
+          PaymentScreen(
+            doctorName: "Mohamed Saeed",
+            speciality: "Physical Therapy",
+            image: AssetsManger.doctor3Image,
+            appointmentDate: DateTime(2024, 7, 17, 16, 0),
+          ),
+        );
+      case Routes.myAppointments:
+        return _patient(const MyAppointment());
+      case Routes.upComingOppointment:
+        return _patient(const UpComingOppointment());
+      case Routes.prescriptionDetails:
+        return _patient(const PrescriptionScreen());
+      case Routes.appointmentConfirmation:
+        return _patient(const ConfirmBooking());
 
-      // doctor home
+      // ── Doctor Protected ─────────────────────────────────────────────────────
       case Routes.doctorHome:
-        return MaterialPageRoute(builder: (_) => DoctorMainScreen());
-
+        return _doctor(const DoctorMainScreen());
       case Routes.doctorNotifications:
-        return MaterialPageRoute(
-          builder: (_) => const DoctorNotificationsScreen(),
-        );
-
+        return _doctor(const DoctorNotificationsScreen());
       case Routes.todayAppointments:
-        return MaterialPageRoute(
-          builder: (_) => const TodayAppointmentsScreen(),
-        );
-
+        return _doctor(const TodayAppointmentsScreen());
       case Routes.addPrescription:
         final args = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
-          builder: (_) => AddPrescriptionScreen(
+        return _doctor(
+          AddPrescriptionScreen(
             patientName: args['patientName'] as String,
             patientAge: args['patientAge'] as int,
             patientMrn: args['patientMrn'] as String,
@@ -137,82 +173,23 @@ class AppRouter {
             patientImage: args['patientImage'] as String,
           ),
         );
-      case Routes.search:
-        return MaterialPageRoute(builder: (_) => SearchScreen());
-      case Routes.specialties:
-        return MaterialPageRoute(builder: (_) => SpecialtiesScreen());
-      case Routes.doctors:
-        return MaterialPageRoute(builder: (_) => DoctorsScreen());
-      case Routes.favorites:
-        return MaterialPageRoute(builder: (_) => FavoritesDoctorsScreen());
-
-      // patient settings
-
-      case Routes.settings:
-        return MaterialPageRoute(builder: (_) => SettingsScreen());
-      case Routes.faqs:
-        return MaterialPageRoute(builder: (_) => FaqsScreen());
-      case Routes.privacyPolicy:
-        return MaterialPageRoute(builder: (_) => PrivacyPolicyScreen());
-      case Routes.mangePassword:
-        return MaterialPageRoute(builder: (_) => ManagePasswordScreen());
-      case Routes.personalInformation:
-        return MaterialPageRoute(builder: (_) => PersonalInformationScreen());
-      case Routes.patientNotification:
-        return MaterialPageRoute(builder: (_) => PatientNotificationsScreen());
-      case Routes.patientMedicalReport:
-        return MaterialPageRoute(builder: (_) => MedicalReportListScreen());
-      case Routes.patientMedicalReportDetails:
-        final report = settings.arguments as MedicalReport;
-        return MaterialPageRoute(
-            builder: (_) => MedicalReportDetailScreen(report: report,));
-
-      // patient payment
-
-
-      case Routes.addNewCard:
-        return MaterialPageRoute(builder: (_) => const AddNewCardScreen());
-      case Routes.pay:
-        return MaterialPageRoute(
-          builder: (_) => PaymentScreen(
-            doctorName: "Mohamed Saeed",
-            speciality: "Physical Therapy",
-            image: AssetsManger.doctor3Image,
-            appointmentDate: DateTime(2024, 7, 17, 16, 0),
-          ),
-        );
-
-      // patient appointment
-
-      case Routes.myAppointments:
-        return MaterialPageRoute(builder: (_) => const MyAppointment());
-      case Routes.upComingOppointment:
-        return MaterialPageRoute(builder: (_) => const UpComingOppointment());
-      case Routes.prescriptionDetails:
-        return MaterialPageRoute(builder: (_) => const PrescriptionScreen());
-      case Routes.appointmentConfirmation:
-        return MaterialPageRoute(builder: (_) => const ConfirmBooking());
-
-
-        // doctor profile
-
       case Routes.doctorProfile:
-        return MaterialPageRoute(builder: (_) => DoctorProfileScreen());
-        case Routes.doctorPersonalInformation:
-        return MaterialPageRoute(builder: (_) => DoctorPersonalInformation());
-        case Routes.doctorManagePassword:
-        return MaterialPageRoute(builder: (_) => DoctorManagePasswordScreen());
-        case Routes.doctorFaqs:
-        return MaterialPageRoute(builder: (_) => DoctorFaqsScreen());
-        case Routes.doctorPrivacyPolicy:
-        return MaterialPageRoute(builder: (_) => DoctorPrivacyPolicyScreen());
-        case Routes.doctorSettings:
-        return MaterialPageRoute(builder: (_) => DoctorSettingsScreen());
+        return _doctor(const DoctorProfileScreen());
+      case Routes.doctorPersonalInformation:
+        return _doctor(const DoctorPersonalInformation());
+      case Routes.doctorManagePassword:
+        return _doctor(const DoctorManagePasswordScreen());
+      case Routes.doctorFaqs:
+        return _doctor(const DoctorFaqsScreen());
+      case Routes.doctorPrivacyPolicy:
+        return _doctor(const DoctorPrivacyPolicyScreen());
+      case Routes.doctorSettings:
+        return _doctor(const DoctorSettingsScreen());
 
+      // ── Fallback ─────────────────────────────────────────────────────────────
       default:
-        return MaterialPageRoute(
-          builder: (_) =>
-              const Scaffold(body: Center(child: Text("No Route Found"))),
+        return _public(
+          const Scaffold(body: Center(child: Text("No Route Found"))),
         );
     }
   }

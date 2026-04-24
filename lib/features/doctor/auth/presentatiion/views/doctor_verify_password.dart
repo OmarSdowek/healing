@@ -16,8 +16,7 @@ class DoctorVerifyPassword extends StatefulWidget {
 }
 
 class _DoctorVerifyPasswordState extends State<DoctorVerifyPassword> {
-  late TextEditingController emailController ;
-
+  late TextEditingController emailController;
 
   @override
   void initState() {
@@ -34,7 +33,6 @@ class _DoctorVerifyPasswordState extends State<DoctorVerifyPassword> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// 🔹 Header
               const CustomHeader(title: "Verify email address"),
 
@@ -44,8 +42,8 @@ class _DoctorVerifyPasswordState extends State<DoctorVerifyPassword> {
               Center(
                 child: Image.asset(
                   AssetsManger.authLogo,
-                  height: 150,
-                  width: 150,
+                  height: context.h(150),
+                  width: context.h(150),
                 ),
               ),
 
@@ -53,10 +51,7 @@ class _DoctorVerifyPasswordState extends State<DoctorVerifyPassword> {
 
               /// 🔹 Title
               Center(
-                child: Text(
-                  "Check Email",
-                  style: AppTextStyles.semiBold24dark,
-                ),
+                child: Text("Check Email", style: AppTextStyles.semiBold24dark),
               ),
 
               context.verticalSpace(10),
@@ -64,7 +59,7 @@ class _DoctorVerifyPasswordState extends State<DoctorVerifyPassword> {
               /// 🔹 Subtitle
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  padding: EdgeInsets.symmetric(horizontal: context.w(30)),
                   child: Text(
                     "Enter your email to verify your account",
                     style: AppTextStyles.semiBold16Black,
@@ -77,14 +72,11 @@ class _DoctorVerifyPasswordState extends State<DoctorVerifyPassword> {
 
               /// 🔹 Email Field
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Email",
-                      style: AppTextStyles.semiBold16Black,
-                    ),
+                    Text("Email", style: AppTextStyles.semiBold16Black),
                     context.verticalSpace(8),
 
                     CustomTextFormField(
@@ -99,10 +91,9 @@ class _DoctorVerifyPasswordState extends State<DoctorVerifyPassword> {
 
               /// 🔹 Buttons
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                 child: Column(
                   children: [
-
                     /// Send Link
                     CustomButton(
                       text: "Send Link",

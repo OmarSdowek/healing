@@ -62,7 +62,7 @@ class _DoctorOtpEmailState extends State<DoctorOtpEmail> {
 
               /// 🔹 Subtitle
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: EdgeInsets.symmetric(horizontal: context.w(30)),
                 child: Text(
                   "Enter the verification code we send to \nyour email Example@gmail.com",
                   style: AppTextStyles.semiBold16Black,
@@ -74,7 +74,7 @@ class _DoctorOtpEmailState extends State<DoctorOtpEmail> {
 
               /// 🔹 PIN CODE (UPDATED)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                 child: MaterialPinField(
                   length: 6,
                   onCompleted: (pin) => print('PIN: $pin'),
@@ -92,7 +92,7 @@ class _DoctorOtpEmailState extends State<DoctorOtpEmail> {
 
               /// 🔹 Confirm Button
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                 child: CustomButton(
                   text: "Send",
                   backgroundColor: AppColors.primary,

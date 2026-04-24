@@ -23,31 +23,32 @@ class DoctorHomeHeader extends StatelessWidget {
           backgroundImage: AssetImage(imageAsset),
         ),
         context.horizontalSpace(12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Good Morning",
-              style: AppTextStyles.semiBold16Black.copyWith(
-                color: AppColors.grey,
-                fontWeight: FontWeight.w400,
-                fontSize: context.sp(14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Good Morning",
+                style: AppTextStyles.semiBold16Black.copyWith(
+                  color: AppColors.grey,
+                  fontWeight: FontWeight.w400,
+                  fontSize: context.sp(14),
+                ),
               ),
-            ),
-            Text(
-              name,
-              style: AppTextStyles.semiBold16Black.copyWith(
-                color: AppColors.primaryText,
-                fontSize: context.sp(16),
+              Text(
+                name,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.semiBold16Black.copyWith(
+                  color: AppColors.primaryText,
+                  fontSize: context.sp(16),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const Spacer(),
         IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, Routes.doctorNotifications);
-          },
+          onPressed: () =>
+              Navigator.pushNamed(context, Routes.doctorNotifications),
           icon: Icon(
             Icons.notifications_outlined,
             color: AppColors.primaryText,

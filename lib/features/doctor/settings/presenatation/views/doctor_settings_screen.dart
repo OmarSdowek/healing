@@ -5,8 +5,6 @@ import '../../../../../core/widgets/custom_header.dart';
 import '../../../../patient/profile/presentation/widgets/log_out_dailog.dart';
 import '../../../../patient/profile/presentation/widgets/profile_option_item.dart';
 
-
-
 class DoctorSettingsScreen extends StatelessWidget {
   const DoctorSettingsScreen({super.key});
 
@@ -15,7 +13,10 @@ class DoctorSettingsScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.w(12),
+            vertical: context.h(12),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

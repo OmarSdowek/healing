@@ -20,10 +20,10 @@ class MedicationDetailsForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(context.w(16)),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.r(12)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -139,12 +139,12 @@ class _InputField extends StatelessWidget {
         suffixIcon: suffix,
         filled: true,
         fillColor: const Color(0xFFF4F6FB),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: context.w(14),
+          vertical: context.h(12),
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(context.r(10)),
           borderSide: BorderSide.none,
         ),
       ),

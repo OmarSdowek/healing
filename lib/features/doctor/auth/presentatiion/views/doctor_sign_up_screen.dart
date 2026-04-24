@@ -37,12 +37,12 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
       backgroundColor: AppColors.scaffoldBackground,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const CustomHeader(title: null),
-              const SizedBox(height: 24),
+              SizedBox(height: context.h(24)),
 
               /// Logo
               Row(
@@ -53,32 +53,32 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                     height: 50,
                     color: AppColors.primary,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: context.w(8)),
                   Text("Healing", style: AppTextStyles.headline1.copyWith(color: AppColors.primary)),
                 ],
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               Center(
                 child: Text("Sign up", style: AppTextStyles.semiBold24dark.copyWith(fontWeight: FontWeight.bold)),
               ),
 
-              const SizedBox(height: 30),
+              SizedBox(height: context.h(30)),
 
               /// Full Name
               Text("Full Name", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(10),
               CustomTextFormField(hintText: "Enter your full name", controller: nameController),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Email
               Text("Email", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(10),
               CustomTextFormField(hintText: "Enter your email", controller: emailController, keyboardType: TextInputType.emailAddress),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Birthday (DatePicker)
               Text("Date of birth", style: AppTextStyles.semiBold16Black),
@@ -102,28 +102,28 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                 textColor: AppColors.primaryDark,
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// National ID
               Text("National ID", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(10),
               CustomTextFormField(hintText: "Enter your ID", controller: idController, keyboardType: TextInputType.number),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Phone Number
               Text("Phone Number", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(10),
               CustomTextFormField(hintText: "Enter your phone", controller: phoneController, keyboardType: TextInputType.phone),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Blood Type
               Text("Blood Type", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(10),
               CustomTextFormField(hintText: "Enter your blood type", controller: bloodController),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Gender (زرارين)
               Text("Gender", style: AppTextStyles.semiBold16Black),
@@ -138,7 +138,7 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                       textColor: selectedGender == "Male" ? Colors.white : AppColors.primaryDark,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: context.w(16)),
                   Expanded(
                     child: CustomButton(
                       text: "Female",
@@ -150,21 +150,21 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Password
               Text("Password", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(10),
               CustomTextFormField(hintText: "Enter your password", controller: passwordController, isPassword: true),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Confirm Password
               Text("Confirm Password", style: AppTextStyles.semiBold16Black),
               context.verticalSpace(10),
               CustomTextFormField(hintText: "Confirm your password", controller: confirmPasswordController, isPassword: true),
 
-              const SizedBox(height: 30),
+              SizedBox(height: context.h(30)),
 
               /// Sign Up Button
               CustomButton(
@@ -183,7 +183,7 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                 },
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
 
               /// Already have account? Login
               Row(

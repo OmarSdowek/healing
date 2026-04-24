@@ -59,7 +59,7 @@ class _DoctorResetPasswordState extends State<DoctorResetPassword> {
 
               /// 🔹 Subtitle
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: EdgeInsets.symmetric(horizontal: context.w(30)),
                 child: Text(
                   "We send a code to example@gmail.com",
                   style: AppTextStyles.semiBold16Black,
@@ -71,7 +71,7 @@ class _DoctorResetPasswordState extends State<DoctorResetPassword> {
 
               /// 🔹 PIN CODE (UPDATED)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                 child: MaterialPinField(
                   length: 6,
                   onCompleted: (pin) => print('PIN: $pin'),
@@ -89,7 +89,7 @@ class _DoctorResetPasswordState extends State<DoctorResetPassword> {
 
               /// 🔹 Confirm Button
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                 child: CustomButton(
                   text: "Confirm",
                   backgroundColor: AppColors.primary,

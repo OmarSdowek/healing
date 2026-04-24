@@ -20,15 +20,14 @@ class TodayAppointmentSection extends StatelessWidget {
       children: [
         _SectionHeader(
           title: "Today Appointment",
-          onViewAll: () {
-            Navigator.pushNamed(context, Routes.todayAppointments);
-          },
+          onViewAll: () =>
+              Navigator.pushNamed(context, Routes.todayAppointments),
         ),
         context.verticalSpace(10),
         Container(
           decoration: BoxDecoration(
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(context.r(12)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.06),
@@ -40,14 +39,14 @@ class TodayAppointmentSection extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(16),
+                  vertical: context.h(10),
                 ),
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 50,
+                      width: context.w(50),
                       child: Text(
                         "Time",
                         style: AppTextStyles.semiBold16Black.copyWith(
@@ -106,11 +105,14 @@ class _AppointmentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(16),
+        vertical: context.h(10),
+      ),
       child: Row(
         children: [
           SizedBox(
-            width: 50,
+            width: context.w(50),
             child: Text(
               time,
               style: AppTextStyles.semiBold16Black.copyWith(
@@ -129,39 +131,46 @@ class _AppointmentRow extends StatelessWidget {
                   size: context.sp(20),
                 ),
                 context.horizontalSpace(8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: AppTextStyles.semiBold16Black.copyWith(
-                        fontSize: context.sp(13),
-                        color: AppColors.primaryText,
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.semiBold16Black.copyWith(
+                          fontSize: context.sp(13),
+                          color: AppColors.primaryText,
+                        ),
                       ),
-                    ),
-                    Text(
-                      type,
-                      style: AppTextStyles.semiBold16Black.copyWith(
-                        fontSize: context.sp(11),
-                        color: AppColors.grey,
-                        fontWeight: FontWeight.w400,
+                      Text(
+                        type,
+                        style: AppTextStyles.semiBold16Black.copyWith(
+                          fontSize: context.sp(11),
+                          color: AppColors.grey,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.w(8),
+              vertical: context.h(4),
+            ),
             decoration: BoxDecoration(
               color: const Color(0xFFFFF3CD),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(context.r(6)),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.circle, color: Color(0xFFFFC107), size: 8),
-                const SizedBox(width: 4),
+                SizedBox(width: context.w(4)),
                 Text(
                   "WAITING",
                   style: AppTextStyles.semiBold16Black.copyWith(

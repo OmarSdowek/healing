@@ -29,11 +29,13 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = context.orientation == Orientation.landscape;
+
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(context.w(14)),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.r(12)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -45,6 +47,7 @@ class AppointmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Date row ──────────────────────────────────────
           Row(
             children: [
               Icon(
@@ -53,14 +56,16 @@ class AppointmentCard extends StatelessWidget {
                 color: AppColors.grey,
               ),
               context.horizontalSpace(6),
-              Text(
-                date,
-                style: AppTextStyles.semiBold16Black.copyWith(
-                  fontSize: context.sp(13),
-                  color: AppColors.grey,
+              Expanded(
+                child: Text(
+                  date,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.semiBold16Black.copyWith(
+                    fontSize: context.sp(13),
+                    color: AppColors.grey,
+                  ),
                 ),
               ),
-              const Spacer(),
               Text(
                 statusLabel,
                 style: AppTextStyles.semiBold16Black.copyWith(
@@ -71,51 +76,59 @@ class AppointmentCard extends StatelessWidget {
             ],
           ),
           context.verticalSpace(12),
+
+          // ── Patient info ──────────────────────────────────
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(context.r(8)),
                 child: Image.asset(
                   patientImage,
-                  width: context.w(60),
-                  height: context.h(60),
+                  width: context.w(isLandscape ? 50 : 60),
+                  height: context.h(isLandscape ? 50 : 60),
                   fit: BoxFit.cover,
                 ),
               ),
               context.horizontalSpace(12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    patientName,
-                    style: AppTextStyles.semiBold16Black.copyWith(
-                      fontSize: context.sp(15),
-                      color: AppColors.primaryText,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      patientName,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.semiBold16Black.copyWith(
+                        fontSize: context.sp(15),
+                        color: AppColors.primaryText,
+                      ),
                     ),
-                  ),
-                  context.verticalSpace(4),
-                  Text(
-                    "$age",
-                    style: AppTextStyles.semiBold16Black.copyWith(
-                      fontSize: context.sp(13),
-                      color: AppColors.grey,
-                      fontWeight: FontWeight.w400,
+                    context.verticalSpace(4),
+                    Text(
+                      "$age",
+                      style: AppTextStyles.semiBold16Black.copyWith(
+                        fontSize: context.sp(13),
+                        color: AppColors.grey,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                  context.verticalSpace(2),
-                  Text(
-                    diagnosis,
-                    style: AppTextStyles.semiBold16Black.copyWith(
-                      fontSize: context.sp(13),
-                      color: AppColors.grey,
-                      fontWeight: FontWeight.w400,
+                    context.verticalSpace(2),
+                    Text(
+                      diagnosis,
+                      style: AppTextStyles.semiBold16Black.copyWith(
+                        fontSize: context.sp(13),
+                        color: AppColors.grey,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
           context.verticalSpace(14),
+
+          // ── Action buttons ────────────────────────────────
           Row(
             children: [
               Expanded(
@@ -123,15 +136,19 @@ class AppointmentCard extends StatelessWidget {
                   onPressed: onAddPrescription,
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: AppColors.primary),
+                    padding: EdgeInsets.symmetric(vertical: context.h(10)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(context.r(10)),
                     ),
                   ),
-                  child: Text(
-                    "Add Prescription",
-                    style: AppTextStyles.semiBold16Black.copyWith(
-                      color: AppColors.primary,
-                      fontSize: context.sp(13),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      "Add Prescription",
+                      style: AppTextStyles.semiBold16Black.copyWith(
+                        color: AppColors.primary,
+                        fontSize: context.sp(13),
+                      ),
                     ),
                   ),
                 ),
@@ -142,15 +159,19 @@ class AppointmentCard extends StatelessWidget {
                   onPressed: onOpenRecord,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
+                    padding: EdgeInsets.symmetric(vertical: context.h(10)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(context.r(10)),
                     ),
                   ),
-                  child: Text(
-                    "Open Record",
-                    style: AppTextStyles.semiBold16Black.copyWith(
-                      color: AppColors.white,
-                      fontSize: context.sp(13),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      "Open Record",
+                      style: AppTextStyles.semiBold16Black.copyWith(
+                        color: AppColors.white,
+                        fontSize: context.sp(13),
+                      ),
                     ),
                   ),
                 ),

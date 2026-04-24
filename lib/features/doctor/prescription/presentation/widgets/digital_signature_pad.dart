@@ -12,7 +12,7 @@ class DigitalSignaturePad extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.r(12)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -24,18 +24,15 @@ class DigitalSignaturePad extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Watermark icon
           Icon(
             Icons.favorite_border,
             size: context.sp(60),
             color: AppColors.primary.withOpacity(0.08),
           ),
-          // Watermark pulse line
           CustomPaint(
             size: Size(context.w(160), context.h(50)),
             painter: _PulsePainter(),
           ),
-          // Tap hint
           Text(
             "Tap here to sign",
             style: TextStyle(
@@ -58,13 +55,13 @@ class _PulsePainter extends CustomPainter {
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
-    final path = Path();
-    path.moveTo(0, size.height / 2);
-    path.lineTo(size.width * 0.3, size.height / 2);
-    path.lineTo(size.width * 0.4, size.height * 0.1);
-    path.lineTo(size.width * 0.5, size.height * 0.9);
-    path.lineTo(size.width * 0.6, size.height / 2);
-    path.lineTo(size.width, size.height / 2);
+    final path = Path()
+      ..moveTo(0, size.height / 2)
+      ..lineTo(size.width * 0.3, size.height / 2)
+      ..lineTo(size.width * 0.4, size.height * 0.1)
+      ..lineTo(size.width * 0.5, size.height * 0.9)
+      ..lineTo(size.width * 0.6, size.height / 2)
+      ..lineTo(size.width, size.height / 2);
 
     canvas.drawPath(path, paint);
   }

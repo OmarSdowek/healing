@@ -24,10 +24,10 @@ class PatientSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(context.w(14)),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.r(12)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -37,9 +37,10 @@ class PatientSummaryCard extends StatelessWidget {
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(context.r(8)),
             child: Image.asset(
               imageAsset,
               width: context.w(56),
@@ -48,40 +49,45 @@ class PatientSummaryCard extends StatelessWidget {
             ),
           ),
           context.horizontalSpace(12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: AppTextStyles.semiBold16Black.copyWith(
-                  fontSize: context.sp(15),
-                  color: AppColors.primaryText,
-                ),
-              ),
-              context.verticalSpace(4),
-              Text(
-                "Age: $age  |  MRN: $mrn",
-                style: AppTextStyles.semiBold16Black.copyWith(
-                  fontSize: context.sp(12),
-                  color: AppColors.grey,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              context.verticalSpace(6),
-              Row(
-                children: [
-                  _Badge(
-                    label: "BLOOD: $bloodType",
-                    color: const Color(0xFFFF8C42),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.semiBold16Black.copyWith(
+                    fontSize: context.sp(15),
+                    color: AppColors.primaryText,
                   ),
-                  context.horizontalSpace(8),
-                  _Badge(
-                    label: "WEIGHT: $weight",
-                    color: const Color(0xFF4CAF50),
+                ),
+                context.verticalSpace(4),
+                Text(
+                  "Age: $age  |  MRN: $mrn",
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.semiBold16Black.copyWith(
+                    fontSize: context.sp(12),
+                    color: AppColors.grey,
+                    fontWeight: FontWeight.w400,
                   ),
-                ],
-              ),
-            ],
+                ),
+                context.verticalSpace(6),
+                Wrap(
+                  spacing: context.w(8),
+                  runSpacing: context.h(4),
+                  children: [
+                    _Badge(
+                      label: "BLOOD: $bloodType",
+                      color: const Color(0xFFFF8C42),
+                    ),
+                    _Badge(
+                      label: "WEIGHT: $weight",
+                      color: const Color(0xFF4CAF50),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -98,10 +104,13 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(8),
+        vertical: context.h(3),
+      ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(context.r(6)),
       ),
       child: Text(
         label,
