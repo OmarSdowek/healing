@@ -24,6 +24,36 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
 
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!mounted) return;
+
+    // Check if user has valid token
+    final token = await TokenStorage.getAccessToken();
+    final doctorId = await TokenStorage.getDoctorId();
+
+    if (token != null && token.isNotEmpty) {
+      // User is logged in
+      // If doctorId exists, route to doctor home, otherwise patient home
+      if (doctorId != null && doctorId.isNotEmpty) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, Routes.doctorHome);
+        }
+      } else {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, Routes.patientHome);
+        }
+      }
+    } else {
+      // User is not logged in, go to onboarding
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, Routes.onboarding);
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
