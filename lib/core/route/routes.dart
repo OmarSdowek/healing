@@ -12,7 +12,6 @@ class Routes {
   static const String setNewPassword = "/set_new_password";
   static const String verifyCode = "/verify_code";
 
-
   // doctor Auth
   static const String doctorLogin = "/doctor_login";
   static const String doctorRegister = "/doctor_register";
@@ -21,7 +20,6 @@ class Routes {
   static const String doctorResetPassword = "/doctor_reset_password";
   static const String doctorSetNewPassword = "/doctor_set_new_password";
   static const String doctorVerifyCode = "/doctor_verify_code";
-
 
   // patient Home
   static const String patientHome = "/patient_home";
@@ -37,6 +35,7 @@ class Routes {
   static const String addPrescription = "/add_prescription";
   static const String doctorNotifications = "/doctor_notifications";
   static const String todayAppointments = "/today_appointments";
+  static const String doctorSchedule = "/doctor_schedule";
 
   // pateint profile
 
@@ -51,20 +50,18 @@ class Routes {
   static const String personalInformation = "/personal_information";
   static const String patientNotification = "/patient_notification";
   static const String patientMedicalReport = "/patient_medical_report";
-  static const String patientMedicalReportDetails = "/patient_medical_report_details";
-
-
+  static const String patientMedicalReportDetails =
+      "/patient_medical_report_details";
 
   // doctor profile
 
   static const String doctorProfile = "/doctor_profile";
-  static const String doctorPersonalInformation = "/doctor_personal_information";
+  static const String doctorPersonalInformation =
+      "/doctor_personal_information";
   static const String doctorManagePassword = "/doctor_manage_password";
   static const String doctorFaqs = "/doctor_faqs";
   static const String doctorPrivacyPolicy = "/doctor_privacy_policy";
   static const String doctorSettings = "/doctor_settings";
-
-
 
   //payment
   static const String paymentMethod = "/payment_method";
@@ -72,23 +69,13 @@ class Routes {
   static const String selectedCard = "/selected_card";
   static const String pay = "/pay";
 
-
-
   // appointment
 
   static const String myAppointments = "/my_appointments";
   static const String upComingOppointment = "/up_coming_oppointment";
   static const String appointmentConfirmation = "/appointment_confirmation";
 
-
-
   //prescription
 
   static const String prescriptionDetails = "/prescription_details";
-
-
-
-
-
-
 }

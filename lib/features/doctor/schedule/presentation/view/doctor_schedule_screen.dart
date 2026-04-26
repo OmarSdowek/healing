@@ -1,33 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:healing/core/constant/assets_manger.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
-import 'package:healing/core/route/routes.dart';
 import 'package:healing/core/widgets/custom_header.dart';
-import 'package:healing/features/doctor/home/presentation/widgets/appointment_card.dart';
+import '../cubit/doctor_schedule_cubit.dart';
 
-class DoctorScheduleScreen extends StatelessWidget {
+class DoctorScheduleScreen extends StatefulWidget {
   const DoctorScheduleScreen({super.key});
 
-  static const _appointments = [
-    {
-      "date": "Monday, July 21 - 10:00 Am",
-      "name": "Mohamed Ahmed",
-      "age": 22,
-      "diagnosis": "Influenza",
-    },
-    {
-      "date": "Monday, July 21 - 11:00 Am",
-      "name": "Menna Ziad",
-      "age": 18,
-      "diagnosis": "Influenza",
-    },
-    {
-      "date": "Monday, July 21 - 12:00 Am",
-      "name": "Eman Reda",
-      "age": 32,
-      "diagnosis": "Influenza",
-    },
-  ];
+  @override
+  State<DoctorScheduleScreen> createState() => _DoctorScheduleScreenState();
+}
+
+class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<DoctorScheduleCubit>().loadSchedules();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,41 +25,135 @@ class DoctorScheduleScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomHeader(title: "Upcoming Appointment"),
+            CustomHeader(title: "Doctor Schedule"),
             Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.w(20),
-                  vertical: context.h(12),
-                ),
-                itemCount: _appointments.length,
-                separatorBuilder: (_, __) => context.verticalSpace(16),
-                itemBuilder: (context, index) {
-                  final a = _appointments[index];
-                  return AppointmentCard(
-                    date: a["date"] as String,
-                    patientName: a["name"] as String,
-                    age: a["age"] as int,
-                    diagnosis: a["diagnosis"] as String,
-                    patientImage: AssetsManger.person,
-                    statusLabel: "Next Appointment",
-                    statusColor: const Color(0xFF7C3AED),
-                    onAddPrescription: () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.addPrescription,
-                        arguments: {
-                          'patientName': a["name"] as String,
-                          'patientAge': a["age"] as int,
-                          'patientMrn': '#MRN-29384',
-                          'patientBloodType': 'O+',
-                          'patientWeight': '78KG',
-                          'patientImage': AssetsManger.person,
-                        },
+              child: BlocBuilder<DoctorScheduleCubit, DoctorScheduleState>(
+                builder: (context, state) {
+                  if (state is DoctorScheduleLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (state is DoctorScheduleError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: context.h(16)),
+                          Text(
+                            state.message,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          SizedBox(height: context.h(16)),
+                          ElevatedButton(
+                            onPressed: () {
+                              context
+                                  .read<DoctorScheduleCubit>()
+                                  .loadSchedules();
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  if (state is DoctorScheduleLoaded) {
+                    if (state.schedules.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.calendar_today,
+                              size: 48,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: context.h(16)),
+                            const Text('No schedules available'),
+                          ],
+                        ),
                       );
-                    },
-                    onOpenRecord: () {},
-                  );
+                    }
+
+                    return ListView.separated(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.w(20),
+                        vertical: context.h(12),
+                      ),
+                      itemCount: state.schedules.length,
+                      separatorBuilder: (_, __) => context.verticalSpace(16),
+                      itemBuilder: (context, index) {
+                        final schedule = state.schedules[index];
+                        return Card(
+                          child: Padding(
+                            padding: EdgeInsets.all(context.w(16)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  schedule.dayOfWeek ?? 'N/A',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                                SizedBox(height: context.h(8)),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.access_time, size: 16),
+                                    SizedBox(width: context.w(8)),
+                                    Text(
+                                      '${schedule.startTime} - ${schedule.endTime}',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: context.h(8)),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: context.w(8),
+                                        vertical: context.h(4),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: schedule.isActive == true
+                                            ? Colors.green.withOpacity(0.1)
+                                            : Colors.red.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        schedule.isActive == true
+                                            ? 'Active'
+                                            : 'Inactive',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: schedule.isActive == true
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+
+                  return const SizedBox.shrink();
                 },
               ),
             ),

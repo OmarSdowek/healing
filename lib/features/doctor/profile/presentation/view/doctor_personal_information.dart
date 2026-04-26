@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
-
+import 'package:healing/core/widgets/custom_button.dart';
+import 'package:healing/features/doctor/profile/domain/entities/doctor_profile_entity.dart';
+import 'package:healing/features/doctor/profile/presentation/cubit/doctor_profile_cubit.dart';
+import 'package:healing/features/doctor/profile/presentation/cubit/doctor_profile_cubit_factory.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
-import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 
@@ -11,176 +14,229 @@ class DoctorPersonalInformation extends StatefulWidget {
   const DoctorPersonalInformation({super.key});
 
   @override
-  State<DoctorPersonalInformation> createState() => _DoctorPersonalInformationState();
+  State<DoctorPersonalInformation> createState() =>
+      _DoctorPersonalInformationState();
 }
 
 class _DoctorPersonalInformationState extends State<DoctorPersonalInformation> {
-  final nameController = TextEditingController();
-  final phoneController = TextEditingController();
-  final emailController = TextEditingController();
-  final bloodController = TextEditingController();
-  final idController = TextEditingController();
-  final addressController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+  late TextEditingController specializationController;
+  late TextEditingController bioController;
+  late TextEditingController yearsController;
+  late TextEditingController licenseController;
 
-  // ✅ الجنس
-  String? selectedGender;
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    emailController = TextEditingController();
+    phoneController = TextEditingController();
+    specializationController = TextEditingController();
+    bioController = TextEditingController();
+    yearsController = TextEditingController();
+    licenseController = TextEditingController();
+  }
 
-  // ✅ الميلاد
-  DateTime? selectedBirthday;
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    specializationController.dispose();
+    bioController.dispose();
+    yearsController.dispose();
+    licenseController.dispose();
+    super.dispose();
+  }
+
+  void _loadProfileData(DoctorProfileEntity profile) {
+    nameController.text = profile.name ?? '';
+    emailController.text = profile.email ?? '';
+    phoneController.text = profile.phone ?? '';
+    specializationController.text = profile.specialization ?? '';
+    bioController.text = profile.bio ?? '';
+    yearsController.text = profile.yearsOfExperience?.toString() ?? '';
+    licenseController.text = profile.licenseNumber ?? '';
+  }
+
+  void _saveProfile(BuildContext context) {
+    final updatedProfile = DoctorProfileEntity(
+      name: nameController.text,
+      email: emailController.text,
+      phone: phoneController.text,
+      specialization: specializationController.text,
+      bio: bioController.text,
+      yearsOfExperience: int.tryParse(yearsController.text),
+      licenseNumber: licenseController.text,
+    );
+
+    context.read<DoctorProfileCubit>().updateProfile(updatedProfile);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CustomHeader(title: "Personal information"),
-              context.verticalSpace(20),
-
-              /// Full Name
-              Text("Full Name", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              CustomTextFormField(
-                hintText: "Enter full name",
-                controller: nameController,
+    return BlocProvider(
+      create: (_) {
+        final cubit = DoctorProfileCubitFactory.create();
+        cubit.getProfile(); // Load profile when cubit is created
+        return cubit;
+      },
+      child: BlocListener<DoctorProfileCubit, DoctorProfileState>(
+        listener: (context, state) {
+          if (state is DoctorProfileLoaded) {
+            _loadProfileData(state.profile);
+          } else if (state is DoctorProfileUpdateSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Profile updated successfully'),
+                backgroundColor: Colors.green,
               ),
-              context.verticalSpace(16),
-
-              /// Phone Number
-              Text("Phone Number", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              CustomTextFormField(
-                hintText: "Enter your phone",
-                controller: phoneController,
-                prefixIcon: const Icon(Icons.phone),
+            );
+            Navigator.pop(context);
+          } else if (state is DoctorProfileError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
               ),
-              context.verticalSpace(16),
+            );
+          }
+        },
+        child: Scaffold(
+          body: SafeArea(
+            child: BlocBuilder<DoctorProfileCubit, DoctorProfileState>(
+              builder: (context, state) {
+                if (state is DoctorProfileLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              /// Email
-              Text("Email", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              CustomTextFormField(
-                hintText: "Enter your email",
-                controller: emailController,
-                prefixIcon: const Icon(Icons.email),
-              ),
-              context.verticalSpace(16),
-
-              /// Birthday (DatePicker)
-              Text("Your birthday", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              CustomButton(
-                text: selectedBirthday == null
-                    ? "Select your birthday"
-                    : "${selectedBirthday!.day}/${selectedBirthday!.month}/${selectedBirthday!.year}",
-                onPressed: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime(2000, 1, 1),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) {
-                    setState(() => selectedBirthday = picked);
-                  }
-                },
-                height: 48,
-                backgroundColor: AppColors.primary.withOpacity(0.1),
-                textColor: AppColors.primaryDark,
-              ),
-              context.verticalSpace(16),
-
-              /// Gender (زرارين)
-              Text("Gender", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: "Male",
-                      onPressed: () {
-                        setState(() => selectedGender = "Male");
-                      },
-                      height: 45,
-                      backgroundColor: selectedGender == "Male"
-                          ? AppColors.primary
-                          : AppColors.cardBackground,
-                      textColor: selectedGender == "Male"
-                          ? Colors.white
-                          : AppColors.primaryDark,
-                    ),
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
                   ),
-                  context.horizontalSpace(12),
-                  Expanded(
-                    child: CustomButton(
-                      text: "Female",
-                      onPressed: () {
-                        setState(() => selectedGender = "Female");
-                      },
-                      height: 45,
-                      backgroundColor: selectedGender == "Female"
-                          ? AppColors.primary
-                          : AppColors.cardBackground,
-                      textColor: selectedGender == "Female"
-                          ? Colors.white
-                          : AppColors.primaryDark,
-                    ),
+                  child: Column(
+                    children: [
+                      const CustomHeader(title: "Personal Information"),
+
+                      context.verticalSpace(20),
+
+                      /// Name
+                      _buildTextField(
+                        label: "Full Name",
+                        controller: nameController,
+                        hint: "Enter your full name",
+                      ),
+
+                      context.verticalSpace(16),
+
+                      /// Email
+                      _buildTextField(
+                        label: "Email",
+                        controller: emailController,
+                        hint: "Enter your email",
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+
+                      context.verticalSpace(16),
+
+                      /// Phone
+                      _buildTextField(
+                        label: "Phone Number",
+                        controller: phoneController,
+                        hint: "Enter your phone number",
+                        keyboardType: TextInputType.phone,
+                      ),
+
+                      context.verticalSpace(16),
+
+                      /// Specialization
+                      _buildTextField(
+                        label: "Specialization",
+                        controller: specializationController,
+                        hint: "Enter your specialization",
+                      ),
+
+                      context.verticalSpace(16),
+
+                      /// Bio
+                      _buildTextField(
+                        label: "Bio",
+                        controller: bioController,
+                        hint: "Enter your bio",
+                        maxLines: 3,
+                      ),
+
+                      context.verticalSpace(16),
+
+                      /// Years of Experience
+                      _buildTextField(
+                        label: "Years of Experience",
+                        controller: yearsController,
+                        hint: "Enter years of experience",
+                        keyboardType: TextInputType.number,
+                      ),
+
+                      context.verticalSpace(16),
+
+                      /// License Number
+                      _buildTextField(
+                        label: "License Number",
+                        controller: licenseController,
+                        hint: "Enter your license number",
+                      ),
+
+                      context.verticalSpace(30),
+
+                      /// Save Button
+                      BlocBuilder<DoctorProfileCubit, DoctorProfileState>(
+                        builder: (context, state) {
+                          final isUpdating = state is DoctorProfileUpdating;
+                          return CustomButton(
+                            text: isUpdating ? "Saving..." : "Save Changes",
+                            backgroundColor: AppColors.primary,
+                            onPressed: isUpdating
+                                ? () {}
+                                : () => _saveProfile(context),
+                          );
+                        },
+                      ),
+
+                      context.verticalSpace(16),
+                    ],
                   ),
-                ],
-              ),
-              context.verticalSpace(16),
-
-              /// Blood Type
-              Text("Blood Type", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              CustomTextFormField(
-                hintText: "Enter your Blood type",
-                controller: bloodController,
-              ),
-              context.verticalSpace(16),
-
-              /// National ID
-              Text("National ID", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              CustomTextFormField(
-                hintText: "Enter your ID",
-                controller: idController,
-              ),
-              context.verticalSpace(16),
-
-              /// Address
-              Text("Address", style: AppTextStyles.semiBold16Black),
-              context.verticalSpace(6),
-              CustomTextFormField(
-                hintText: "Enter your address",
-                controller: addressController,
-              ),
-              context.verticalSpace(24),
-
-              /// زر الحفظ
-              CustomButton(
-                text: "Save",
-                onPressed: () {
-                  print("Name: ${nameController.text}");
-                  print("Phone: ${phoneController.text}");
-                  print("Email: ${emailController.text}");
-                  print("Gender: $selectedGender");
-                  print("Birthday: $selectedBirthday");
-                  print("Blood: ${bloodController.text}");
-                  print("ID: ${idController.text}");
-                  print("Address: ${addressController.text}");
-                },
-                height: 48,
-                backgroundColor: AppColors.primary,
-                textColor: Colors.white,
-              ),
-            ],
+                );
+              },
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTextStyles.semiBold16Black.copyWith(color: AppColors.black),
+        ),
+        context.verticalSpace(8),
+        CustomTextFormField(
+          hintText: hint,
+          controller: controller,
+          keyboardType: keyboardType,
+        ),
+      ],
     );
   }
 }
