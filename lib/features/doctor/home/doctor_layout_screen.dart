@@ -4,16 +4,11 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/features/doctor/home/presentation/manger/layout_cubit/doctor_layout_cubit.dart';
 import 'package:healing/features/doctor/home/presentation/view/doctor_home_screen.dart';
 import 'package:healing/features/doctor/profile/presentation/view/doctor_profile_screen.dart';
+import 'package:healing/features/doctor/schedule/presentation/cubit/doctor_schedule_cubit_factory.dart';
 import 'package:healing/features/doctor/schedule/presentation/view/doctor_schedule_screen.dart';
 
 class DoctorMainScreen extends StatelessWidget {
   const DoctorMainScreen({super.key});
-
-  static const List<Widget> _screens = [
-    DoctorHomeScreen(),
-    DoctorScheduleScreen(),
-    DoctorProfileScreen(),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +17,7 @@ class DoctorMainScreen extends StatelessWidget {
       child: BlocBuilder<DoctorLayoutCubit, int>(
         builder: (context, currentIndex) {
           return Scaffold(
-            body: _screens[currentIndex],
+            body: _buildScreen(currentIndex),
             bottomNavigationBar: Container(
               padding: const EdgeInsets.symmetric(vertical: 6),
               decoration: BoxDecoration(
@@ -71,5 +66,25 @@ class DoctorMainScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Widget _buildScreen(int index) {
+    switch (index) {
+      case 0:
+        return const DoctorHomeScreen();
+      case 1:
+        return BlocProvider(
+          create: (_) {
+            final cubit = DoctorScheduleCubitFactory.create();
+            cubit.loadSchedules();
+            return cubit;
+          },
+          child: const DoctorScheduleScreen(),
+        );
+      case 2:
+        return const DoctorProfileScreen();
+      default:
+        return const DoctorHomeScreen();
+    }
   }
 }

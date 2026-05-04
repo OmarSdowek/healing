@@ -37,6 +37,7 @@ import '../../features/doctor/appointments/presentation/view/today_appointments_
 import '../../features/doctor/home/doctor_layout_screen.dart';
 import '../../features/doctor/notifications/presentation/view/doctor_notifications_screen.dart';
 import '../../features/doctor/prescription/presentation/view/add_prescription_screen.dart';
+import '../../features/doctor/schedule/presentation/view/doctor_schedule_screen.dart';
 import '../../features/patient/home/presentation/view/specialties_screen.dart';
 import '../../features/patient/medical_report/presentation/view/medical_report_details.dart';
 import '../../features/patient/medical_report/presentation/view/medical_report_screen.dart';
@@ -145,6 +146,9 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const TodayAppointmentsScreen(),
         );
+
+      case Routes.doctorSchedule:
+        return MaterialPageRoute(builder: (_) => const DoctorScheduleScreen());
 
       case Routes.addPrescription:
         final args = settings.arguments as Map<String, dynamic>;

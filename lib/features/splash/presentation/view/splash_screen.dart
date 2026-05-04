@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/network/token_storage.dart';
 import '../../../../core/constant/assets_manger.dart';
 import '../../../../core/route/routes.dart';
 
@@ -14,24 +15,40 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, Routes.onboarding);
-    });
     super.initState();
+    _checkAuthAndNavigate();
   }
 
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!mounted) return;
+
+    // Check if user has valid token
+    final token = await TokenStorage.getAccessToken();
+
+    if (token != null && token.isNotEmpty) {
+      // User is logged in, go to doctor home
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, Routes.doctorHome);
+      }
+    } else {
+      // User is not logged in, go to onboarding
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, Routes.onboarding);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.accent,
       body: SafeArea(
         child: Column(
           children: [
-
             Expanded(
               child: Center(
                 child: Row(
@@ -43,10 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       height: context.h(51),
                     ),
                     context.horizontalSpace(8),
-                    Text(
-                      "Healing",
-                      style: AppTextStyles.headline1,
-                    ),
+                    Text("Healing", style: AppTextStyles.headline1),
                   ],
                 ),
               ),
