@@ -73,7 +73,6 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                       speciality: d["speciality"] as String,
                       hours: d["hours"] as String,
                       rating: d["rating"] as double,
-                      image: d["image"] as String,
                       onTap: () {
                       },
                       onFavorite: () {

@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/constant/app_colors.dart';
-import '../../../../../core/constant/assets_manger.dart';
+import 'package:healing/core/widgets/doctor_avatar.dart';
 
 class PrescriptionHeader extends StatelessWidget {
   final String doctorName;
   final String speciality;
   final String date;
   final String prescriptionId;
+  final String? doctorImageUrl;
 
   const PrescriptionHeader({
     super.key,
@@ -16,6 +17,7 @@ class PrescriptionHeader extends StatelessWidget {
     required this.speciality,
     required this.date,
     required this.prescriptionId,
+    this.doctorImageUrl,
   });
 
   @override
@@ -40,15 +42,16 @@ class PrescriptionHeader extends StatelessWidget {
           /// Doctor Info
           Row(
             children: [
-              CircleAvatar(
-                radius: context.r(30),
-                backgroundImage: AssetImage(AssetsManger.doctorImage),
-              ),
+              DoctorAvatar(pictureUrl: doctorImageUrl, radius: context.r(30)),
               context.horizontalSpace(12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Dr. $doctorName", style: AppTextStyles.reg20black),
+                  Text(
+                    // Remove "Dr." prefix if already in name to avoid "Dr. Dr."
+                    doctorName.startsWith('Dr.') ? doctorName : "Dr. $doctorName",
+                    style: AppTextStyles.reg20black,
+                  ),
                   context.verticalSpace(4),
                   Text(
                     speciality,

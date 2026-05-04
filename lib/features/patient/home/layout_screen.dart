@@ -1,31 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_colors.dart';
+import 'package:healing/features/patient/home/presentation/manger/home_cubit/home_cubit.dart';
 import 'package:healing/features/patient/home/presentation/manger/layout_cubit/layout_cubit.dart';
 import 'package:healing/features/patient/home/presentation/view/home_screen.dart';
+import '../../../core/di/injection_container.dart';
 import '../appointment/presentation/view/up_coming_oppointment.dart';
+import '../auth/presentatiion/manger/patient_auth_cubit.dart';
 import '../booking/presentation/views/booking_screen.dart';
 import '../profile/presentation/view/profie_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
-  static final List<Widget> screens = [
-    const HomeScreen(),
-    UpComingOppointment(),
-    BookAppointmentScreen(),
-    const ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => LayoutCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<PatientAuthCubit>(
+          create: (_) => sl<PatientAuthCubit>()..meData(),
+        ),
+        BlocProvider<HomeCubit>(
+          create: (_) => sl<HomeCubit>()..loadHomeData(),
+        ),
+        BlocProvider<LayoutCubit>(
+          create: (_) => LayoutCubit(),
+        ),
+      ],
       child: BlocBuilder<LayoutCubit, int>(
         builder: (context, currentIndex) {
           return Scaffold(
-            body: screens[currentIndex],
-
+            body: IndexedStack(
+              index: currentIndex,
+              children: const [
+                HomeScreen(),
+                UpComingOppointment(),
+                BookAppointmentScreen(),
+                ProfileScreen(),
+              ],
+            ),
             bottomNavigationBar: Container(
               padding: const EdgeInsets.symmetric(vertical: 6),
               decoration: BoxDecoration(
@@ -44,19 +57,14 @@ class MainScreen extends StatelessWidget {
                 onTap: (index) {
                   context.read<LayoutCubit>().changeTab(index);
                 },
-
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-
                 selectedItemColor: AppColors.primary,
                 unselectedItemColor: Colors.grey,
-
                 selectedFontSize: 16,
                 unselectedFontSize: 15,
-
                 showUnselectedLabels: true,
-
                 items: const [
                   BottomNavigationBarItem(
                     icon: Icon(Icons.home_outlined),

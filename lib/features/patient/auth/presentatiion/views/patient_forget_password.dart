@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/widgets/custom_button.dart';
@@ -7,6 +8,7 @@ import '../../../../../core/constant/assets_manger.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 import '../../../../../core/route/routes.dart';
+import '../manger/patient_auth_cubit.dart';
 
 class PatientForgotPassword extends StatefulWidget {
   PatientForgotPassword({super.key});
@@ -94,21 +96,60 @@ class _PatientForgotPasswordState extends State<PatientForgotPassword> {
               context.verticalSpace(30),
 
               /// 🔹 Buttons
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
+              ///
+              BlocConsumer<PatientAuthCubit, PatientAuthState>(
+                listener: (context, state) {
+                  if (state is PatientForgotPasswordSent) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Check your email"),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
 
-                    /// Next (Send Code)
-                    CustomButton(
-                      text: "Next",
+                    Navigator.pushNamed(
+                      context,
+                      Routes.setNewPassword,
+
+                    );
+                  }
+
+                  if (state is PatientAuthError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+
+                builder: (context, state) {
+                  if (state is PatientAuthLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: CustomButton(
+                      text:  "Next",
                       backgroundColor: AppColors.primary,
-                      onPressed: () {
-                        Navigator.pushNamed(context, Routes.resetPassword);
+                      onPressed:  () {
+                        final email = emailController.text.trim();
+
+                        if (email.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Enter your email")),
+                          );
+                          return;
+                        }
+
+                        context.read<PatientAuthCubit>().forgotPassword(email);
                       },
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
 
               context.verticalSpace(20),

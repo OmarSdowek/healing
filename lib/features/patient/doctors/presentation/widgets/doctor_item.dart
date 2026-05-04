@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
+import '../../../../../core/widgets/doctor_avatar.dart';
 
 class DoctorItem extends StatelessWidget {
   final String name;
   final String speciality;
   final String hours;
   final double rating;
-  final String image;
+  final String? pictureUrl; // network URL from API
   final VoidCallback onTap;
   final VoidCallback onFavorite;
 
@@ -18,7 +19,7 @@ class DoctorItem extends StatelessWidget {
     required this.speciality,
     required this.hours,
     required this.rating,
-    required this.image,
+    this.pictureUrl,
     required this.onTap,
     required this.onFavorite,
   });
@@ -26,7 +27,7 @@ class DoctorItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap, // 🔹 clickable
+      onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(12),
@@ -43,32 +44,29 @@ class DoctorItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            CircleAvatar(radius: 50, backgroundImage: AssetImage(image)),
+            /// Doctor avatar — resolves URL, falls back to default
+            DoctorAvatar(pictureUrl: pictureUrl, radius: 30),
             const SizedBox(width: 12),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(name, style: AppTextStyles.reg20black),
-                  Text(
-                    speciality,
-                    style: AppTextStyles.semiBold16Black.copyWith(
-                      color: Colors.grey,
-                    ),
-                  ),
+                  Text(speciality,
+                      style: AppTextStyles.semiBold16Black
+                          .copyWith(color: Colors.grey)),
                   Row(
                     children: [
-                      Icon(
-                        Icons.access_time,
-                        color: Colors.grey.shade400,
-                        size: 18,
-                      ),
+                      Icon(Icons.access_time,
+                          color: Colors.grey.shade400, size: 18),
                       context.horizontalSpace(4),
-                      Text(
-                        hours,
-                        style: AppTextStyles.semiBold16Black.copyWith(
-                          color: Colors.grey,
-                        ),
+                      Expanded(
+                        child: Text(hours,
+                            style: AppTextStyles.semiBold16Black
+                                .copyWith(color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
                       ),
                     ],
                   ),
@@ -76,20 +74,17 @@ class DoctorItem extends StatelessWidget {
                     children: [
                       const Icon(Icons.star, color: Colors.amber, size: 18),
                       context.horizontalSpace(4),
-
-                      Text(
-                        rating.toString(),
-                        style: AppTextStyles.semiBold16Black.copyWith(
-                          color: Colors.black,
-                        ),
-                      ),
+                      Text(rating.toStringAsFixed(1),
+                          style: AppTextStyles.semiBold16Black),
                     ],
                   ),
                 ],
               ),
             ),
+
             IconButton(
-              icon: const Icon(Icons.favorite_border, color: AppColors.primary),
+              icon: const Icon(Icons.favorite_border,
+                  color: AppColors.primary),
               onPressed: onFavorite,
             ),
           ],

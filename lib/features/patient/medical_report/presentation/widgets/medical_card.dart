@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
+import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 
-import '../../domin/entity/medical_report_model.dart';
-
 class ReportCard extends StatelessWidget {
-  final MedicalReport report;
+  final String reportId;
+  final String title;
+  final String type;
+  final String status;
+  final String date;
+  final String? thumbnailUrl;
   final VoidCallback onView;
-   // 🔹 لون اللابل (أخضر / برتقالي)
 
   const ReportCard({
     super.key,
-    required this.report,
+    required this.reportId,
+    required this.title,
+    required this.type,
+    required this.status,
+    required this.date,
     required this.onView,
-
+    this.thumbnailUrl,
   });
 
   @override
   Widget build(BuildContext context) {
+    // thumbnailUrl is already resolved by the model (null if localhost)
+    final imageUrl = thumbnailUrl;
+
     return Container(
       margin: EdgeInsets.only(bottom: context.h(16)),
       decoration: BoxDecoration(
@@ -36,7 +46,7 @@ class ReportCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// 🔹 صورة التحليل مع لابل الحالة
+          /// Image + Status badge
           Stack(
             children: [
               ClipRRect(
@@ -44,24 +54,32 @@ class ReportCard extends StatelessWidget {
                   topLeft: Radius.circular(context.r(12)),
                   topRight: Radius.circular(context.r(12)),
                 ),
-                child: Image.asset(
-                  report.image,
-                  height: context.h(140),
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+                child: imageUrl != null && imageUrl.startsWith('http')
+                    ? Image.network(
+                        imageUrl,
+                        height: context.h(140),
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _fallbackImage(context),
+                      )
+                    : _fallbackImage(context),
               ),
               Positioned(
                 top: context.h(8),
                 right: context.w(8),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: context.w(10), vertical: context.h(4)),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(context.r(8)),
+                    color: status.toLowerCase() == 'normal'
+                        ? Colors.green
+                        : Colors.orange,
+                    borderRadius: BorderRadius.circular(context.r(6)),
                   ),
                   child: Text(
-                    report.status,
-                    style: AppTextStyles.semiBold16Black.copyWith(color: Colors.white),
+                    status.toUpperCase(),
+                    style: AppTextStyles.semiBold16Black.copyWith(
+                        color: Colors.white, fontSize: 11),
                   ),
                 ),
               ),
@@ -73,24 +91,28 @@ class ReportCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// 🔹 LABORATORY
-                Text("LABORATORY", style: AppTextStyles.semiBold16Black.copyWith(color: AppColors.primaryDark)),
-                context.verticalSpace(8),
-
-                /// 🔹 ID
-                Text("ID: ${report.id}", style: AppTextStyles.semiBold16Black),
+                Text(
+                  type.toUpperCase(),
+                  style: AppTextStyles.semiBold16Black
+                      .copyWith(color: AppColors.primaryDark),
+                ),
                 context.verticalSpace(4),
-
-                /// 🔹 Title
-                Text(report.title, style: AppTextStyles.semiBold16Black),
+                Text("ID: $reportId",
+                    style: AppTextStyles.semiBold16Black),
                 context.verticalSpace(4),
-
-                /// 🔹 Date
-                Text("Date: ${report.date}", style: AppTextStyles.semiBold16Black),
-
+                Text(title, style: AppTextStyles.semiBold16Black),
+                context.verticalSpace(4),
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today,
+                        size: 14, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text(date,
+                        style: AppTextStyles.semiBold16Black
+                            .copyWith(color: Colors.grey)),
+                  ],
+                ),
                 context.verticalSpace(16),
-
-                /// 🔹 View Button
                 CustomButton(
                   text: "View",
                   onPressed: onView,
@@ -103,6 +125,15 @@ class ReportCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _fallbackImage(BuildContext context) {
+    return Container(
+      height: context.h(140),
+      width: double.infinity,
+      color: Colors.grey.shade200,
+      child: const Icon(Icons.image_outlined, size: 48, color: Colors.grey),
     );
   }
 }

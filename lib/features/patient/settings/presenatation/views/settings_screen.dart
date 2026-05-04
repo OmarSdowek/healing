@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
+import '../../../auth/presentatiion/manger/patient_auth_cubit.dart';
 import '../../../profile/presentation/widgets/log_out_dailog.dart';
 import '../../../profile/presentation/widgets/profile_option_item.dart';
 
@@ -50,17 +52,66 @@ class SettingsScreen extends StatelessWidget {
                 title: "Delete account",
                 textColor: Colors.red,
                 onTap: () {
-                  // افتح Dialog تأكيد الحذف
+                  // ✅ Get the cubit before opening dialog
+                  final cubit = context.read<PatientAuthCubit>();
+                  
                   showDialog(
                     context: context,
-                    builder: (_) => LogoutDialog(
-                      onCancel: () => Navigator.pop(context),
-                      onConfirm: () {
-                        Navigator.pop(context);
-                        // 🔹 هنا تعمل لوجيك حذف الحساب
-                      },
-                      btnText: "Delete",
-                      subtitle: 'Are you sure you want to delete your account?',
+                    builder: (dialogContext) => BlocProvider.value(
+                      value: cubit, // ✅ Pass existing cubit to dialog
+                      child: BlocConsumer<PatientAuthCubit, PatientAuthState>(
+                        listener: (context, state) {
+                          if (state is PatientAccountDeletedSuccess) {
+                            Navigator.pop(dialogContext);
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              Routes.patientLogin,
+                              (route) => false,
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Account deleted successfully"),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          } else if (state is PatientAuthError) {
+                            Navigator.pop(dialogContext);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(state.message),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          // Get user ID from current state
+                          String? userId;
+                          if (state is PatientDataSuccess) {
+                            userId = state.meData.id;
+                          }
+
+                          return LogoutDialog(
+                            onCancel: () => Navigator.pop(dialogContext),
+                            onConfirm: () {
+                              if (userId != null) {
+                                print("🔥 Delete account button pressed for user: $userId");
+                                context.read<PatientAuthCubit>().deleteAccount(userId);
+                              } else {
+                                Navigator.pop(dialogContext);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Unable to get user ID"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
+                            btnText: state is PatientAuthLoading ? "Deleting..." : "Delete",
+                            subtitle: 'Are you sure you want to delete your account?',
+                          );
+                        },
+                      ),
                     ),
                   );
                 },

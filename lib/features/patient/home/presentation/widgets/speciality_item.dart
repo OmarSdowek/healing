@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
-import '../../../../../core/route/routes.dart';
-import '../../../doctors/presentation/view/doctors_screen.dart';
 
 class SpecialityItem extends StatelessWidget {
   final String title;
   final String iconPath;
-  const SpecialityItem({super.key, required this.title, required this.iconPath});
+  final VoidCallback? onTap;
+  
+  const SpecialityItem({
+    super.key,
+    required this.title,
+    required this.iconPath,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-       Navigator.pushNamed(context, Routes.doctors);
-      },
+      onTap: onTap,
       child: Container(
         width: 100,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -29,8 +32,13 @@ class SpecialityItem extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               title,
-              style: AppTextStyles.semiBold16Black.copyWith(color: AppColors.black),
+              style: AppTextStyles.semiBold16Black.copyWith(
+                color: AppColors.black,
+                fontSize: 12,
+              ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

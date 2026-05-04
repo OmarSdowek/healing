@@ -11,7 +11,7 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function(String?)? validator;
   final Widget? prefixIcon;
   final Function()? onTap;
-
+  final Function(String)? onChanged;
 
   const CustomTextFormField({
     super.key,
@@ -20,7 +20,9 @@ class CustomTextFormField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
     this.validator,
-    this.prefixIcon, this.onTap,
+    this.prefixIcon,
+    this.onTap,
+    this.onChanged,
   });
 
   @override
@@ -38,6 +40,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       obscureText: widget.isPassword ? obscureText : false,
       validator: widget.validator,
       onTap: widget.onTap,
+      onChanged: widget.onChanged,
       style: AppTextStyles.semiBold16Black,
       decoration: InputDecoration(
         prefixIcon: widget.prefixIcon,

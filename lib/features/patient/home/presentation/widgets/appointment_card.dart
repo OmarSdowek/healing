@@ -4,19 +4,13 @@ import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
-import 'package:flutter/material.dart';
-import 'package:healing/core/helper/extentions/media_query.dart';
-import '../../../../../core/constant/app_colors.dart';
-import '../../../../../core/constant/app_text_style.dart';
-import '../../../../../core/widgets/custom_button.dart';
-
 enum AppointmentStatus { upcoming, completed, canceled }
 
 class AppointmentCard extends StatelessWidget {
   final String date;
   final String doctorName;
   final String speciality;
-  final String image;
+  final String? image; // optional — shows Icons.person if null/localhost
   final VoidCallback onCancel;
   final VoidCallback onReschedule;
   final AppointmentStatus status;
@@ -26,7 +20,7 @@ class AppointmentCard extends StatelessWidget {
     required this.date,
     required this.doctorName,
     required this.speciality,
-    required this.image,
+    this.image,
     required this.onCancel,
     required this.onReschedule,
     required this.status,
@@ -69,14 +63,18 @@ class AppointmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// التاريخ + Badge
+          /// Date + Status badge
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                date,
-                style: AppTextStyles.semiBold16Black.copyWith(
-                  color: Colors.grey.shade700,
+              Expanded(
+                child: Text(
+                  date.isNotEmpty ? date : '—',
+                  style: AppTextStyles.semiBold16Black.copyWith(
+                    color: Colors.grey.shade700,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(
@@ -90,38 +88,47 @@ class AppointmentCard extends StatelessWidget {
           const Divider(thickness: 1),
           context.verticalSpace(8),
 
-          /// اسم الدكتور + التخصص
+          /// Doctor info
           Row(
             children: [
+              /// Always show Icons.person — no asset/network images
               CircleAvatar(
                 radius: 28,
-                backgroundImage: _getImageProvider(),
+                backgroundColor: AppColors.primary.withOpacity(0.1),
+                child: const Icon(
+                  Icons.person,
+                  size: 30,
+                  color: AppColors.primary,
+                ),
               ),
               context.horizontalSpace(12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    doctorName,
-                    style: AppTextStyles.semiBold16Black,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  context.verticalSpace(4),
-                  Text(
-                    speciality,
-                    style: AppTextStyles.semiBold16Black.copyWith(color: Colors.grey),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      doctorName.isNotEmpty ? doctorName : '—',
+                      style: AppTextStyles.semiBold16Black,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    context.verticalSpace(4),
+                    Text(
+                      speciality.isNotEmpty ? speciality : '—',
+                      style: AppTextStyles.semiBold16Black
+                          .copyWith(color: Colors.grey),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
 
           context.verticalSpace(12),
 
-          /// الأزرار (تظهر بس في Upcoming و Canceled)
+          /// Buttons (only for upcoming & canceled)
           if (status != AppointmentStatus.completed)
             Row(
               children: [
@@ -148,14 +155,4 @@ class AppointmentCard extends StatelessWidget {
       ),
     );
   }
-
-  /// Handle asset / network image
-  ImageProvider _getImageProvider() {
-    if (image.startsWith('http')) {
-      return NetworkImage(image);
-    } else {
-      return AssetImage(image);
-    }
-  }
 }
-

@@ -1,117 +1,153 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
+import 'package:healing/core/di/injection_container.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/widgets/custom_header.dart';
+import '../../../auth/presentatiion/manger/patient_auth_cubit.dart';
+import '../../domin/entity/notification_display_item.dart';
+import '../manger/notification_cubit.dart';
 
 class PatientNotificationsScreen extends StatelessWidget {
   const PatientNotificationsScreen({super.key});
 
-  static const _notifications = [
-    {
-      "type": "upcoming",
-      "title": "Upcoming Appointment",
-      "body": "Reminder: You have an appointment with...",
-      "time": "1h",
-    },
-    {
-      "type": "upcoming",
-      "title": "Upcoming Appointment",
-      "body": "Reminder: You have an appointment with...",
-      "time": "2h",
-    },
-    {
-      "type": "upcoming",
-      "title": "Upcoming Appointment",
-      "body": "Reminder: You have an appointment with...",
-      "time": "5h",
-    },
-    {
-      "type": "cancelled",
-      "title": "Appointment Cancelled",
-      "body":
-          "You have successfully cancelled your appointment with Ahmed Yasser.",
-      "time": "3d",
-    },
-    {
-      "type": "cancelled",
-      "title": "Appointment Cancelled",
-      "body":
-          "You have successfully cancelled your appointment with Bassant Kamel.",
-      "time": "5d",
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomHeader(title: "Notification"),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.w(20),
-                vertical: context.h(8),
-              ),
-              child: Text(
-                "Today",
-                style: AppTextStyles.semiBold16Black.copyWith(
-                  color: AppColors.primary,
-                  fontSize: context.sp(15),
+    return BlocProvider<PatientAuthCubit>(
+      create: (_) => sl<PatientAuthCubit>()..meData(),
+      child: BlocBuilder<PatientAuthCubit, PatientAuthState>(
+        builder: (ctx, authState) {
+          int patientId = 1;
+          if (authState is PatientDataSuccess) {
+            patientId =
+                int.tryParse(authState.meData.patientId ?? '1') ?? 1;
+          }
+
+          return BlocProvider<NotificationCubit>(
+            key: ValueKey(patientId),
+            create: (_) => sl<NotificationCubit>()
+              ..loadNotifications(patientId),
+            child: Scaffold(
+              backgroundColor: const Color(0xFFF4F6FB),
+              body: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CustomHeader(title: "Notification"),
+                    Expanded(
+                      child: BlocBuilder<NotificationCubit, NotificationState>(
+                        builder: (_, state) {
+                          if (state is NotificationLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (state is NotificationsLoaded) {
+                            return _NotificationList(groups: state.groups);
+                          }
+                          if (state is NotificationEmpty ||
+                              state is NotificationError) {
+                            return const _EmptyState();
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
-                itemCount: _notifications.length,
-                separatorBuilder: (_, __) => context.verticalSpace(10),
-                itemBuilder: (context, index) {
-                  final n = _notifications[index];
-                  final isUpcoming = n["type"] == "upcoming";
-                  return _NotificationTile(
-                    title: n["title"]!,
-                    body: n["body"]!,
-                    time: n["time"]!,
-                    isUpcoming: isUpcoming,
-                  );
-                },
-              ),
-            ),
-          ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ─── Notification List ────────────────────────────────────────────────────────
+
+class _NotificationList extends StatelessWidget {
+  final NotificationGroups groups;
+  const _NotificationList({required this.groups});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(20),
+        vertical: context.h(8),
+      ),
+      children: [
+        if (groups.today.isNotEmpty) ...[
+          const _SectionLabel(label: "Today"),
+          ...groups.today.map((n) => _NotificationTile(item: n)),
+        ],
+        if (groups.earlier.isNotEmpty) ...[
+          const _SectionLabel(label: "Earlier"),
+          ...groups.earlier.map((n) => _NotificationTile(item: n)),
+        ],
+      ],
+    );
+  }
+}
+
+// ─── Empty State ──────────────────────────────────────────────────────────────
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.notifications_none,
+              size: 64, color: Colors.grey.shade400),
+          const SizedBox(height: 16),
+          Text(
+            "No notifications yet",
+            style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Section Label ────────────────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  final String label;
+  const _SectionLabel({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.h(8), top: context.h(4)),
+      child: Text(
+        label,
+        style: AppTextStyles.semiBold16Black.copyWith(
+          color: AppColors.primary,
+          fontSize: context.sp(15),
         ),
       ),
     );
   }
 }
 
-class _NotificationTile extends StatelessWidget {
-  final String title;
-  final String body;
-  final String time;
-  final bool isUpcoming;
+// ─── Notification Tile ────────────────────────────────────────────────────────
 
-  const _NotificationTile({
-    required this.title,
-    required this.body,
-    required this.time,
-    required this.isUpcoming,
-  });
+class _NotificationTile extends StatelessWidget {
+  final NotificationDisplayItem item;
+  const _NotificationTile({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    final iconBg = isUpcoming
-        ? AppColors.primary.withOpacity(0.12)
-        : const Color(0xFFFFE5E5);
-    final iconColor = isUpcoming ? AppColors.primary : const Color(0xFFE53935);
-    final icon = isUpcoming
-        ? Icons.access_time_rounded
-        : Icons.event_busy_outlined;
+    final config = _TileConfig.from(item.type);
 
     return Container(
+      margin: EdgeInsets.only(bottom: context.h(10)),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -131,10 +167,11 @@ class _NotificationTile extends StatelessWidget {
             width: context.w(42),
             height: context.h(42),
             decoration: BoxDecoration(
-              color: iconBg,
+              color: config.iconBg,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: iconColor, size: context.sp(22)),
+            child: Icon(config.icon,
+                color: config.iconColor, size: context.sp(22)),
           ),
           context.horizontalSpace(12),
           Expanded(
@@ -142,7 +179,7 @@ class _NotificationTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  item.title,
                   style: AppTextStyles.semiBold16Black.copyWith(
                     fontSize: context.sp(14),
                     color: AppColors.primaryText,
@@ -150,7 +187,7 @@ class _NotificationTile extends StatelessWidget {
                 ),
                 context.verticalSpace(4),
                 Text(
-                  body,
+                  item.body,
                   style: AppTextStyles.semiBold16Black.copyWith(
                     fontSize: context.sp(12),
                     color: AppColors.grey,
@@ -164,7 +201,7 @@ class _NotificationTile extends StatelessWidget {
           ),
           context.horizontalSpace(8),
           Text(
-            time,
+            item.timeAgo,
             style: AppTextStyles.semiBold16Black.copyWith(
               fontSize: context.sp(12),
               color: AppColors.grey,
@@ -174,5 +211,42 @@ class _NotificationTile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+// ─── Tile Config ─────────────────────────────────────────────────────────────
+
+class _TileConfig {
+  final Color iconBg;
+  final Color iconColor;
+  final IconData icon;
+
+  const _TileConfig({
+    required this.iconBg,
+    required this.iconColor,
+    required this.icon,
+  });
+
+  factory _TileConfig.from(NotificationType type) {
+    switch (type) {
+      case NotificationType.cancelled:
+        return _TileConfig(
+          iconBg: const Color(0xFFFFE5E5),
+          iconColor: const Color(0xFFE53935),
+          icon: Icons.event_busy_outlined,
+        );
+      case NotificationType.completed:
+        return _TileConfig(
+          iconBg: Colors.green.withOpacity(0.12),
+          iconColor: Colors.green.shade700,
+          icon: Icons.check_circle_outline,
+        );
+      case NotificationType.upcoming:
+        return _TileConfig(
+          iconBg: AppColors.primary.withOpacity(0.12),
+          iconColor: AppColors.primary,
+          icon: Icons.access_time_rounded,
+        );
+    }
   }
 }

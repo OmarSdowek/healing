@@ -30,8 +30,8 @@ class Routes {
   static const String doctors = "/doctors";
   static const String favorites = "/favorites";
   static const String doctorDetails = "/doctor_details";
+  static const String doctorsByDepartment = "/doctors_by_department";
   static const String booking = "/booking";
-
   // Doctor
   static const String doctorHome = "/doctor_home";
   static const String addPrescription = "/add_prescription";

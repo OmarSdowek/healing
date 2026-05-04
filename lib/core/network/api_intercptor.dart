@@ -35,7 +35,7 @@ class AuthInterceptor extends Interceptor {
 
       try {
         final response = await dio.post(
-          "/auth/refresh",
+          "/api/auth/refresh",
           data: {"refreshToken": refreshToken},
           options: Options(extra: {"skipAuth": true}),
         );

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healing/features/patient/prescription/presentation/view/prescription_screen.dart';
-import 'package:healing/features/patient/settings/presenatation/views/faqs_screen.dart';
-import 'package:healing/features/patient/settings/presenatation/views/privacy_polices_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth/presentation/view/sign_up_as.dart';
 import '../../features/doctor/auth/presentatiion/views/doctor_forget_password.dart';
 import '../../features/doctor/auth/presentatiion/views/doctor_new_password.dart';
@@ -19,6 +17,7 @@ import '../../features/doctor/settings/presenatation/views/doctor_settings_scree
 import '../../features/on_boarding/presentation/views/on_boarding.dart';
 import '../../features/patient/appointment/presentation/view/my_appointemetn.dart';
 import '../../features/patient/appointment/presentation/view/up_coming_oppointment.dart';
+import '../../features/patient/auth/presentatiion/manger/patient_auth_cubit.dart';
 import '../../features/patient/auth/presentatiion/views/new_password.dart';
 import '../../features/patient/auth/presentatiion/views/patient_forget_password.dart';
 import '../../features/patient/auth/presentatiion/views/patient_otp_email.dart';
@@ -26,27 +25,33 @@ import '../../features/patient/auth/presentatiion/views/patient_sign_in.dart';
 import '../../features/patient/auth/presentatiion/views/patient_verify_password.dart';
 import '../../features/patient/auth/presentatiion/views/reset_password.dart';
 import '../../features/patient/auth/presentatiion/views/sign_up_screen.dart';
+import '../../features/patient/booking/presentation/views/booking_screen.dart';
 import '../../features/patient/booking/presentation/views/confirm_booking.dart';
 import '../../features/patient/booking/presentation/views/pay_booking_screen.dart';
 import '../../features/patient/doctors/presentation/view/doctors_screen.dart';
+import '../../features/patient/doctors/presentation/view/doctors_by_department_screen.dart';
 import '../../features/patient/doctors/presentation/view/favourite_doctor.dart';
 import '../../features/patient/home/layout_screen.dart';
+import '../../features/patient/home/domin/entity/doctor_entity.dart';
 import '../../features/doctor/appointments/presentation/view/today_appointments_screen.dart';
 import '../../features/doctor/home/doctor_layout_screen.dart';
 import '../../features/doctor/notifications/presentation/view/doctor_notifications_screen.dart';
 import '../../features/doctor/prescription/presentation/view/add_prescription_screen.dart';
 import '../../features/patient/home/presentation/view/specialties_screen.dart';
-import '../../features/patient/medical_report/domin/entity/medical_report_model.dart';
 import '../../features/patient/medical_report/presentation/view/medical_report_details.dart';
 import '../../features/patient/medical_report/presentation/view/medical_report_screen.dart';
 import '../../features/patient/notifications/presentation/view/patient_notifications_screen.dart';
 import '../../features/patient/payment/presenatation/view/add_new_card.dart';
+import '../../features/patient/prescription/presentation/view/prescription_screen.dart';
 import '../../features/patient/profile/presentation/view/personal_information.dart';
 import '../../features/patient/search/presentation/view/search.dart';
+import '../../features/patient/settings/presenatation/views/faqs_screen.dart';
 import '../../features/patient/settings/presenatation/views/mange_password_screen.dart';
+import '../../features/patient/settings/presenatation/views/privacy_polices_screen.dart';
 import '../../features/patient/settings/presenatation/views/settings_screen.dart';
 import '../../features/splash/presentation/view/splash_screen.dart';
 import '../constant/assets_manger.dart';
+import '../di/injection_container.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -69,16 +74,32 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => PatientSignUpScreen());
 
       case Routes.verifyEmail:
-        return MaterialPageRoute(builder: (_) => PatientOtpEmail());
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final token = args['token'] as String? ?? '';
+        final email = args['email'] as String? ?? '';
+
+        return MaterialPageRoute(
+          builder: (_) => PatientOtpEmail(token: token, email: email),
+        );
 
       case Routes.forgotPassword:
-        return MaterialPageRoute(builder: (_) => PatientForgotPassword());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => sl<PatientAuthCubit>(),
+            child: PatientForgotPassword(),
+          ),
+        );
 
       case Routes.resetPassword:
         return MaterialPageRoute(builder: (_) => PatientResetPassword());
 
       case Routes.setNewPassword:
-        return MaterialPageRoute(builder: (_) => PatientSetNewPassword());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => sl<PatientAuthCubit>(),
+            child: PatientSetNewPassword(),
+          ),
+        );
 
       case Routes.verifyCode:
         return MaterialPageRoute(builder: (_) => PatientVerifyPassword());
@@ -141,15 +162,36 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => SearchScreen());
       case Routes.specialties:
         return MaterialPageRoute(builder: (_) => SpecialtiesScreen());
+      case Routes.booking:
+        final doctor = settings.arguments;
+        return MaterialPageRoute(
+          builder: (_) => BookAppointmentScreen(
+            doctor: doctor is DoctorEntity ? doctor : null,
+          ),
+        );
       case Routes.doctors:
         return MaterialPageRoute(builder: (_) => DoctorsScreen());
+      case Routes.doctorsByDepartment:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => DoctorsByDepartmentScreen(
+            departmentId: args['departmentId'] as int,
+            departmentName: args['departmentName'] as String,
+          ),
+        );
       case Routes.favorites:
         return MaterialPageRoute(builder: (_) => FavoritesDoctorsScreen());
 
       // patient settings
 
       case Routes.settings:
-        return MaterialPageRoute(builder: (_) => SettingsScreen());
+        // ✅ Provide PatientAuthCubit for delete account functionality
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<PatientAuthCubit>()..meData(),
+            child: const SettingsScreen(),
+          ),
+        );
       case Routes.faqs:
         return MaterialPageRoute(builder: (_) => FaqsScreen());
       case Routes.privacyPolicy:
@@ -157,18 +199,24 @@ class AppRouter {
       case Routes.mangePassword:
         return MaterialPageRoute(builder: (_) => ManagePasswordScreen());
       case Routes.personalInformation:
-        return MaterialPageRoute(builder: (_) => PersonalInformationScreen());
+        // ✅ Create new PatientAuthCubit instance and load data
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<PatientAuthCubit>()..meData(),
+            child: const PersonalInformationScreen(),
+          ),
+        );
       case Routes.patientNotification:
         return MaterialPageRoute(builder: (_) => PatientNotificationsScreen());
       case Routes.patientMedicalReport:
-        return MaterialPageRoute(builder: (_) => MedicalReportListScreen());
+        return MaterialPageRoute(builder: (_) => const MedicalReportListScreen());
       case Routes.patientMedicalReportDetails:
-        final report = settings.arguments as MedicalReport;
+        final reportId = settings.arguments as String? ?? '';
         return MaterialPageRoute(
-            builder: (_) => MedicalReportDetailScreen(report: report,));
+          builder: (_) => MedicalReportDetailScreen(reportId: reportId),
+        );
 
       // patient payment
-
 
       case Routes.addNewCard:
         return MaterialPageRoute(builder: (_) => const AddNewCardScreen());
@@ -191,22 +239,38 @@ class AppRouter {
       case Routes.prescriptionDetails:
         return MaterialPageRoute(builder: (_) => const PrescriptionScreen());
       case Routes.appointmentConfirmation:
-        return MaterialPageRoute(builder: (_) => const ConfirmBooking());
+        final args = settings.arguments as Map<String, dynamic>?;
+        final doctor = args?['doctor'] as DoctorEntity?;
+        if (doctor == null) {
+          return MaterialPageRoute(
+            builder: (_) => const Scaffold(
+              body: Center(child: Text("Missing booking data")),
+            ),
+          );
+        }
+        return MaterialPageRoute(
+          builder: (_) => ConfirmBooking(
+            doctor: doctor,
+            date: args?['date'] as String? ?? '',
+            startTime: args?['startTime'] as String? ?? '',
+            endTime: args?['endTime'] as String? ?? '',
+            patientId: args?['patientId'] as int? ?? 1,
+          ),
+        );
 
-
-        // doctor profile
+      // doctor profile
 
       case Routes.doctorProfile:
         return MaterialPageRoute(builder: (_) => DoctorProfileScreen());
-        case Routes.doctorPersonalInformation:
+      case Routes.doctorPersonalInformation:
         return MaterialPageRoute(builder: (_) => DoctorPersonalInformation());
-        case Routes.doctorManagePassword:
+      case Routes.doctorManagePassword:
         return MaterialPageRoute(builder: (_) => DoctorManagePasswordScreen());
-        case Routes.doctorFaqs:
+      case Routes.doctorFaqs:
         return MaterialPageRoute(builder: (_) => DoctorFaqsScreen());
-        case Routes.doctorPrivacyPolicy:
+      case Routes.doctorPrivacyPolicy:
         return MaterialPageRoute(builder: (_) => DoctorPrivacyPolicyScreen());
-        case Routes.doctorSettings:
+      case Routes.doctorSettings:
         return MaterialPageRoute(builder: (_) => DoctorSettingsScreen());
 
       default:

@@ -21,7 +21,7 @@ class ErrorHandler {
 
       case DioExceptionType.badResponse:
         return ApiException(
-          message: error.response?.data["message"] ??
+          message: _extractMessage(error.response?.data) ??
               "Bad response from server",
           statusCode: error.response?.statusCode,
         );
@@ -36,6 +36,13 @@ class ErrorHandler {
           message: "No Internet Connection",
         );
       case DioExceptionType.unknown:
+        // Handle connection closed / network interruption
+        final msg = error.message ?? '';
+        if (msg.contains('Connection closed') ||
+            msg.contains('Connection reset') ||
+            msg.contains('SocketException')) {
+          return ApiException(message: "Connection interrupted. Please try again.");
+        }
         return ApiException(
           message: "Unknown error occurred",
         );
@@ -44,5 +51,21 @@ class ErrorHandler {
           message: "Unexpected error occurred",
         );
     }
+  }
+
+  /// Safely extract error message from any response data type
+  static String? _extractMessage(dynamic data) {
+    if (data == null) return null;
+    if (data is Map) {
+      return data['message']?.toString() ??
+          data['title']?.toString() ??
+          data['detail']?.toString();
+    }
+    if (data is String && data.isNotEmpty) {
+      // Avoid returning huge HTML pages
+      if (data.length > 200) return null;
+      return data;
+    }
+    return null;
   }
 }

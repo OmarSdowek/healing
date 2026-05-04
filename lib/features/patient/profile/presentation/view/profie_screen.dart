@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
+import '../../../auth/presentatiion/manger/patient_auth_cubit.dart';
 import '../widgets/log_out_dailog.dart';
 import '../widgets/profile_option_item.dart';
 
@@ -22,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(   // 🔹 هنا التغيير
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           child: Column(
             children: [
@@ -30,12 +32,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               context.verticalSpace(20),
 
+              /// Profile Picture
               CircleAvatar(
                 radius: context.r(80),
                 backgroundImage: AssetImage(AssetsManger.person),
               ),
               context.verticalSpace(12),
-              Text("Ahmed Mohamed", style: AppTextStyles.reg20black),
+
+              /// User Name
+              BlocBuilder<PatientAuthCubit, PatientAuthState>(
+                builder: (context, state) {
+                  if (state is PatientDataSuccess) {
+                    return Text(
+                      state.meData.fullName,
+                      style: AppTextStyles.reg20black,
+                    );
+                  }
+                  return Text("Loading...", style: AppTextStyles.reg20black);
+                },
+              ),
 
               context.verticalSpace(20),
 
@@ -43,6 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 width: context.screenWidth,
                 height: context.h(50),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(context.r(12)),
@@ -64,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               context.verticalSpace(20),
 
-              /// Options (كلهم في نفس السكرول)
+              /// Profile Options
               ProfileOptionItem(
                 icon: Icons.person,
                 title: "Personal information",
@@ -77,13 +93,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: "Settings",
                 onTap: () {
                   Navigator.pushNamed(context, Routes.settings);
-                },
-              ),
-              ProfileOptionItem(
-                icon: Icons.payment,
-                title: "Payment Method",
-                onTap: () {
-                  Navigator.pushNamed(context, Routes.selectedCard);
                 },
               ),
               ProfileOptionItem(
@@ -107,23 +116,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Navigator.pushNamed(context, Routes.myAppointments);
                 },
               ),
+
+              /// Logout Button
               ProfileOptionItem(
                 icon: Icons.logout,
                 title: "Logout",
                 textColor: Colors.red,
                 onTap: () {
-                   showDialog(
-                    builder: (context) => LogoutDialog(
-                      onCancel: () {
-                        Navigator.pop(context);
-                      },
-                      onConfirm: () {
+                  // ✅ Get the cubit before opening dialog
+                  final cubit = context.read<PatientAuthCubit>();
 
-                      },
-                      btnText: "Logout",
-                      subtitle: "Are you sure you want to logout?",
-                    ),
+                  showDialog(
                     context: context,
+                    builder: (dialogContext) => BlocProvider.value(
+                      value: cubit, // ✅ Pass existing cubit to dialog
+                      child: BlocConsumer<PatientAuthCubit, PatientAuthState>(
+                        listener: (context, state) {
+                          if (state is PatientLoggedOut) {
+                            // Close dialog
+                            Navigator.pop(dialogContext);
+                            // Navigate to login and clear stack
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              Routes.patientLogin,
+                              (route) => false,
+                            );
+                          } else if (state is PatientAuthError) {
+                            // Close dialog
+                            Navigator.pop(dialogContext);
+                            // Show error
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(state.message),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          return LogoutDialog(
+                            onCancel: () {
+                              Navigator.pop(dialogContext);
+                            },
+                            onConfirm: () {
+                              print("🔥 Logout button pressed");
+                              context.read<PatientAuthCubit>().logout();
+                            },
+                            btnText: state is PatientAuthLoading
+                                ? "Logging out..."
+                                : "Logout",
+                            subtitle: "Are you sure you want to logout?",
+                          );
+                        },
+                      ),
+                    ),
                   );
                 },
               ),
