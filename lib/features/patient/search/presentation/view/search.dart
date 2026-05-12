@@ -8,6 +8,7 @@ import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/route/routes.dart';
 import 'package:healing/core/widgets/custom_header.dart';
 import 'package:healing/core/widgets/custom_text_feild.dart';
+import 'package:healing/core/widgets/doctor_avatar.dart';
 import '../../../home/domin/entity/doctor_entity.dart';
 import '../../../home/presentation/manger/home_cubit/home_cubit.dart';
 import '../../../home/presentation/widgets/specility_card.dart';
@@ -119,19 +120,12 @@ class _SearchScreenState extends State<SearchScreen> {
                             itemCount: doctors.length,
                             itemBuilder: (_, i) {
                               final d = doctors[i];
-                              final img = d.pictureUrl
-                                  .replaceFirst('localhost', '10.0.2.2');
                               return ListTile(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 4),
-                                leading: CircleAvatar(
+                                leading: DoctorAvatar(
+                                  pictureUrl: d.pictureUrl,
                                   radius: 26,
-                                  backgroundImage: img.startsWith('http')
-                                      ? NetworkImage(img)
-                                      : const AssetImage(
-                                              'assets/images/doctor1.png')
-                                          as ImageProvider,
-                                  onBackgroundImageError: (_, __) {},
                                 ),
                                 title: Text(d.fullName,
                                     style: AppTextStyles.semiBold16Black),

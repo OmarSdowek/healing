@@ -48,6 +48,9 @@ class RepoImpl implements AuthRepoInterface {
 
       final auth = AuthResponseModel.fromJson(response.data);
 
+      // Clear old tokens first to avoid stale doctor_id
+      await TokenStorage.clearTokens();
+
       await TokenStorage.saveTokens(
         accessToken: auth.accessToken,
         refreshToken: auth.refreshToken,

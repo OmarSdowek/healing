@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import '../../../../../core/constant/api_endpoint.dart';
 import '../../../../../core/error/failure.dart';
 import '../../../../../core/network/api_service.dart';
 import '../../../../../core/network/error_handling.dart';
+import '../../../../../core/network/token_storage.dart';
 import '../../domain/entities/doctor_profile_entity.dart';
 import '../../domain/repositories/doctor_profile_repository.dart';
 import '../models/doctor_profile_model.dart';
@@ -13,12 +15,53 @@ class DoctorProfileRepositoryImpl implements DoctorProfileRepository {
 
   DoctorProfileRepositoryImpl(this._api);
 
+  Future<String?> _getDoctorId() async {
+    try {
+      final token = await TokenStorage.getAccessToken();
+      if (token != null && token.isNotEmpty) {
+        final parts = token.split('.');
+        if (parts.length == 3) {
+          final decoded = utf8.decode(
+            base64Url.decode(base64Url.normalize(parts[1])),
+          );
+          final payload = jsonDecode(decoded) as Map<String, dynamic>;
+          final id = payload['doctor_id']?.toString();
+          if (id != null && id.isNotEmpty) return id;
+        }
+      }
+    } catch (_) {}
+    return await TokenStorage.getDoctorId();
+  }
+
   @override
   Future<Either<Failure, DoctorProfileEntity>> getProfile() async {
     try {
-      final response = await _api.get(ApiEndpoints.me);
-      final profile = DoctorProfileModel.fromJson(response.data);
-      return Right(profile);
+      // GET /api/Auth/me — returns basic identity info
+      final meResponse = await _api.get(ApiEndpoints.me);
+      final meData = meResponse.data as Map<String, dynamic>;
+
+      // Try to get full doctor details from /api/doctors/{id}/details
+      String? doctorId = meData['doctorId']?.toString();
+      if (doctorId != null && doctorId.isNotEmpty) {
+        try {
+          final detailsResponse = await _api.get(
+            ApiEndpoints.getDoctorDetails(int.parse(doctorId)),
+          );
+          final details = detailsResponse.data as Map<String, dynamic>;
+          return Right(DoctorProfileModel.fromJson({
+            ...meData,
+            ...details,
+            'doctorId': doctorId,
+          }));
+        } catch (_) {
+          // Fallback to /me data only
+        }
+      }
+
+      return Right(DoctorProfileModel.fromJson({
+        ...meData,
+        'doctorId': doctorId,
+      }));
     } on DioException catch (e) {
       return Left(Failure(ErrorHandler.handle(e).message));
     }
@@ -29,16 +72,19 @@ class DoctorProfileRepositoryImpl implements DoctorProfileRepository {
     DoctorProfileEntity profile,
   ) async {
     try {
+      final doctorId = await _getDoctorId();
+      if (doctorId == null) return Left(Failure('Doctor ID not found'));
+
+      // PUT /api/doctors/{id} — update doctor profile
       await _api.put(
-        ApiEndpoints.me,
+        ApiEndpoints.getDoctorById(int.parse(doctorId)),
         data: {
-          'name': profile.name,
-          'email': profile.email,
-          'phone': profile.phone,
-          'specialization': profile.specialization,
-          'bio': profile.bio,
-          'yearsOfExperience': profile.yearsOfExperience,
-          'licenseNumber': profile.licenseNumber,
+          if (profile.phone != null) 'phone': profile.phone,
+          if (profile.bio != null) 'bio': profile.bio,
+          if (profile.yearsOfExperience != null)
+            'yearsOfExperience': profile.yearsOfExperience,
+          if (profile.specialization != null)
+            'specialization': profile.specialization,
         },
       );
       return const Right(unit);
@@ -53,7 +99,6 @@ class DoctorProfileRepositoryImpl implements DoctorProfileRepository {
       final formData = FormData.fromMap({
         'profileImage': await MultipartFile.fromFile(imagePath),
       });
-
       await _api.post('${ApiEndpoints.me}/upload-image', data: formData);
       return const Right(unit);
     } on DioException catch (e) {

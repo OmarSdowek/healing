@@ -11,4 +11,8 @@ abstract class DoctorAuthRepository {
     required String token,
     required String newPassword,
   });
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 }

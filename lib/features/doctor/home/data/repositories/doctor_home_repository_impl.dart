@@ -1,152 +1,166 @@
-import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import '../../../../../core/constant/api_endpoint.dart';
 import '../../../../../core/error/failure.dart';
+import '../../../../../core/helper/jwt_helper.dart';
 import '../../../../../core/network/api_service.dart';
 import '../../../../../core/network/error_handling.dart';
-import '../../../../../core/network/token_storage.dart';
+import '../../../../../core/utils/appointment_date_helper.dart';
 import '../../domain/entities/doctor_appointment_entity.dart';
 import '../../domain/entities/doctor_dashboard_entity.dart';
 import '../../domain/repositories/doctor_home_repository.dart';
 import '../models/doctor_appointment_model.dart';
 import '../models/doctor_dashboard_model.dart';
 
+/// Fetches all doctor appointments in a single request.
+/// JWT parsing → [JwtHelper], date formatting → [AppointmentDateHelper].
 class DoctorHomeRepositoryImpl implements DoctorHomeRepository {
   final ApiService _api;
 
   DoctorHomeRepositoryImpl(this._api);
 
-  Future<String?> _getDoctorId() async {
-    // Try to get from storage first
-    var doctorId = await TokenStorage.getDoctorId();
+  // ─── Fetch ALL appointments — single request ──────────────────────────────
+  // Response is grouped by patient:
+  // [{ patientId, patientName, age, medicalRecordNumber, appointments: [...] }]
+  // We flatten it into a List<DoctorAppointmentModel>.
 
-    // If not in storage, try to extract from JWT token
-    if (doctorId == null) {
-      try {
-        final token = await TokenStorage.getAccessToken();
-        if (token != null && token.isNotEmpty) {
-          final parts = token.split('.');
-          if (parts.length == 3) {
-            final decoded = utf8.decode(
-              base64Url.decode(base64Url.normalize(parts[1])),
-            );
-            final payload = jsonDecode(decoded);
-            doctorId = payload['doctor_id']?.toString();
-
-            // Save it for future use
-            if (doctorId != null) {
-              await TokenStorage.saveDoctorId(doctorId);
-            }
-          }
-        }
-      } catch (e) {
-        // If JWT parsing fails, continue
+  Future<List<DoctorAppointmentModel>> _fetchAllAppointments(
+      String doctorId) async {
+    try {
+      final res = await _api.get(
+        ApiEndpoints.doctorAllPatientAppointments(int.parse(doctorId)),
+      );
+      final raw = res.data;
+      if (raw is List && raw.isNotEmpty) {
+        return DoctorAppointmentModel.fromGroupedJson(raw);
       }
+    } catch (e) {
+      rethrow;
     }
-
-    return doctorId;
+    return [];
   }
+
+  // ─── Single date fetch (kept for dashboard today-only call) ───────────────
+
+  Future<List<DoctorAppointmentModel>> _fetchForDate(
+      String doctorId, String date) async {
+    try {
+      final res = await _api.get(
+        ApiEndpoints.doctorAppointments(int.parse(doctorId)),
+        queryParameters: {'date': date},
+      );
+      final raw = res.data;
+      if (raw is List && raw.isNotEmpty) {
+        // Old format: flat list of appointments
+        return raw.map((e) => DoctorAppointmentModel.fromJson(e)).toList();
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  // ─── getDashboard — today stats + today appointments ─────────────────────
 
   @override
   Future<Either<Failure, DoctorDashboardEntity>> getDashboard() async {
     try {
-      final doctorId = await _getDoctorId();
-      if (doctorId == null) {
-        return Left(Failure('Doctor ID not found'));
-      }
+      final doctorId = (await JwtHelper.getDoctorId()).toString();
+      if (doctorId == '0') return Left(Failure('Doctor ID not found'));
 
-      // Get today's appointments
-      final today = DateTime.now().toString().split(' ')[0];
-      final response = await _api.get(
-        ApiEndpoints.doctorAppointments(int.parse(doctorId)),
-        queryParameters: {'date': today},
-      );
+      final doctorName = await JwtHelper.getFullName();
+      final today = AppointmentDateHelper.formatDate(DateTime.now());
 
-      final appointments = (response.data as List)
-          .map((e) => DoctorAppointmentModel.fromJson(e))
-          .toList();
+      final todayApts = await _fetchForDate(doctorId, today);
+      todayApts.sort(
+          (a, b) => (a.startTime ?? '').compareTo(b.startTime ?? ''));
 
-      // Calculate dashboard stats from appointments
-      int confirmedCount = 0;
-      int pendingCount = 0;
+      final counts = _countStatuses(todayApts);
 
-      for (var appointment in appointments) {
-        if (appointment.status?.toLowerCase() == 'confirmed') {
-          confirmedCount++;
-        } else if (appointment.status?.toLowerCase() == 'pending') {
-          pendingCount++;
-        }
-      }
-
-      // Build dashboard model from aggregated data
-      final dashboard = DoctorDashboardModel(
-        totalAppointmentsToday: appointments.length,
-        confirmedAppointments: confirmedCount,
-        pendingAppointments: pendingCount,
-        totalPatients: appointments.length,
-        todayAppointments: appointments,
-      );
-
-      return Right(dashboard);
+      return Right(DoctorDashboardModel(
+        totalAppointmentsToday: todayApts.length,
+        confirmedAppointments: counts['confirmed']!,
+        pendingAppointments: counts['pending']!,
+        totalPatients: todayApts.length,
+        todayAppointments: todayApts,
+        allAppointments: todayApts,
+        doctorName: doctorName,
+        doctorId: doctorId,
+      ));
     } on DioException catch (e) {
       return Left(Failure(ErrorHandler.handle(e).message));
     } catch (e) {
       return Left(Failure(e.toString()));
     }
   }
+
+  // ─── getTodayAppointments ─────────────────────────────────────────────────
 
   @override
   Future<Either<Failure, List<DoctorAppointmentEntity>>>
-  getTodayAppointments() async {
+      getTodayAppointments() async {
     try {
-      final doctorId = await _getDoctorId();
-      if (doctorId == null) {
-        return Left(Failure('Doctor ID not found'));
-      }
-
-      final today = DateTime.now().toString().split(' ')[0];
-      final response = await _api.get(
-        ApiEndpoints.doctorAppointments(int.parse(doctorId)),
-        queryParameters: {'date': today},
-      );
-
-      final appointments = (response.data as List)
-          .map((e) => DoctorAppointmentModel.fromJson(e))
-          .toList();
-
-      return Right(appointments);
+      final doctorId = (await JwtHelper.getDoctorId()).toString();
+      if (doctorId == '0') return Left(Failure('Doctor ID not found'));
+      final list = await _fetchForDate(
+          doctorId, AppointmentDateHelper.formatDate(DateTime.now()));
+      return Right(list);
     } on DioException catch (e) {
       return Left(Failure(ErrorHandler.handle(e).message));
     } catch (e) {
       return Left(Failure(e.toString()));
     }
   }
+
+  // ─── getAppointmentsByDate ────────────────────────────────────────────────
 
   @override
   Future<Either<Failure, List<DoctorAppointmentEntity>>> getAppointmentsByDate(
     String date,
   ) async {
     try {
-      final doctorId = await _getDoctorId();
-      if (doctorId == null) {
-        return Left(Failure('Doctor ID not found'));
-      }
-
-      final response = await _api.get(
-        ApiEndpoints.doctorAppointments(int.parse(doctorId)),
-        queryParameters: {'date': date},
-      );
-
-      final appointments = (response.data as List)
-          .map((e) => DoctorAppointmentModel.fromJson(e))
-          .toList();
-
-      return Right(appointments);
+      final doctorId = (await JwtHelper.getDoctorId()).toString();
+      if (doctorId == '0') return Left(Failure('Doctor ID not found'));
+      final list = await _fetchForDate(doctorId, date);
+      return Right(list);
     } on DioException catch (e) {
       return Left(Failure(ErrorHandler.handle(e).message));
     } catch (e) {
       return Left(Failure(e.toString()));
     }
+  }
+
+  // ─── getAllAppointments — ONE request, flatten grouped response ───────────
+
+  @override
+  Future<Either<Failure, List<DoctorAppointmentEntity>>>
+      getAllAppointments() async {
+    try {
+      final doctorId = (await JwtHelper.getDoctorId()).toString();
+      if (doctorId == '0') return Left(Failure('Doctor ID not found'));
+
+      final all = await _fetchAllAppointments(doctorId);
+      return Right(all);
+    } on DioException catch (e) {
+      return Left(Failure(ErrorHandler.handle(e).message));
+    } catch (e) {
+      return Left(Failure(e.toString()));
+    }
+  }
+
+  // ─── Private helpers ──────────────────────────────────────────────────────
+
+  Map<String, int> _countStatuses(List<DoctorAppointmentModel> apts) {
+    int confirmed = 0, pending = 0;
+    for (final apt in apts) {
+      switch (apt.status?.toLowerCase()) {
+        case 'confirmed':
+          confirmed++;
+          break;
+        case 'scheduled':
+        case 'pending':
+          pending++;
+          break;
+      }
+    }
+    return {'confirmed': confirmed, 'pending': pending};
   }
 }

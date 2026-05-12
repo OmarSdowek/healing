@@ -23,3 +23,13 @@ class DoctorHomeError extends DoctorHomeState {
 
   const DoctorHomeError(this.message);
 }
+
+class DoctorAllAppointmentsLoading extends DoctorHomeState {
+  const DoctorAllAppointmentsLoading();
+}
+
+class DoctorAllAppointmentsLoaded extends DoctorHomeState {
+  final List<DoctorAppointmentEntity> appointments;
+
+  const DoctorAllAppointmentsLoaded(this.appointments);
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/constant/assets_manger.dart';
@@ -101,12 +102,7 @@ class PatientOtpEmail extends StatelessWidget {
                 BlocConsumer<PatientAuthCubit, PatientAuthState>(
                   listener: (context, state) {
                     if (state is PatientAuthError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.message),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
+                      AppSnackBar.showError(context, state.message);
                     } else if (state is PatientEmailVerifiedSuccess) {
                       showDialog(
                         context: context,
@@ -116,7 +112,8 @@ class PatientOtpEmail extends StatelessWidget {
                           subtitle: 'Email verified successfully!',
                           onConfirm: () {
                             Navigator.pop(context);
-                            Navigator.pushReplacementNamed(context, Routes.patientLogin);
+                            Navigator.pushReplacementNamed(
+                                context, Routes.patientLogin);
                           },
                         ),
                       );
@@ -124,11 +121,8 @@ class PatientOtpEmail extends StatelessWidget {
                   },
                   builder: (context, state) {
                     if (state is PatientAuthLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
-
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: CustomButton(
@@ -136,16 +130,13 @@ class PatientOtpEmail extends StatelessWidget {
                         backgroundColor: AppColors.primary,
                         onPressed: () {
                           if (tokenValue.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("❌ Token is empty"),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
+                            AppSnackBar.showWarning(
+                                context, 'Please enter the verification code.');
                             return;
                           }
-
-                          context.read<PatientAuthCubit>().verifyEmail(tokenValue);
+                          context
+                              .read<PatientAuthCubit>()
+                              .verifyEmail(tokenValue);
                         },
                       ),
                     );

@@ -3,7 +3,7 @@ import '../../domain/entities/doctor_profile_entity.dart';
 class DoctorProfileModel extends DoctorProfileEntity {
   DoctorProfileModel({
     String? doctorId,
-    String? name,
+    String? fullName,
     String? email,
     String? phone,
     String? specialization,
@@ -15,7 +15,7 @@ class DoctorProfileModel extends DoctorProfileEntity {
     List<String>? qualifications,
   }) : super(
          doctorId: doctorId,
-         name: name,
+    fullName: fullName,
          email: email,
          phone: phone,
          specialization: specialization,
@@ -28,24 +28,35 @@ class DoctorProfileModel extends DoctorProfileEntity {
        );
 
   factory DoctorProfileModel.fromJson(Map<String, dynamic> json) {
+    // Handle both /api/Auth/me and /api/doctors/{id}/details responses
+    final name = json['fullName'] ??
+        json['name'] ??
+        '${json['firstName'] ?? ''} ${json['lastName'] ?? ''}'.trim();
+
     return DoctorProfileModel(
-      doctorId: json['doctorId']?.toString(),
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      specialization: json['specialization'],
-      bio: json['bio'],
-      profileImage: json['profileImage'],
+      doctorId: (json['doctorId'] ?? json['id'])?.toString(),
+      fullName: name.isEmpty ? null : name,
+      email: json['email']?.toString(),
+      phone: json['phone']?.toString(),
+      specialization: json['specialization']?.toString(),
+      bio: json['bio']?.toString(),
+      profileImage: json['pictureUrl']?.toString() ??
+          json['profileImage']?.toString(),
       rating: (json['rating'] as num?)?.toDouble(),
-      yearsOfExperience: json['yearsOfExperience'],
-      licenseNumber: json['licenseNumber'],
-      qualifications: List<String>.from(json['qualifications'] ?? []),
+      yearsOfExperience:
+          ((json['yearsOfExperience']) as num?)?.toInt(),
+      licenseNumber: json['licenseNumber']?.toString(),
+      qualifications: (json['qualifications'] as List?)
+              ?.map((q) =>
+                  (q['degree'] ?? q['title'] ?? q.toString()).toString())
+              .toList() ??
+          [],
     );
   }
 
   Map<String, dynamic> toJson() => {
     'doctorId': doctorId,
-    'name': name,
+    'fullName': fullName,
     'email': email,
     'phone': phone,
     'specialization': specialization,

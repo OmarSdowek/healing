@@ -6,6 +6,7 @@ import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/utils/vaidation.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import '../../../../../core/di/injection_container.dart';
 import '../../../../../core/network/api_service.dart';
@@ -46,217 +47,210 @@ class _PatientSignInState extends State<PatientSignIn> {
       child: BlocListener<PatientAuthCubit, PatientAuthState>(
         listener: (context, state) {
           if (state is PatientLoginSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Login Successfully"),
-                backgroundColor: Colors.green,
-              ),
-            );
+            AppSnackBar.showSuccess(context, 'Welcome back! Login successful.');
             Navigator.pushReplacementNamed(context, Routes.patientHome);
           } else if (state is PatientAuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            AppSnackBar.showError(context, state.message);
           }
         },
         child: Scaffold(
         body: SafeArea(
-          child: Column(
-            children: [
-              const CustomHeader(title: null),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const CustomHeader(title: null),
 
-              /// 🔹 Logo + Healing
-              const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    AssetsManger.logo,
-                    height: 50,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Healing",
-                    style: AppTextStyles.headline1.copyWith(
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ],
-              ),
-
-              context.verticalSpace(20),
-
-              /// 🔹 Title + Subtitle
-              Text(
-                "Login",
-                style: AppTextStyles.semiBold24dark.copyWith(
-                  color: AppColors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              context.verticalSpace(10),
-              Text(
-                "Enter your information to log in to your account",
-                style: AppTextStyles.reg20black,
-                textAlign: TextAlign.center,
-              ),
-
-              context.verticalSpace(20),
-
-              /// 🔹 Input Fields
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// 🔹 Name Label
-                    Text(
-                      "Name",
-                      style: AppTextStyles.semiBold16Black.copyWith(
-                        color: AppColors.black,
-                      ),
-                    ),
-                    context.verticalSpace(8),
-
-                    CustomTextFormField(
-                      hintText: "Enter your name",
-                      controller: nameController,
-                      validator: (name) => AppValidators.emailValidator(name),
-                    ),
-
-                    context.verticalSpace(20),
-
-                    /// 🔹 Password Label
-                    Text(
-                      "Password",
-                      style: AppTextStyles.semiBold16Black.copyWith(
-                        color: AppColors.black,
-                      ),
-                    ),
-                    context.verticalSpace(8),
-
-                    CustomTextFormField(
-                      hintText: "Enter your password",
-                      controller: passwordController,
-                      isPassword: true,
-                      validator: (pass) => AppValidators.passwordValidator(pass),
-                    ),
-                  ],
-                ),
-              ),
-
-              /// 🔹 Forget Password
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, Routes.forgotPassword);
-                    },
-                    child: Text(
-                      "Forget Password?",
-                      style: AppTextStyles.semiBold16Black.copyWith(
-                        color: AppColors.primaryDark,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              /// 🔹 Login Button
-              ///
-              BlocBuilder<PatientAuthCubit, PatientAuthState>(
-                builder: (context, state) {
-                  if (state is PatientAuthLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: CustomButton(
-                      text: "Login",
-                      backgroundColor: AppColors.primary,
-                      onPressed: () {
-                        context.read<PatientAuthCubit>().login(
-                              request: LoginRequestModel(
-                                email: nameController.text,
-                                password: passwordController.text,
-                              ),
-                            );
-                      },
-                    ),
-                  );
-                },
-              ),
-
-
-              const SizedBox(height: 20),
-
-              /// 🔹 Social Login Buttons
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    CustomButton(
-                      text: "Log in with Google",
-                      backgroundColor: Colors.white,
-                      textColor: AppColors.primary,
-                      outlined: false,
-                      onPressed: () {
-                      },
-                      icon: Image.asset(AssetsManger.googleLogo),
-
-                    ),
-                    const SizedBox(height: 12),
-                    CustomButton(
-                      text: "Log in with Facebook",
-                      backgroundColor: Colors.white,
-                      textColor: AppColors.primary,
-                      outlined: false,
-                      onPressed: () {
-                        // Facebook Login
-                      },
-                      icon: Image.asset(AssetsManger.facebookLogo),
-                    ),
-                  ],
-                ),
-              ),
-
-              const Spacer(),
-
-              /// 🔹 Sign up link
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Row(
+                /// 🔹 Logo + Healing
+                const SizedBox(height: 40),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Didn't have any account? ",
-                      style: AppTextStyles.reg20black,
+                    SvgPicture.asset(
+                      AssetsManger.logo,
+                      height: 50,
+                      color: AppColors.primary,
                     ),
-                    GestureDetector(
+                    const SizedBox(width: 8),
+                    Text(
+                      "Healing",
+                      style: AppTextStyles.headline1.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+
+                context.verticalSpace(20),
+
+                /// 🔹 Title + Subtitle
+                Text(
+                  "Login",
+                  style: AppTextStyles.semiBold24dark.copyWith(
+                    color: AppColors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                context.verticalSpace(10),
+                Text(
+                  "Enter your information to log in to your account",
+                  style: AppTextStyles.reg20black,
+                  textAlign: TextAlign.center,
+                ),
+
+                context.verticalSpace(20),
+
+                /// 🔹 Input Fields
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// 🔹 Name Label
+                      Text(
+                        "Name",
+                        style: AppTextStyles.semiBold16Black.copyWith(
+                          color: AppColors.black,
+                        ),
+                      ),
+                      context.verticalSpace(8),
+
+                      CustomTextFormField(
+                        hintText: "Enter your name",
+                        controller: nameController,
+                        validator: (name) => AppValidators.emailValidator(name),
+                      ),
+
+                      context.verticalSpace(20),
+
+                      /// 🔹 Password Label
+                      Text(
+                        "Password",
+                        style: AppTextStyles.semiBold16Black.copyWith(
+                          color: AppColors.black,
+                        ),
+                      ),
+                      context.verticalSpace(8),
+
+                      CustomTextFormField(
+                        hintText: "Enter your password",
+                        controller: passwordController,
+                        isPassword: true,
+                        validator: (pass) => AppValidators.passwordValidator(pass),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// 🔹 Forget Password
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, Routes.patientRegister);
+                        Navigator.pushNamed(context, Routes.forgotPassword);
                       },
                       child: Text(
-                        "Sign up",
+                        "Forget Password?",
                         style: AppTextStyles.semiBold16Black.copyWith(
-                          color: AppColors.primary,
-                          fontSize: context.sp(20),
+                          color: AppColors.primaryDark,
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+
+                /// 🔹 Login Button
+                ///
+                BlocBuilder<PatientAuthCubit, PatientAuthState>(
+                  builder: (context, state) {
+                    if (state is PatientAuthLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: CustomButton(
+                        text: "Login",
+                        backgroundColor: AppColors.primary,
+                        onPressed: () {
+                          context.read<PatientAuthCubit>().login(
+                                request: LoginRequestModel(
+                                  email: nameController.text,
+                                  password: passwordController.text,
+                                ),
+                              );
+                        },
+                      ),
+                    );
+                  },
+                ),
+
+
+                const SizedBox(height: 20),
+
+                /// 🔹 Social Login Buttons
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      CustomButton(
+                        text: "Log in with Google",
+                        backgroundColor: Colors.white,
+                        textColor: AppColors.primary,
+                        outlined: false,
+                        onPressed: () {
+                        },
+                        icon: Image.asset(AssetsManger.googleLogo),
+
+                      ),
+                      const SizedBox(height: 12),
+                      CustomButton(
+                        text: "Log in with Facebook",
+                        backgroundColor: Colors.white,
+                        textColor: AppColors.primary,
+                        outlined: false,
+                        onPressed: () {
+                          // Facebook Login
+                        },
+                        icon: Image.asset(AssetsManger.facebookLogo),
+                      ),
+                    ],
+                  ),
+                ),
+
+                 context.verticalSpace(38),
+
+
+                /// 🔹 Sign up link
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Didn't have any account? ",
+                        style: AppTextStyles.reg20black,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.patientRegister);
+                        },
+                        child: Text(
+                          "Sign up",
+                          style: AppTextStyles.semiBold16Black.copyWith(
+                            color: AppColors.primary,
+                            fontSize: context.sp(20),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

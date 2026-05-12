@@ -5,6 +5,7 @@ import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/di/injection_container.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_header.dart';
 import '../../../auth/presentatiion/manger/patient_auth_cubit.dart';
 import '../../../home/presentation/widgets/appointment_card.dart';
@@ -94,23 +95,32 @@ class MyAppointment extends StatelessWidget {
                               if (state is AppointmentLoaded) {
                                 final allAppointments = state.appointments;
 
+                                // Upcoming: nearest date first
                                 final upcoming = allAppointments
                                     .where((apt) =>
                                         apt.status == 'Scheduled' ||
                                         apt.status == 'Confirmed' ||
                                         apt.status == 'Pending')
-                                    .toList();
+                                    .toList()
+                                  ..sort((a, b) => _parseDate(a)
+                                      .compareTo(_parseDate(b)));
 
+                                // Completed: most recent first
                                 final completed = allAppointments
                                     .where(
                                         (apt) => apt.status == 'Completed')
-                                    .toList();
+                                    .toList()
+                                  ..sort((a, b) => _parseDate(b)
+                                      .compareTo(_parseDate(a)));
 
+                                // Cancelled: most recent first
                                 final canceled = allAppointments
                                     .where((apt) =>
                                         apt.status == 'Cancelled' ||
                                         apt.status == 'Canceled')
-                                    .toList();
+                                    .toList()
+                                  ..sort((a, b) => _parseDate(b)
+                                      .compareTo(_parseDate(a)));
 
                                 return Column(
                                   crossAxisAlignment:
@@ -131,8 +141,7 @@ class MyAppointment extends StatelessWidget {
                                         itemBuilder: (context, index) {
                                           final apt = upcoming[index];
                                           return AppointmentCard(
-                                            date:
-                                                "${apt.appointmentDate} – ${apt.startTime}",
+                                            date: _formatDate(apt.appointmentDate, apt.startTime),
                                             doctorName: apt.doctorName,
                                             speciality:
                                                 apt.doctorSpecialization,
@@ -173,8 +182,7 @@ class MyAppointment extends StatelessWidget {
                                         itemBuilder: (context, index) {
                                           final apt = completed[index];
                                           return AppointmentCard(
-                                            date:
-                                                "${apt.appointmentDate} – ${apt.startTime}",
+                                            date: _formatDate(apt.appointmentDate, apt.startTime),
                                             doctorName: apt.doctorName,
                                             speciality:
                                                 apt.doctorSpecialization,
@@ -203,8 +211,7 @@ class MyAppointment extends StatelessWidget {
                                         itemBuilder: (context, index) {
                                           final apt = canceled[index];
                                           return AppointmentCard(
-                                            date:
-                                                "${apt.appointmentDate} – ${apt.startTime}",
+                                            date: _formatDate(apt.appointmentDate, apt.startTime),
                                             doctorName: apt.doctorName,
                                             speciality:
                                                 apt.doctorSpecialization,
@@ -263,6 +270,35 @@ class MyAppointment extends StatelessWidget {
     );
   }
 
+  /// Format date for display: "Mon, Jun 10 · 09:00 AM"
+  String _formatDate(String? date, String? time) {
+    try {
+      final dt = DateTime.parse('${date ?? '2000-01-01'}T${time ?? '00:00:00'}');
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      int hour = dt.hour;
+      final min = dt.minute.toString().padLeft(2, '0');
+      final period = hour >= 12 ? 'PM' : 'AM';
+      if (hour > 12) hour -= 12;
+      if (hour == 0) hour = 12;
+      return '${days[dt.weekday - 1]}, ${months[dt.month - 1]} ${dt.day} · $hour:$min $period';
+    } catch (_) {
+      return '${date ?? '--'} · ${time ?? '--'}';
+    }
+  }
+
+  DateTime _parseDate(dynamic apt) {
+    try {
+      return DateTime.parse(
+          '${apt.appointmentDate ?? '2000-01-01'}T${apt.startTime ?? '00:00:00'}');
+    } catch (_) {
+      return DateTime(2000);
+    }
+  }
+
   void _showCancelDialog(BuildContext context, int appointmentId) {
     showDialog(
       context: context,
@@ -281,12 +317,7 @@ class MyAppointment extends StatelessWidget {
               context
                   .read<AppointmentCubit>()
                   .cancelAppointment(appointmentId, "Patient cancelled");
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Appointment cancelled successfully"),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              AppSnackBar.showSuccess(context, 'Appointment cancelled successfully.');
             },
             child: const Text("Yes, Cancel"),
           ),

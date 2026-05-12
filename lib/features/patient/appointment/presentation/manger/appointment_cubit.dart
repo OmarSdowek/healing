@@ -32,8 +32,10 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       },
       (appointments) {
         print("✅ AppointmentCubit: Got ${appointments.length} appointments");
-        _allAppointments = appointments;
-        if (!isClosed) emit(AppointmentLoaded(appointments));
+        // Sort: upcoming first (ascending by date), past last (descending)
+        final sorted = _sortAppointments(appointments);
+        _allAppointments = sorted;
+        if (!isClosed) emit(AppointmentLoaded(sorted));
       },
     );
   }
@@ -69,6 +71,43 @@ class AppointmentCubit extends Cubit<AppointmentState> {
         emit(AppointmentLoaded(_allAppointments));
       },
     );
+  }
+
+  /// Sort appointments:
+  /// - Upcoming (Scheduled/Confirmed/Pending): ascending by date (nearest first)
+  /// - Completed: descending by date (most recent first)
+  /// - Cancelled: descending by date (most recent first)
+  List<AppointmentEntity> _sortAppointments(
+      List<AppointmentEntity> appointments) {
+    final upcoming = appointments
+        .where((a) =>
+            a.status == 'Scheduled' ||
+            a.status == 'Confirmed' ||
+            a.status == 'Pending')
+        .toList()
+      ..sort((a, b) => _parseDate(a).compareTo(_parseDate(b)));
+
+    final completed = appointments
+        .where((a) => a.status == 'Completed')
+        .toList()
+      ..sort((a, b) => _parseDate(b).compareTo(_parseDate(a)));
+
+    final cancelled = appointments
+        .where((a) => a.status == 'Cancelled' || a.status == 'Canceled')
+        .toList()
+      ..sort((a, b) => _parseDate(b).compareTo(_parseDate(a)));
+
+    return [...upcoming, ...completed, ...cancelled];
+  }
+
+  DateTime _parseDate(AppointmentEntity apt) {
+    try {
+      final dateStr =
+          '${apt.appointmentDate ?? '2000-01-01'}T${apt.startTime ?? '00:00:00'}';
+      return DateTime.parse(dateStr);
+    } catch (_) {
+      return DateTime(2000);
+    }
   }
 
   /// Creates a copy of AppointmentEntity with updated status

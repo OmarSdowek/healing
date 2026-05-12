@@ -21,8 +21,14 @@ class ProfileHeader extends StatelessWidget {
             radius: 25,
           ),
           const SizedBox(width: 12),
-          Text("👋 Hi $name", style: AppTextStyles.reg20black),
-          const Spacer(),
+          Expanded(
+            child: Text(
+              "👋 Hi $name",
+              style: AppTextStyles.semiBold16Black,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.favorite_border),
             onPressed: () {

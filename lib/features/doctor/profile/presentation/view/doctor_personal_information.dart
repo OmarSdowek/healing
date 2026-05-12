@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import 'package:healing/features/doctor/profile/domain/entities/doctor_profile_entity.dart';
 import 'package:healing/features/doctor/profile/presentation/cubit/doctor_profile_cubit.dart';
@@ -52,7 +53,7 @@ class _DoctorPersonalInformationState extends State<DoctorPersonalInformation> {
   }
 
   void _loadProfileData(DoctorProfileEntity profile) {
-    nameController.text = profile.name ?? '';
+    nameController.text = profile.fullName ?? '';
     emailController.text = profile.email ?? '';
     phoneController.text = profile.phone ?? '';
     specializationController.text = profile.specialization ?? '';
@@ -63,7 +64,7 @@ class _DoctorPersonalInformationState extends State<DoctorPersonalInformation> {
 
   void _saveProfile(BuildContext context) {
     final updatedProfile = DoctorProfileEntity(
-      name: nameController.text,
+      fullName: nameController.text,
       email: emailController.text,
       phone: phoneController.text,
       specialization: specializationController.text,
@@ -88,20 +89,10 @@ class _DoctorPersonalInformationState extends State<DoctorPersonalInformation> {
           if (state is DoctorProfileLoaded) {
             _loadProfileData(state.profile);
           } else if (state is DoctorProfileUpdateSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Profile updated successfully'),
-                backgroundColor: Colors.green,
-              ),
-            );
+            AppSnackBar.showSuccess(context, 'Profile updated successfully.');
             Navigator.pop(context);
           } else if (state is DoctorProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            AppSnackBar.showError(context, state.message);
           }
         },
         child: Scaffold(

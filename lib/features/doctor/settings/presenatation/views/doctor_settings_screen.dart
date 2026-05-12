@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/network/token_storage.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../patient/profile/presentation/widgets/log_out_dailog.dart';
@@ -34,24 +35,13 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
           Routes.doctorLogin,
           (route) => false,
         );
-
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Account deleted successfully"),
-            backgroundColor: Colors.green,
-          ),
-        );
+        AppSnackBar.showSuccess(context, 'Account deleted successfully.');
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isDeleting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Failed to delete account. Please try again."),
-            backgroundColor: Colors.red,
-          ),
-        );
+        AppSnackBar.showError(context,
+            'Failed to delete account. Please try again.');
       }
     }
   }

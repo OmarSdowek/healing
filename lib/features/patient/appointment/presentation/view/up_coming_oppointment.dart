@@ -4,6 +4,7 @@ import 'package:healing/core/helper/extentions/media_query.dart';
 import '../../../../../core/constant/assets_manger.dart';
 import '../../../../../core/di/injection_container.dart';
 import '../../../../../core/widgets/custom_header.dart';
+import '../../../../../core/widgets/app_snack_bar.dart';
 import '../../../auth/presentatiion/manger/patient_auth_cubit.dart';
 import '../../../home/presentation/widgets/appointment_card.dart';
 import '../manger/appointment_cubit.dart';
@@ -48,7 +49,7 @@ class UpComingOppointment extends StatelessWidget {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(5),
             child: Column(
               children: [
                 const CustomHeader(title: "Upcoming Appointments"),
@@ -115,8 +116,9 @@ class UpComingOppointment extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final appointment = state.appointments[index];
                             return AppointmentCard(
-                              date:
-                                  "${appointment.appointmentDate} – ${appointment.startTime}",
+                              date: _formatDate(
+                                  appointment.appointmentDate,
+                                  appointment.startTime),
                               doctorName: appointment.doctorName,
                               speciality: appointment.doctorSpecialization,
                               image: AssetsManger.doctor2Image,
@@ -124,12 +126,7 @@ class UpComingOppointment extends StatelessWidget {
                                 _showCancelDialog(context, appointment.id);
                               },
                               onReschedule: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        "Reschedule feature coming soon!"),
-                                  ),
-                                );
+                                AppSnackBar.showInfo(context, 'Reschedule feature coming soon.');
                               },
                               status: _mapStatus(appointment.status),
                             );
@@ -165,6 +162,27 @@ class UpComingOppointment extends StatelessWidget {
     }
   }
 
+  /// Format: "Mon, Jun 10 · 09:00 AM"
+  String _formatDate(String? date, String? time) {
+    try {
+      final dt =
+          DateTime.parse('${date ?? '2000-01-01'}T${time ?? '00:00:00'}');
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      int hour = dt.hour;
+      final min = dt.minute.toString().padLeft(2, '0');
+      final period = hour >= 12 ? 'PM' : 'AM';
+      if (hour > 12) hour -= 12;
+      if (hour == 0) hour = 12;
+      return '${days[dt.weekday - 1]}, ${months[dt.month - 1]} ${dt.day} · $hour:$min $period';
+    } catch (_) {
+      return '${date ?? '--'} · ${time ?? '--'}';
+    }
+  }
+
   void _showCancelDialog(BuildContext context, int appointmentId) {
     showDialog(
       context: context,
@@ -183,12 +201,7 @@ class UpComingOppointment extends StatelessWidget {
               context
                   .read<AppointmentCubit>()
                   .cancelAppointment(appointmentId, "Patient cancelled");
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Appointment cancelled successfully"),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              AppSnackBar.showSuccess(context, 'Appointment cancelled successfully.');
             },
             child: const Text("Yes, Cancel"),
           ),

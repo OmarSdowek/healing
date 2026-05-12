@@ -8,6 +8,9 @@ import '../../features/doctor/auth/presentatiion/views/doctor_reset_password.dar
 import '../../features/doctor/auth/presentatiion/views/doctor_sign_in.dart';
 import '../../features/doctor/auth/presentatiion/views/doctor_sign_up_screen.dart';
 import '../../features/doctor/auth/presentatiion/views/doctor_verify_password.dart';
+import '../../features/doctor/medical_record/presentation/view/patient_details_screen.dart';
+import '../../features/doctor/medical_record/presentation/view/create_medical_record_screen.dart';
+import '../../features/doctor/medical_record/presentation/view/add_vitals_screen.dart';
 import '../../features/doctor/profile/presentation/view/doctor_mange_password_screen.dart';
 import '../../features/doctor/profile/presentation/view/doctor_personal_information.dart';
 import '../../features/doctor/profile/presentation/view/doctor_profile_screen.dart';
@@ -34,6 +37,8 @@ import '../../features/patient/doctors/presentation/view/favourite_doctor.dart';
 import '../../features/patient/home/layout_screen.dart';
 import '../../features/patient/home/domin/entity/doctor_entity.dart';
 import '../../features/doctor/appointments/presentation/view/today_appointments_screen.dart';
+import '../../features/doctor/appointments/presentation/view/upcoming_appointments_screen.dart';
+import '../../features/doctor/lab_order/presentation/view/lab_order_screen.dart';
 import '../../features/doctor/home/doctor_layout_screen.dart';
 import '../../features/doctor/notifications/presentation/view/doctor_notifications_screen.dart';
 import '../../features/doctor/prescription/presentation/view/add_prescription_screen.dart';
@@ -147,21 +152,48 @@ class AppRouter {
           builder: (_) => const TodayAppointmentsScreen(),
         );
 
+      case Routes.upcomingAppointments:
+        return MaterialPageRoute(
+          builder: (_) => const UpcomingAppointmentsScreen(),
+        );
+
+      case Routes.labOrder:
+        return MaterialPageRoute(
+          builder: (_) => const LabOrderScreen(),
+        );
+
       case Routes.doctorSchedule:
         return MaterialPageRoute(builder: (_) => const DoctorScheduleScreen());
 
       case Routes.addPrescription:
-        final args = settings.arguments as Map<String, dynamic>;
+        final prescArgs =
+            settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => AddPrescriptionScreen(
-            patientName: args['patientName'] as String,
-            patientAge: args['patientAge'] as int,
-            patientMrn: args['patientMrn'] as String,
-            patientBloodType: args['patientBloodType'] as String,
-            patientWeight: args['patientWeight'] as String,
-            patientImage: args['patientImage'] as String,
+          builder: (_) => AddPrescriptionScreen(initialArgs: prescArgs),
+        );
+
+      case Routes.patientDetails:
+        final pdArgs = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => PatientDetailsScreen(
+            patientId: pdArgs['patientId'] as int,
+            appointmentId: pdArgs['appointmentId'] as int,
+            patientName: pdArgs['patientName'] as String? ?? 'Patient',
           ),
         );
+
+      case Routes.createMedicalRecord:
+        final cmrArgs = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => CreateMedicalRecordScreen(
+            patientId: cmrArgs['patientId'] as int,
+            appointmentId: cmrArgs['appointmentId'] as int,
+            patientName: cmrArgs['patientName'] as String? ?? 'Patient',
+            doctorId: cmrArgs['doctorId'] as int? ?? 0,
+          ),
+        );
+      case Routes.addVitals:
+        return MaterialPageRoute(builder: (_) => const AddVitalsScreen());
       case Routes.search:
         return MaterialPageRoute(builder: (_) => SearchScreen());
       case Routes.specialties:

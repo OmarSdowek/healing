@@ -1,6 +1,6 @@
 class DoctorProfileEntity {
   final String? doctorId;
-  final String? name;
+  final String? fullName;
   final String? email;
   final String? phone;
   final String? specialization;
@@ -13,7 +13,7 @@ class DoctorProfileEntity {
 
   DoctorProfileEntity({
     this.doctorId,
-    this.name,
+    this.fullName,
     this.email,
     this.phone,
     this.specialization,

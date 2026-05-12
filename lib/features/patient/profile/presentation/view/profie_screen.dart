@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/route/routes.dart';
@@ -32,10 +32,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               context.verticalSpace(20),
 
-              /// Profile Picture
+              /// Profile Picture — shows default since /api/Auth/me doesn't return pictureUrl
               CircleAvatar(
                 radius: context.r(80),
-                backgroundImage: AssetImage(AssetsManger.person),
+                backgroundColor: AppColors.primary.withOpacity(0.1),
+                child: Icon(
+                  Icons.person,
+                  size: context.r(70),
+                  color: AppColors.primary,
+                ),
               ),
               context.verticalSpace(12),
 
@@ -142,15 +147,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               (route) => false,
                             );
                           } else if (state is PatientAuthError) {
-                            // Close dialog
                             Navigator.pop(dialogContext);
-                            // Show error
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(state.message),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
+                            AppSnackBar.showError(context, state.message);
                           }
                         },
                         builder: (context, state) {

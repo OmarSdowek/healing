@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/route/routes.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/assets_manger.dart';
@@ -115,9 +116,7 @@ class _DoctorSetNewPasswordState extends State<DoctorSetNewPassword> {
                   backgroundColor: AppColors.primary,
                   onPressed: () {
                     if (newPasswordController.text != confirmPasswordController.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Passwords do not match"),backgroundColor: Colors.red,),
-                      );
+                      AppSnackBar.showWarning(context, 'Passwords do not match. Please try again.');
                       return;
                     }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/route/routes.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import '../../../../../core/constant/app_colors.dart';
@@ -131,42 +132,32 @@ class _PatientSetNewPasswordState extends State<PatientSetNewPassword> {
                   }
 
                   if (state is PatientAuthError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    AppSnackBar.showError(context, state.message);
                   }
                 },
-
                 builder: (context, state) {
                   if (state is PatientAuthLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: CustomButton(
-                      text:  "Reset Password",
+                      text: "Reset Password",
                       backgroundColor: AppColors.primary,
-                      onPressed:() {
+                      onPressed: () {
                         final newPassword = newPasswordController.text;
                         final confirmPassword = confirmPasswordController.text;
 
                         if (newPassword.isEmpty || confirmPassword.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Enter all fields")),
-                          );
+                          AppSnackBar.showWarning(
+                              context, 'Please fill in all fields.');
                           return;
                         }
 
-
                         context.read<PatientAuthCubit>().resetPassword(
-                          token: confirmPassword,
-                          newPassword: newPassword,
-                        );
+                              token: confirmPassword,
+                              newPassword: newPassword,
+                            );
                       },
                     ),
                   );

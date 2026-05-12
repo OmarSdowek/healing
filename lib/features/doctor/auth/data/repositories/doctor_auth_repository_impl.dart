@@ -26,7 +26,10 @@ class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
 
       final auth = DoctorAuthResponse.fromJson(response.data);
 
-      // Save tokens and doctor ID
+      // Clear old tokens first to avoid stale doctor_id
+      await TokenStorage.clearTokens();
+
+      // Save new tokens and doctor ID from JWT
       await TokenStorage.saveTokens(
         accessToken: auth.accessToken,
         refreshToken: auth.refreshToken,
@@ -69,6 +72,25 @@ class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
       await _api.post(
         ApiEndpoints.resetPassword,
         data: {"token": token, "newPassword": newPassword},
+      );
+      return const Right(unit);
+    } on DioException catch (e) {
+      return Left(Failure(ErrorHandler.handle(e).message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      await _api.post(
+        ApiEndpoints.changePassword,
+        data: {
+          "currentPassword": currentPassword,
+          "newPassword": newPassword,
+        },
       );
       return const Right(unit);
     } on DioException catch (e) {

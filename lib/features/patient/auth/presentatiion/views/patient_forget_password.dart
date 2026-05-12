@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/helper/extentions/context_extensions.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/assets_manger.dart';
@@ -100,51 +101,28 @@ class _PatientForgotPasswordState extends State<PatientForgotPassword> {
               BlocConsumer<PatientAuthCubit, PatientAuthState>(
                 listener: (context, state) {
                   if (state is PatientForgotPasswordSent) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Check your email"),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-
-                    Navigator.pushNamed(
-                      context,
-                      Routes.setNewPassword,
-
-                    );
+                    context.showSuccess('Reset link sent! Please check your email.');
+                    Navigator.pushNamed(context, Routes.setNewPassword);
                   }
-
                   if (state is PatientAuthError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    context.showError(state.message);
                   }
                 },
-
                 builder: (context, state) {
                   if (state is PatientAuthLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: CustomButton(
-                      text:  "Next",
+                      text: "Next",
                       backgroundColor: AppColors.primary,
-                      onPressed:  () {
+                      onPressed: () {
                         final email = emailController.text.trim();
-
                         if (email.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Enter your email")),
-                          );
+                          context.showWarning('Please enter your email address.');
                           return;
                         }
-
                         context.read<PatientAuthCubit>().forgotPassword(email);
                       },
                     ),

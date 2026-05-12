@@ -5,8 +5,10 @@ import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/di/injection_container.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/helper/image_helper.dart';
 import 'package:healing/core/route/routes.dart';
 import 'package:healing/core/services/local_notification_service.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_header.dart';
 import '../../../home/domin/entity/doctor_entity.dart';
 import '../manger/booking_cubit.dart';
@@ -51,11 +53,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
     }
   }
 
-  String get _imageUrl {
-    final url = widget.doctor.pictureUrl;
-    if (url.isEmpty) return '';
-    return url.replaceFirst('localhost', '10.0.2.2');
-  }
+  String get _imageUrl => resolveImageUrl(widget.doctor.pictureUrl) ?? '';
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +89,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
               },
             );
           } else if (state is BookingError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            AppSnackBar.showError(context, state.message);
           }
         },
         builder: (context, state) {

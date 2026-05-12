@@ -35,7 +35,14 @@ class Routes {
   static const String addPrescription = "/add_prescription";
   static const String doctorNotifications = "/doctor_notifications";
   static const String todayAppointments = "/today_appointments";
+  static const String upcomingAppointments = "/upcoming_appointments";
   static const String doctorSchedule = "/doctor_schedule";
+  static const String patientDetails = "/patient_details";
+  static const String createMedicalRecord = "/create_medical_record";
+  static const String addVitals = "/add_vitals";
+  static const String labOrder = "/lab_order";
+  static const String doctorMedicalRecords = "/doctor_medical_records";
+  static const String doctorLabOrders = "/doctor_lab_orders";
 
   // pateint profile
 

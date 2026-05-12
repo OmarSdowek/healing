@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
-
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../auth/presentatiion/manger/patient_auth_cubit.dart';
@@ -68,24 +68,14 @@ class SettingsScreen extends StatelessWidget {
                               Routes.patientLogin,
                               (route) => false,
                             );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Account deleted successfully"),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
+                            AppSnackBar.showSuccess(
+                                context, 'Account deleted successfully.');
                           } else if (state is PatientAuthError) {
                             Navigator.pop(dialogContext);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(state.message),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
+                            AppSnackBar.showError(context, state.message);
                           }
                         },
                         builder: (context, state) {
-                          // Get user ID from current state
                           String? userId;
                           if (state is PatientDataSuccess) {
                             userId = state.meData.id;
@@ -95,20 +85,20 @@ class SettingsScreen extends StatelessWidget {
                             onCancel: () => Navigator.pop(dialogContext),
                             onConfirm: () {
                               if (userId != null) {
-                                print("🔥 Delete account button pressed for user: $userId");
-                                context.read<PatientAuthCubit>().deleteAccount(userId);
+                                context
+                                    .read<PatientAuthCubit>()
+                                    .deleteAccount(userId);
                               } else {
                                 Navigator.pop(dialogContext);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Unable to get user ID"),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
+                                AppSnackBar.showError(context,
+                                    'Unable to identify your account. Please try again.');
                               }
                             },
-                            btnText: state is PatientAuthLoading ? "Deleting..." : "Delete",
-                            subtitle: 'Are you sure you want to delete your account?',
+                            btnText: state is PatientAuthLoading
+                                ? "Deleting..."
+                                : "Delete",
+                            subtitle:
+                                'Are you sure you want to delete your account?',
                           );
                         },
                       ),

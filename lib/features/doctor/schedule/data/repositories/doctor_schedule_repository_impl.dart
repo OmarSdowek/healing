@@ -16,31 +16,26 @@ class DoctorScheduleRepositoryImpl implements DoctorScheduleRepository {
   DoctorScheduleRepositoryImpl(this._api);
 
   Future<String?> _getDoctorId() async {
-    var doctorId = await TokenStorage.getDoctorId();
-
-    if (doctorId == null) {
-      try {
-        final token = await TokenStorage.getAccessToken();
-        if (token != null && token.isNotEmpty) {
-          final parts = token.split('.');
-          if (parts.length == 3) {
-            final decoded = utf8.decode(
-              base64Url.decode(base64Url.normalize(parts[1])),
-            );
-            final payload = jsonDecode(decoded);
-            doctorId = payload['doctor_id']?.toString();
-
-            if (doctorId != null) {
-              await TokenStorage.saveDoctorId(doctorId);
-            }
+    // Always read from JWT directly to avoid stale storage values
+    try {
+      final token = await TokenStorage.getAccessToken();
+      if (token != null && token.isNotEmpty) {
+        final parts = token.split('.');
+        if (parts.length == 3) {
+          final decoded = utf8.decode(
+            base64Url.decode(base64Url.normalize(parts[1])),
+          );
+          final payload = jsonDecode(decoded);
+          final doctorId = payload['doctor_id']?.toString();
+          if (doctorId != null && doctorId.isNotEmpty) {
+            return doctorId;
           }
         }
-      } catch (e) {
-        // If JWT parsing fails, continue
       }
-    }
+    } catch (_) {}
 
-    return doctorId;
+    // Fallback to storage
+    return await TokenStorage.getDoctorId();
   }
 
   @override

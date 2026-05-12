@@ -307,9 +307,6 @@ class _SelectedDoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl =
-        doctor.pictureUrl.replaceFirst('localhost', '10.0.2.2');
-
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -319,7 +316,6 @@ class _SelectedDoctorCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Avatar — uses DoctorAvatar with resolveImageUrl
           DoctorAvatar(pictureUrl: doctor.pictureUrl, radius: 28),
           const SizedBox(width: 12),
 

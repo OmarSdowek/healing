@@ -74,8 +74,8 @@ class _DoctorResetPasswordState extends State<DoctorResetPassword> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: MaterialPinField(
                   length: 6,
-                  onCompleted: (pin) => print('PIN: $pin'),
-                  onChanged: (value) => print('Changed: $value'),
+                  onCompleted: (pin) {},
+                  onChanged: (value) {},
                   theme: MaterialPinTheme(
                     shape: MaterialPinShape.outlined,
                     cellSize: Size(56, 64),

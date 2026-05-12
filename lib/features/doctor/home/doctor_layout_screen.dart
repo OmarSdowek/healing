@@ -4,7 +4,6 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/features/doctor/home/presentation/manger/layout_cubit/doctor_layout_cubit.dart';
 import 'package:healing/features/doctor/home/presentation/view/doctor_home_screen.dart';
 import 'package:healing/features/doctor/profile/presentation/view/doctor_profile_screen.dart';
-import 'package:healing/features/doctor/schedule/presentation/cubit/doctor_schedule_cubit_factory.dart';
 import 'package:healing/features/doctor/schedule/presentation/view/doctor_schedule_screen.dart';
 
 class DoctorMainScreen extends StatelessWidget {
@@ -73,14 +72,7 @@ class DoctorMainScreen extends StatelessWidget {
       case 0:
         return const DoctorHomeScreen();
       case 1:
-        return BlocProvider(
-          create: (_) {
-            final cubit = DoctorScheduleCubitFactory.create();
-            cubit.loadSchedules();
-            return cubit;
-          },
-          child: const DoctorScheduleScreen(),
-        );
+        return const DoctorScheduleScreen();
       case 2:
         return const DoctorProfileScreen();
       default:

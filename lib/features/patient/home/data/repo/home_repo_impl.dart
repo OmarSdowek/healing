@@ -22,7 +22,7 @@ class HomeRepoImpl implements HomeRepo {
         ApiEndpoints.getDoctors,
         queryParameters: {
           'pageIndex': 1,
-          'pageSize': 50, // get all doctors
+          'pageSize': 100, // get all doctors
         },
       );
 

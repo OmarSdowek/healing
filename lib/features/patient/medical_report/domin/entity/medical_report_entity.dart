@@ -1,9 +1,10 @@
 class MedicalReportEntity {
   final String id;
-  final String type;
-  final String title;
-  final String date;
-  final String status;
+  final String type;       // chiefComplaint
+  final String title;      // diagnosis
+  final String date;       // visitDate
+  final String status;     // doctorName
+  final String? doctorName;
   final String? thumbnailUrl;
 
   MedicalReportEntity({
@@ -12,6 +13,7 @@ class MedicalReportEntity {
     required this.title,
     required this.date,
     required this.status,
+    this.doctorName,
     this.thumbnailUrl,
   });
 }

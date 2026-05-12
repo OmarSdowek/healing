@@ -19,14 +19,18 @@ class MedicalReportCubit extends Cubit<MedicalReportState> {
   ) : super(MedicalReportInitial());
 
   Future<void> loadReports(int patientId) async {
+    if (isClosed) return;
     emit(MedicalReportLoading());
     final result = await getReportsUseCase(patientId);
+    if (isClosed) return;
     result.fold(
       (f) {
         print("⚠️ Medical reports API unavailable: ${f.massage}");
-        emit(MedicalReportsLoaded([])); // empty — no mock data
+        if (!isClosed) emit(MedicalReportsLoaded([]));
       },
-      (reports) => emit(MedicalReportsLoaded(reports)),
+      (reports) {
+        if (!isClosed) emit(MedicalReportsLoaded(reports));
+      },
     );
   }
 
@@ -43,22 +47,28 @@ class MedicalReportCubit extends Cubit<MedicalReportState> {
   }
 
   Future<void> loadPrescriptions(int patientId) async {
+    if (isClosed) return;
     emit(MedicalReportLoading());
-    // Try active prescriptions first
     final activeResult = await getActivePrescriptionsUseCase(patientId);
+    if (isClosed) return;
     activeResult.fold(
       (f) async {
         print("⚠️ Active prescriptions failed: ${f.massage} — trying all");
         final allResult = await getPrescriptionsUseCase(patientId);
+        if (isClosed) return;
         allResult.fold(
           (f2) {
             print("⚠️ All prescriptions failed — showing empty state");
-            emit(PrescriptionsLoaded([])); // empty — no mock data
+            if (!isClosed) emit(PrescriptionsLoaded([]));
           },
-          (list) => emit(PrescriptionsLoaded(list)),
+          (list) {
+            if (!isClosed) emit(PrescriptionsLoaded(list));
+          },
         );
       },
-      (list) => emit(PrescriptionsLoaded(list)),
+      (list) {
+        if (!isClosed) emit(PrescriptionsLoaded(list));
+      },
     );
   }
 

@@ -8,23 +8,17 @@ class DoctorDashboardModel extends DoctorDashboardEntity {
     int? pendingAppointments,
     int? totalPatients,
     List<DoctorAppointmentModel>? todayAppointments,
+    List<DoctorAppointmentModel>? allAppointments,
+    String? doctorName,
+    String? doctorId,
   }) : super(
-         totalAppointmentsToday: totalAppointmentsToday,
-         confirmedAppointments: confirmedAppointments,
-         pendingAppointments: pendingAppointments,
-         totalPatients: totalPatients,
-         todayAppointments: todayAppointments,
-       );
-
-  factory DoctorDashboardModel.fromJson(Map<String, dynamic> json) {
-    return DoctorDashboardModel(
-      totalAppointmentsToday: json['totalAppointmentsToday'],
-      confirmedAppointments: json['confirmedAppointments'],
-      pendingAppointments: json['pendingAppointments'],
-      totalPatients: json['totalPatients'],
-      todayAppointments: (json['todayAppointments'] as List?)
-          ?.map((e) => DoctorAppointmentModel.fromJson(e))
-          .toList(),
-    );
-  }
+          totalAppointmentsToday: totalAppointmentsToday,
+          confirmedAppointments: confirmedAppointments,
+          pendingAppointments: pendingAppointments,
+          totalPatients: totalPatients,
+          todayAppointments: todayAppointments,
+          allAppointments: allAppointments,
+          doctorName: doctorName,
+          doctorId: doctorId,
+        );
 }

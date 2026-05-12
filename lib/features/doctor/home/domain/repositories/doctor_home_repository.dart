@@ -9,4 +9,5 @@ abstract class DoctorHomeRepository {
   Future<Either<Failure, List<DoctorAppointmentEntity>>> getAppointmentsByDate(
     String date,
   );
+  Future<Either<Failure, List<DoctorAppointmentEntity>>> getAllAppointments();
 }

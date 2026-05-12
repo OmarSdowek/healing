@@ -8,23 +8,33 @@ class MedicalReportModel extends MedicalReportEntity {
     required super.title,
     required super.date,
     required super.status,
+    super.doctorName,
     super.thumbnailUrl,
   });
 
   factory MedicalReportModel.fromJson(Map<String, dynamic> json) {
-    // Resolve thumbnail URL — show default if localhost
     final rawThumb = json['thumbnailUrl']?.toString() ??
-        json['imageUrl']?.toString() ??
-        json['reportImageUrl']?.toString();
+        json['imageUrl']?.toString();
+
+    // Real API format: { id, chiefComplaint, diagnosis, visitDate, doctorName, ... }
+    final rawDate = json['visitDate']?.toString() ??
+        json['date']?.toString() ?? '';
+    final date = rawDate.length >= 10 ? rawDate.substring(0, 10) : rawDate;
+
+    final diagnosis = json['diagnosis']?.toString() ??
+        json['title']?.toString() ?? 'Medical Record';
+    final chiefComplaint = json['chiefComplaint']?.toString() ??
+        json['type']?.toString() ?? '';
+    final rawDoctorName = json['doctorName']?.toString() ?? '';
 
     return MedicalReportModel(
-      id: json['id']?.toString() ?? '',
-      type: json['type']?.toString() ?? '',
-      title: json['title']?.toString() ?? '',
-      date: json['date']?.toString() ??
-          json['dateOfDiagnosis']?.toString() ?? '',
-      status: json['status']?.toString() ?? '',
-      thumbnailUrl: resolveImageUrl(rawThumb), // null if localhost
+      id: (json['id'] ?? json['Id'])?.toString() ?? '',
+      type: chiefComplaint,
+      title: diagnosis,
+      date: date,
+      status: 'Completed',
+      doctorName: rawDoctorName.isNotEmpty ? rawDoctorName : null,
+      thumbnailUrl: resolveImageUrl(rawThumb),
     );
   }
 }

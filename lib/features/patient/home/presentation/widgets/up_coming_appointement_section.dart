@@ -7,6 +7,7 @@ import '../../../../../core/constant/app_text_style.dart';
 import '../../../../../core/di/injection_container.dart';
 import '../../../appointment/presentation/manger/appointment_cubit.dart';
 import '../../../auth/presentatiion/manger/patient_auth_cubit.dart';
+import '../../../../../core/widgets/app_snack_bar.dart';
 import 'appointment_card.dart';
 
 class UpcomingAppointmentSection extends StatelessWidget {
@@ -17,14 +18,19 @@ class UpcomingAppointmentSection extends StatelessWidget {
     // Listen to auth state changes and rebuild appointment section accordingly
     return BlocBuilder<PatientAuthCubit, PatientAuthState>(
       builder: (context, authState) {
-        int patientId = 1;
-        if (authState is PatientDataSuccess) {
-          patientId = int.tryParse(authState.meData.patientId ?? '1') ?? 1;
-          print("✅ UpcomingAppointmentSection: Patient ID = $patientId");
+        // Wait for real patientId — don't use default 1
+        if (authState is! PatientDataSuccess) {
+          return const SizedBox(); // silent wait
         }
 
+        final patientId =
+            int.tryParse(authState.meData.patientId ?? '0') ?? 0;
+        if (patientId == 0) return const SizedBox();
+
+        print("✅ UpcomingAppointmentSection: Patient ID = $patientId");
+
         return BlocProvider(
-          key: ValueKey(patientId), // Recreate when patientId changes
+          key: ValueKey(patientId),
           create: (_) {
             print("🔥 UpcomingAppointmentSection: Creating AppointmentCubit with patientId=$patientId");
             return sl<AppointmentCubit>()..loadAppointments(patientId);
@@ -80,8 +86,9 @@ class UpcomingAppointmentSection extends StatelessWidget {
                       ],
                     ),
                     AppointmentCard(
-                      date:
-                          "${appointment.appointmentDate} – ${appointment.startTime}",
+                      date: _formatDate(
+                          appointment.appointmentDate,
+                          appointment.startTime),
                       doctorName: appointment.doctorName,
                       speciality: appointment.doctorSpecialization,
                       image: AssetsManger.doctor2Image,
@@ -89,11 +96,7 @@ class UpcomingAppointmentSection extends StatelessWidget {
                         _showCancelDialog(context, appointment.id);
                       },
                       onReschedule: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Reschedule feature coming soon!"),
-                          ),
-                        );
+                        AppSnackBar.showInfo(context, 'Reschedule feature coming soon.');
                       },
                       status: AppointmentStatus.upcoming,
                     ),
@@ -107,6 +110,27 @@ class UpcomingAppointmentSection extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// Format: "Mon, Jun 10 · 09:00 AM"
+  String _formatDate(String? date, String? time) {
+    try {
+      final dt =
+          DateTime.parse('${date ?? '2000-01-01'}T${time ?? '00:00:00'}');
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      int hour = dt.hour;
+      final min = dt.minute.toString().padLeft(2, '0');
+      final period = hour >= 12 ? 'PM' : 'AM';
+      if (hour > 12) hour -= 12;
+      if (hour == 0) hour = 12;
+      return '${days[dt.weekday - 1]}, ${months[dt.month - 1]} ${dt.day} · $hour:$min $period';
+    } catch (_) {
+      return '${date ?? '--'} · ${time ?? '--'}';
+    }
   }
 
   void _showCancelDialog(BuildContext context, int appointmentId) {
@@ -127,12 +151,7 @@ class UpcomingAppointmentSection extends StatelessWidget {
               context
                   .read<AppointmentCubit>()
                   .cancelAppointment(appointmentId, "Patient cancelled");
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Appointment cancelled successfully"),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              AppSnackBar.showSuccess(context, 'Appointment cancelled successfully.');
             },
             child: const Text("Yes, Cancel"),
           ),

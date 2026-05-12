@@ -5,6 +5,8 @@ class DoctorScheduleEntity {
   final String? startTime;
   final String? endTime;
   final bool? isActive;
+  final int? slotDurationMinutes;
+  final int? maxAppointmentsPerSlot;
 
   DoctorScheduleEntity({
     this.id,
@@ -13,5 +15,7 @@ class DoctorScheduleEntity {
     this.startTime,
     this.endTime,
     this.isActive,
+    this.slotDurationMinutes,
+    this.maxAppointmentsPerSlot,
   });
 }

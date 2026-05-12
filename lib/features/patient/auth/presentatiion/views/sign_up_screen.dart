@@ -5,6 +5,7 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/helper/extentions/context_extensions.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import 'package:healing/core/widgets/custom_header.dart';
 import '../../../../../core/di/injection_container.dart';
@@ -44,12 +45,7 @@ class _PatientSignUpScreenState extends State<PatientSignUpScreen> {
       child: BlocListener<PatientAuthCubit, PatientAuthState>(
         listener: (context, state) {
           if (state is PatientRegisterSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Registration successful! Please verify your email.'),
-                backgroundColor: Colors.green,
-              ),
-            );
+            context.showSuccess('Registration successful! Please verify your email.');
             Navigator.pushNamed(
               context,
               Routes.verifyEmail,
@@ -59,12 +55,7 @@ class _PatientSignUpScreenState extends State<PatientSignUpScreen> {
               },
             );
           } else if (state is PatientAuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            context.showError(state.message);
           }
         },
         child: Scaffold(

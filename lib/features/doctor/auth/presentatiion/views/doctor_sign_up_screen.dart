@@ -4,6 +4,7 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import 'package:healing/core/widgets/custom_header.dart';
 import '../../../../../core/route/routes.dart';
@@ -171,14 +172,21 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                 text: "Sign up",
                 backgroundColor: AppColors.primary,
                 onPressed: () {
-                  print("Name: ${nameController.text}");
-                  print("Email: ${emailController.text}");
-                  print("Birthday: $selectedBirthday");
-                  print("Gender: $selectedGender");
-                  print("ID: ${idController.text}");
-                  print("Phone: ${phoneController.text}");
-                  print("Blood: ${bloodController.text}");
-                  print("Password: ${passwordController.text}");
+                  // Validate required fields
+                  if (nameController.text.trim().isEmpty ||
+                      emailController.text.trim().isEmpty ||
+                      idController.text.trim().isEmpty ||
+                      passwordController.text.isEmpty) {
+                    AppSnackBar.showWarning(context,
+                        'Please fill in all required fields.');
+                    return;
+                  }
+                  if (passwordController.text !=
+                      confirmPasswordController.text) {
+                    AppSnackBar.showWarning(
+                        context, 'Passwords do not match.');
+                    return;
+                  }
                   Navigator.pushNamed(context, Routes.doctorVerifyEmail);
                 },
               ),

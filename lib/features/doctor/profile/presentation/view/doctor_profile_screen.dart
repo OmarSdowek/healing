@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
-import 'package:healing/features/doctor/auth/presentation/cubit/doctor_auth_cubit.dart';
-import 'package:healing/features/doctor/auth/presentation/cubit/doctor_auth_cubit_factory.dart';
+import 'package:healing/core/helper/image_helper.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
+import 'package:healing/core/widgets/doctor_avatar.dart';
 import 'package:healing/features/doctor/profile/presentation/cubit/doctor_profile_cubit.dart';
 import 'package:healing/features/doctor/profile/presentation/cubit/doctor_profile_cubit_factory.dart';
 import '../../../../../core/constant/app_colors.dart';
 import '../../../../../core/constant/app_text_style.dart';
-import '../../../../../core/constant/assets_manger.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../patient/profile/presentation/widgets/log_out_dailog.dart';
 import '../../../../patient/profile/presentation/widgets/profile_option_item.dart';
+import '../../../auth/presentatiion/cubit/doctor_auth_cubit.dart';
+import '../../../auth/presentatiion/cubit/doctor_auth_cubit_factory.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
   const DoctorProfileScreen({super.key});
@@ -62,13 +64,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
               (route) => false,
             );
           } else if (state is DoctorAuthError) {
-            Navigator.pop(context); // Close dialog
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            Navigator.pop(context);
+            AppSnackBar.showError(context, state.message);
           }
         },
         child: Scaffold(
@@ -110,16 +107,15 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
                         context.verticalSpace(20),
 
-                        CircleAvatar(
+                        DoctorAvatar(
+                          pictureUrl: profile.profileImage,
                           radius: context.r(80),
-                          backgroundImage: profile.profileImage != null
-                              ? NetworkImage(profile.profileImage!)
-                              : AssetImage(AssetsManger.doctor2Image)
-                                    as ImageProvider,
+                          backgroundColor: AppColors.primary.withOpacity(0.1),
+                          iconColor: AppColors.primary,
                         ),
                         context.verticalSpace(12),
                         Text(
-                          profile.name ?? "Doctor",
+                          profile.fullName ?? "Doctor",
                           style: AppTextStyles.reg20black,
                         ),
                         if (profile.specialization != null)

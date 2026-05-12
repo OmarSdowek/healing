@@ -17,7 +17,7 @@ class CustomHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: context.w(16),
+        horizontal: context.w(14),
         vertical: context.h(12),
       ),
       child: Row(
@@ -26,11 +26,11 @@ class CustomHeader extends StatelessWidget {
             icon: Icon(Icons.arrow_back_ios, color: AppColors.black,size: context.sp(30),),
             onPressed: onBack ?? () => Navigator.pop(context),
           ),
-          context.horizontalSpace(30),
+          context.horizontalSpace(20),
           if (title != null)
             Text(
               title!,
-              style: AppTextStyles.semiBold24dark.copyWith(color: AppColors.black),
+              style: AppTextStyles.reg20black.copyWith(color: AppColors.black),
             ),
         ],
       ),

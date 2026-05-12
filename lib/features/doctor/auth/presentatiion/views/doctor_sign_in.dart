@@ -6,12 +6,13 @@ import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/utils/vaidation.dart';
+import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_button.dart';
-import 'package:healing/features/doctor/auth/presentation/cubit/doctor_auth_cubit.dart';
-import 'package:healing/features/doctor/auth/presentation/cubit/doctor_auth_cubit_factory.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
+import '../cubit/doctor_auth_cubit.dart';
+import '../cubit/doctor_auth_cubit_factory.dart';
 
 class DoctorSignIn extends StatefulWidget {
   const DoctorSignIn({super.key});
@@ -50,12 +51,7 @@ class _DoctorSignInState extends State<DoctorSignIn> {
               if (state is DoctorAuthSuccess) {
                 Navigator.pushReplacementNamed(context, Routes.doctorHome);
               } else if (state is DoctorAuthError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: Colors.red,
-                  ),
-                );
+                AppSnackBar.showError(context, state.message);
               }
             },
             builder: (context, state) {
