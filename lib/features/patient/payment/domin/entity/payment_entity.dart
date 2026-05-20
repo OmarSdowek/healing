@@ -1,6 +1,6 @@
-/// Invoice created before payment
+/// Invoice created before payment — id is UUID string from API
 class InvoiceEntity {
-  final int id;
+  final String id;
   final int appointmentId;
   final double amount;
   final String currency;
@@ -15,15 +15,15 @@ class InvoiceEntity {
   });
 }
 
-/// Payment intent created from invoice
+/// Payment intent returned by POST /api/payments/intent/{invoiceId}
 class PaymentIntentEntity {
   final String paymentId;
-  final int invoiceId;
+  final String invoiceId;
   final double amount;
   final String currency;
   final String status;
   final String? clientSecret;
-  final String? gatewayPaymentIntentId;
+  final String? stripePaymentIntentId;
 
   PaymentIntentEntity({
     required this.paymentId,
@@ -32,15 +32,15 @@ class PaymentIntentEntity {
     required this.currency,
     required this.status,
     this.clientSecret,
-    this.gatewayPaymentIntentId,
+    this.stripePaymentIntentId,
   });
 }
 
 /// Payment confirmation result
 class PaymentConfirmEntity {
   final String paymentId;
-  final int invoiceId;
-  final String status; // Paid
+  final String invoiceId;
+  final String status;
   final double amount;
   final String currency;
   final String? paidAt;

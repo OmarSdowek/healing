@@ -48,7 +48,6 @@ class ApiService {
     return await _dio.put(path, data: data, queryParameters: queryParameters);
   }
 
-  // merged version (حل الكونفليكت)
   Future<Response> delete(
       String path, {
         dynamic data,
@@ -59,5 +58,14 @@ class ApiService {
       data: data,
       queryParameters: queryParameters,
     );
+  }
+
+  /// Downloads a binary file (e.g. PDF) and returns raw bytes.
+  Future<List<int>> downloadBytes(String path) async {
+    final response = await _dio.get<List<int>>(
+      path,
+      options: Options(responseType: ResponseType.bytes),
+    );
+    return response.data ?? [];
   }
 }

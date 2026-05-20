@@ -21,6 +21,10 @@ import '../../features/patient/booking/domin/repo/booking_repo.dart';
 import '../../features/patient/medical_report/data/repo/medical_report_repo_impl.dart';
 import '../../features/patient/medical_report/domin/repo/medical_report_repo.dart';
 
+// Prescription Repo
+import '../../features/patient/prescription/data/repo/prescription_repo_impl.dart';
+import '../../features/patient/prescription/domin/repo/prescription_repo_interface.dart';
+
 // Payment Repo
 import '../../features/patient/payment/data/repo/payment_repo_impl.dart';
 import '../../features/patient/payment/domin/repo/payment_repo.dart';
@@ -56,6 +60,11 @@ import '../../features/patient/booking/domin/use_cases/book_appointment_use_case
 // Medical Report UseCases
 import '../../features/patient/medical_report/domin/use_cases/get_reports_use_case.dart';
 
+// Prescription UseCases
+import '../../features/patient/prescription/domin/use_cases/get_prescriptions_use_case.dart'
+    as prescription_uc;
+import '../../features/patient/prescription/domin/use_cases/download_prescription_pdf_use_case.dart';
+
 // Payment UseCases
 import '../../features/patient/payment/domin/use_cases/payment_use_cases.dart';
 // Notification UseCases
@@ -69,6 +78,7 @@ import '../../features/patient/booking/presentation/manger/booking_cubit.dart';
 import '../../features/patient/medical_report/presentation/manger/medical_report_cubit.dart';
 import '../../features/patient/payment/presenatation/manger/payment_cubit.dart';
 import '../../features/patient/notifications/presentation/manger/notification_cubit.dart';
+import '../../features/patient/prescription/presentation/manger/prescription_cubit/prescription_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -96,6 +106,10 @@ Future<void> init() async {
 
   sl.registerLazySingleton<MedicalReportRepo>(
     () => MedicalReportRepoImpl(sl<ApiService>()),
+  );
+
+  sl.registerLazySingleton<PrescriptionRepository>(
+    () => PrescriptionRepositoryImpl(sl<ApiService>()),
   );
 
   sl.registerLazySingleton<PaymentRepo>(
@@ -181,6 +195,16 @@ Future<void> init() async {
     () => GetActivePrescriptionsUseCase(sl<MedicalReportRepo>()),
   );
 
+  // ================= USE CASES - PRESCRIPTION =================
+
+  sl.registerLazySingleton<prescription_uc.GetPrescriptionsUseCase>(
+    () => prescription_uc.GetPrescriptionsUseCase(sl<PrescriptionRepository>()),
+  );
+
+  sl.registerLazySingleton<DownloadPrescriptionPdfUseCase>(
+    () => DownloadPrescriptionPdfUseCase(sl<PrescriptionRepository>()),
+  );
+
   // ================= USE CASES - PAYMENT =================
 
   sl.registerLazySingleton<CreateInvoiceUseCase>(
@@ -251,10 +275,7 @@ Future<void> init() async {
 
   sl.registerFactory<PaymentCubit>(
     () => PaymentCubit(
-      createInvoiceUseCase: sl<CreateInvoiceUseCase>(),
-      issueInvoiceUseCase: sl<IssueInvoiceUseCase>(),
       createPaymentIntentUseCase: sl<CreatePaymentIntentUseCase>(),
-      confirmCashPaymentUseCase: sl<ConfirmCashPaymentUseCase>(),
     ),
   );
 
@@ -263,6 +284,13 @@ Future<void> init() async {
       getNotificationsUseCase: sl<GetNotificationsUseCase>(),
       getAppointmentsUseCase: sl<GetPatientAppointmentsUseCase>(),
       notificationRepo: sl<NotificationRepo>(),
+    ),
+  );
+
+  sl.registerFactory<PrescriptionCubit>(
+    () => PrescriptionCubit(
+      sl<prescription_uc.GetPrescriptionsUseCase>(),
+      sl<DownloadPrescriptionPdfUseCase>(),
     ),
   );
 }

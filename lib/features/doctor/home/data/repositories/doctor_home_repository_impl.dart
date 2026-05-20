@@ -69,7 +69,22 @@ class DoctorHomeRepositoryImpl implements DoctorHomeRepository {
       final doctorName = await JwtHelper.getFullName();
       final today = AppointmentDateHelper.formatDate(DateTime.now());
 
-      final todayApts = await _fetchForDate(doctorId, today);
+      // Use grouped endpoint — includes patientName reliably
+      List<DoctorAppointmentModel> allApts = [];
+      try {
+        allApts = await _fetchAllAppointments(doctorId);
+      } catch (_) {
+        // fallback to flat endpoint
+        allApts = await _fetchForDate(doctorId, today);
+      }
+
+      // Filter today's appointments
+      final todayApts = allApts
+          .where((a) =>
+              a.appointmentDate != null &&
+              a.appointmentDate!.startsWith(today))
+          .toList();
+
       todayApts.sort(
           (a, b) => (a.startTime ?? '').compareTo(b.startTime ?? ''));
 
@@ -81,7 +96,7 @@ class DoctorHomeRepositoryImpl implements DoctorHomeRepository {
         pendingAppointments: counts['pending']!,
         totalPatients: todayApts.length,
         todayAppointments: todayApts,
-        allAppointments: todayApts,
+        allAppointments: allApts,
         doctorName: doctorName,
         doctorId: doctorId,
       ));

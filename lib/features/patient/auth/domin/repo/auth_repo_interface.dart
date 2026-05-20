@@ -33,4 +33,8 @@ abstract class AuthRepoInterface {
 
   Future<Either<Failure, MeDataModel>> meData();
 
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 }

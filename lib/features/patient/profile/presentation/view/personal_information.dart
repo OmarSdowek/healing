@@ -49,9 +49,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     nameController.text = user.fullName;
     emailController.text = user.email;
     
-    phoneController.text = "01298653589";
+    phoneController.text = "01285974635";
     bloodController.text = "A+";
     addressController.text = "Egypt";
+    idController.text = "30415128965893";
     
     _isDataInitialized = true;
     print("✅ Form data initialized successfully");

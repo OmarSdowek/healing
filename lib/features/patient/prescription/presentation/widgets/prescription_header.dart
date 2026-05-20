@@ -71,7 +71,7 @@ class PrescriptionHeader extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(context.r(8)),
                   ),
                   child: Text(
@@ -85,7 +85,7 @@ class PrescriptionHeader extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(context.r(8)),
                   ),
                   child: Text(

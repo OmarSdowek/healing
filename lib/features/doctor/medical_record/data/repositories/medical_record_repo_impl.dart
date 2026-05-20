@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../../core/constant/api_endpoint.dart';
 import '../../../../../core/error/failure.dart';
 import '../../../../../core/network/api_service.dart';
@@ -68,8 +69,14 @@ class DoctorMedicalRecordRepoImpl implements DoctorMedicalRecordRepo {
     try {
       final response =
           await api.get(ApiEndpoints.getPatientDetails(patientId));
+
+      debugPrint('🔎 getPatientDetails[$patientId] url: ${ApiEndpoints.getPatientDetails(patientId)}');
+      debugPrint('🔎 getPatientDetails[$patientId] type: ${response.data.runtimeType}');
+      debugPrint('🔎 getPatientDetails[$patientId] data: ${response.data}');
+
       return Right(MedicalRecordMapper.toPatientDetails(response.data));
     } on DioException catch (e) {
+      debugPrint('❌ getPatientDetails[$patientId] error: ${e.response?.statusCode} ${e.message}');
       return Left(Failure(ErrorHandler.handle(e).message));
     }
   }

@@ -13,27 +13,28 @@ class PrescriptionModel extends PrescriptionEntity {
   });
 
   factory PrescriptionModel.fromJson(Map<String, dynamic> json) {
-    // ── New flat API format ────────────────────────────────────────────────
+    // ── Flat API format ────────────────────────────────────────────────────
     // { id, medicationName, dosage, frequency, durationDays, instructions,
-    //   status, prescribedAt, expiresAt, doctorId, doctorName, ... }
-    final isFlatFormat = json.containsKey('medicationName') ||
-        json.containsKey('prescribedAt');
+    //   status, prescribedAt, expiresAt, doctorId, ... }
+    final isFlatFormat =
+        json.containsKey('medicationName') || json.containsKey('prescribedAt');
 
     if (isFlatFormat) {
-      // doctorName may be null in API — use doctorId as fallback display
       final rawDoctorName = json['doctorName']?.toString();
       final doctorId = (json['doctorId'] as num?)?.toInt() ?? 0;
+      // doctorName is null in the API response — repo will enrich it later
       final doctorName = (rawDoctorName != null && rawDoctorName.isNotEmpty)
           ? rawDoctorName
           : 'Doctor #$doctorId';
+
       final medicationName = json['medicationName']?.toString() ?? '';
       final dosage = json['dosage']?.toString() ?? '';
       final frequency = json['frequency']?.toString() ?? '';
       final durationDays = (json['durationDays'] as num?)?.toInt() ?? 0;
       final instructions = json['instructions']?.toString() ?? '';
       final prescribedAt = json['prescribedAt']?.toString() ??
-          json['createdAt']?.toString() ?? '';
-      final expiresAt = json['expiresAt']?.toString() ?? '';
+          json['createdAt']?.toString() ??
+          '';
 
       return PrescriptionModel(
         id: json['id']?.toString() ?? '',
@@ -53,7 +54,9 @@ class PrescriptionModel extends PrescriptionEntity {
             dosage: dosage,
             form: frequency,
             durationDays: durationDays,
-            instructions: instructions.isNotEmpty ? instructions : 'No special instructions',
+            instructions: instructions.isNotEmpty
+                ? instructions
+                : 'No special instructions',
           ),
         ],
         doctorNotes: instructions,

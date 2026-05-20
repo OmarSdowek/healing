@@ -33,11 +33,26 @@ class DoctorAppointmentModel extends DoctorAppointmentEntity {
 
   /// Parse a single flat appointment object (old format or new flat format)
   factory DoctorAppointmentModel.fromJson(Map<String, dynamic> json) {
+    // patientName — try every possible key the API might return
+    final patientName = (json['patientName'] ??
+            json['PatientName'] ??
+            json['patient_name'] ??
+            json['fullName'] ??
+            json['FullName'] ??
+            json['name'] ??
+            json['Name'] ??
+            // nested patient object
+            (json['patient'] as Map?)?['fullName'] ??
+            (json['patient'] as Map?)?['name'] ??
+            (json['Patient'] as Map?)?['fullName'] ??
+            (json['Patient'] as Map?)?['name'])
+        ?.toString();
+
     return DoctorAppointmentModel(
       id: ((json['id'] ?? json['Id'] ?? json['appointmentId'] ?? json['AppointmentId']) as num?)?.toInt(),
       confirmationNumber: (json['confirmationNumber'] ?? json['ConfirmationNumber'])?.toString(),
       patientId: ((json['patientId'] ?? json['PatientId']) as num?)?.toInt(),
-      patientName: (json['patientName'] ?? json['PatientName'])?.toString(),
+      patientName: patientName,
       patientImage: (json['patientImage'] ?? json['PatientImage'])?.toString(),
       patientAge: ((json['patientAge'] ?? json['PatientAge'] ?? json['age'] ?? json['Age']) as num?)?.toInt(),
       patientMrn: (json['patientMrn'] ?? json['PatientMrn'] ?? json['medicalRecordNumber'] ?? json['MedicalRecordNumber'])?.toString(),

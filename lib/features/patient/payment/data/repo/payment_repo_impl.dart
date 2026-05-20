@@ -12,6 +12,7 @@ class PaymentRepoImpl implements PaymentRepo {
   PaymentRepoImpl(this.api);
 
   // ─── POST /api/invoices ───────────────────────────────────────────────────
+  // Body per API guide: { patientId, appointmentId, lineItems: [...] }
   @override
   Future<Either<Failure, InvoiceEntity>> createInvoice({
     required int appointmentId,
@@ -19,18 +20,24 @@ class PaymentRepoImpl implements PaymentRepo {
     required double amount,
   }) async {
     try {
-      print("🔥 PaymentRepo: createInvoice(appointmentId=$appointmentId)");
+      print("🔥 PaymentRepo: createInvoice(appointmentId=$appointmentId, amount=$amount)");
       final response = await api.post(
         ApiEndpoints.createInvoice,
         data: {
-          'appointmentId': appointmentId,
           'patientId': patientId,
-          'amount': amount,
-          'currency': 'EGP',
+          'appointmentId': appointmentId,
+          'lineItems': [
+            {
+              'description': 'Consultation Fee',
+              'lineItemType': 'Consultation',
+              'quantity': 1,
+              'unitPrice': amount,
+            }
+          ],
         },
       );
       print("✅ Invoice created: ${response.data}");
-      return Right(_parseInvoice(response.data));
+      return Right(_parseInvoice(response.data, amount));
     } on DioException catch (e) {
       print("❌ createInvoice: ${e.response?.statusCode} - ${e.message}");
       return Left(Failure(ErrorHandler.handle(e).message));
@@ -38,14 +45,21 @@ class PaymentRepoImpl implements PaymentRepo {
   }
 
   // ─── PUT /api/invoices/{id}/issue ─────────────────────────────────────────
+  // Body per API guide: { discountAmount, discountPercent, taxPercent }
   @override
-  Future<Either<Failure, InvoiceEntity>> issueInvoice(int invoiceId) async {
+  Future<Either<Failure, InvoiceEntity>> issueInvoice(String invoiceId) async {
     try {
       print("🔥 PaymentRepo: issueInvoice($invoiceId)");
-      final response =
-          await api.put(ApiEndpoints.issueInvoice(invoiceId));
+      final response = await api.put(
+        ApiEndpoints.issueInvoice(invoiceId),
+        data: {
+          'discountAmount': 0,
+          'discountPercent': 0,
+          'taxPercent': 0,
+        },
+      );
       print("✅ Invoice issued: ${response.data}");
-      return Right(_parseInvoice(response.data));
+      return Right(_parseInvoice(response.data, 0));
     } on DioException catch (e) {
       print("❌ issueInvoice: ${e.response?.statusCode} - ${e.message}");
       return Left(Failure(ErrorHandler.handle(e).message));
@@ -53,24 +67,25 @@ class PaymentRepoImpl implements PaymentRepo {
   }
 
   // ─── POST /api/payments/intent/{invoiceId} ────────────────────────────────
+  // Response: { invoiceId, stripePaymentIntentId, clientSecret, amount }
   @override
   Future<Either<Failure, PaymentIntentEntity>> createPaymentIntent(
-      int invoiceId) async {
+      String invoiceId) async {
     try {
       print("🔥 PaymentRepo: createPaymentIntent(invoiceId=$invoiceId)");
-      final response = await api.post(
-          ApiEndpoints.createPaymentIntent(invoiceId));
+      final response =
+          await api.post(ApiEndpoints.createPaymentIntent(invoiceId));
       print("✅ Payment intent: ${response.data}");
       final data = response.data as Map<String, dynamic>;
       return Right(PaymentIntentEntity(
-        paymentId: data['paymentId']?.toString() ?? '',
-        invoiceId: (data['invoiceId'] as num?)?.toInt() ?? invoiceId,
+        paymentId: data['stripePaymentIntentId']?.toString() ?? '',
+        invoiceId: invoiceId,
         amount: (data['amount'] as num?)?.toDouble() ?? 0,
-        currency: data['currency']?.toString() ?? 'EGP',
-        status: data['status']?.toString() ?? 'Pending',
+        currency: 'EGP',
+        status: 'Pending',
         clientSecret: data['clientSecret']?.toString(),
-        gatewayPaymentIntentId:
-            data['gatewayPaymentIntentId']?.toString(),
+        stripePaymentIntentId:
+            data['stripePaymentIntentId']?.toString(),
       ));
     } on DioException catch (e) {
       print("❌ createPaymentIntent: ${e.response?.statusCode} - ${e.message}");
@@ -79,21 +94,24 @@ class PaymentRepoImpl implements PaymentRepo {
   }
 
   // ─── POST /api/payments/cash/{invoiceId} ──────────────────────────────────
+  // Body per API guide: { amount }
   @override
   Future<Either<Failure, PaymentConfirmEntity>> confirmCashPayment(
-      int invoiceId) async {
+      String invoiceId, double amount) async {
     try {
-      print("🔥 PaymentRepo: confirmCashPayment(invoiceId=$invoiceId)");
+      print("🔥 PaymentRepo: confirmCashPayment(invoiceId=$invoiceId, amount=$amount)");
       final response = await api.post(
-          ApiEndpoints.confirmCashPayment(invoiceId));
+        ApiEndpoints.confirmCashPayment(invoiceId),
+        data: {'amount': amount},
+      );
       print("✅ Payment confirmed: ${response.data}");
       final data = response.data as Map<String, dynamic>;
       return Right(PaymentConfirmEntity(
-        paymentId: data['paymentId']?.toString() ?? '',
-        invoiceId: (data['invoiceId'] as num?)?.toInt() ?? invoiceId,
-        status: data['status']?.toString() ?? 'Paid',
-        amount: (data['amount'] as num?)?.toDouble() ?? 0,
-        currency: data['currency']?.toString() ?? 'EGP',
+        paymentId: data['id']?.toString() ?? '',
+        invoiceId: invoiceId,
+        status: data['status']?.toString() ?? 'Succeeded',
+        amount: (data['amount'] as num?)?.toDouble() ?? amount,
+        currency: 'EGP',
         paidAt: data['paidAt']?.toString(),
         receiptUrl: data['receiptUrl']?.toString(),
       ));
@@ -103,18 +121,24 @@ class PaymentRepoImpl implements PaymentRepo {
     }
   }
 
-  InvoiceEntity _parseInvoice(dynamic data) {
+  InvoiceEntity _parseInvoice(dynamic data, double fallbackAmount) {
     if (data is Map<String, dynamic>) {
       return InvoiceEntity(
-        id: (data['id'] as num?)?.toInt() ?? 0,
+        id: data['id']?.toString() ?? '',
         appointmentId:
             (data['appointmentId'] as num?)?.toInt() ?? 0,
-        amount: (data['amount'] as num?)?.toDouble() ?? 0,
-        currency: data['currency']?.toString() ?? 'EGP',
+        amount: (data['totalAmount'] as num?)?.toDouble() ??
+            (data['subTotal'] as num?)?.toDouble() ??
+            fallbackAmount,
+        currency: 'EGP',
         status: data['status']?.toString() ?? 'Draft',
       );
     }
     return InvoiceEntity(
-        id: 0, appointmentId: 0, amount: 0, currency: 'EGP', status: 'Draft');
+        id: '',
+        appointmentId: 0,
+        amount: fallbackAmount,
+        currency: 'EGP',
+        status: 'Draft');
   }
 }

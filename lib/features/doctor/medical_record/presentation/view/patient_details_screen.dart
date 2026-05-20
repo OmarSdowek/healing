@@ -11,7 +11,7 @@ import 'package:healing/core/widgets/custom_header.dart';
 import '../../data/repositories/medical_record_repo_impl.dart';
 import '../cubit/medical_record_cubit.dart';
 
-class PatientDetailsScreen extends StatelessWidget {
+class PatientDetailsScreen extends StatefulWidget {
   final int patientId;
   final int appointmentId;
   final String patientName;
@@ -24,11 +24,76 @@ class PatientDetailsScreen extends StatelessWidget {
   });
 
   @override
+  State<PatientDetailsScreen> createState() => _PatientDetailsScreenState();
+}
+
+class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
+  bool _labOrderLoading = false;
+
+  /// جيب أحدث recordId للمريض ثم انتقل لـ lab order screen
+  Future<void> _navigateToLabOrder(
+    BuildContext context, {
+    required String patientName,
+    required String? patientMrn,
+    required String? bloodType,
+  }) async {
+    setState(() => _labOrderLoading = true);
+
+    // استخدم repo مباشرة بدون context
+    final repo = DoctorMedicalRecordRepoImpl(ApiService());
+    final result = await repo.getPatientRecords(widget.patientId);
+
+    if (!mounted) return;
+    setState(() => _labOrderLoading = false);
+
+    int recordId = 0;
+    result.fold(
+      (f) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load records: ${f.massage}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+      (list) {
+        if (list.isNotEmpty) {
+          // خد أحدث record (الأول في الـ list)
+          recordId = list.first.id;
+        }
+      },
+    );
+
+    if (recordId == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'No medical record found. Please create a medical record first.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    Navigator.pushNamed(
+      context,
+      Routes.labOrder,
+      arguments: {
+        'recordId': recordId,
+        'patientId': widget.patientId,
+        'patientName': patientName,
+        'patientMrn': patientMrn,
+        'patientBloodType': bloodType,
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => DoctorMedicalRecordCubit(
         DoctorMedicalRecordRepoImpl(ApiService()),
-      )..loadPatientDetails(patientId),
+      )..loadPatientDetails(widget.patientId),
       child: Scaffold(
         backgroundColor: const Color(0xFFF4F6FB),
         body: SafeArea(
@@ -56,7 +121,7 @@ class PatientDetailsScreen extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () => context
                                   .read<DoctorMedicalRecordCubit>()
-                                  .loadPatientDetails(patientId),
+                                  .loadPatientDetails(widget.patientId),
                               child: const Text('Retry'),
                             ),
                           ],
@@ -178,35 +243,43 @@ class PatientDetailsScreen extends StatelessWidget {
                               backgroundColor: AppColors.primary,
                               textColor: Colors.white,
                               onPressed: () async {
-                                final doctorId = await JwtHelper.getDoctorId();
+                                final doctorId =
+                                    await JwtHelper.getDoctorId();
                                 if (!context.mounted) return;
                                 Navigator.pushNamed(
                                   context,
                                   Routes.createMedicalRecord,
                                   arguments: {
-                                    'patientId': patientId,
-                                    'appointmentId': appointmentId,
+                                    'patientId': widget.patientId,
+                                    'appointmentId': widget.appointmentId,
                                     'patientName': p.fullName,
                                     'doctorId': doctorId,
                                   },
                                 );
                               },
                             ),
+
                             context.verticalSpace(12),
-                            CustomButton(
-                              text: "Order Lab Tests",
-                              outlined: true,
-                              textColor: AppColors.primary,
-                              onPressed: () => Navigator.pushNamed(
-                                context,
-                                Routes.labOrder,
-                                arguments: {
-                                  'recordId': 0,
-                                  'patientId': patientId,
-                                  'patientName': p.fullName,
-                                },
-                              ),
-                            ),
+
+                            // ── Order Lab Tests ───────────────────────────
+                            _labOrderLoading
+                                ? const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : CustomButton(
+                                    text: "Order Lab Tests",
+                                    outlined: true,
+                                    textColor: AppColors.primary,
+                                    onPressed: () => _navigateToLabOrder(
+                                      context,
+                                      patientName: p.fullName,
+                                      patientMrn: p.medicalRecordNumber,
+                                      bloodType: p.bloodType,
+                                    ),
+                                  ),
                           ],
                         ),
                       );
@@ -224,6 +297,8 @@ class PatientDetailsScreen extends StatelessWidget {
   }
 }
 
+// ─── Shared Widgets ───────────────────────────────────────────────────────────
+
 class _InfoCard extends StatelessWidget {
   final List<Widget> children;
   const _InfoCard({required this.children});
@@ -237,7 +312,7 @@ class _InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2))
         ],

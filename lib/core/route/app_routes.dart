@@ -159,6 +159,7 @@ class AppRouter {
 
       case Routes.labOrder:
         return MaterialPageRoute(
+          settings: settings,
           builder: (_) => const LabOrderScreen(),
         );
 
@@ -193,7 +194,10 @@ class AppRouter {
           ),
         );
       case Routes.addVitals:
-        return MaterialPageRoute(builder: (_) => const AddVitalsScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const AddVitalsScreen(),
+        );
       case Routes.search:
         return MaterialPageRoute(builder: (_) => SearchScreen());
       case Routes.specialties:
@@ -255,7 +259,10 @@ class AppRouter {
       // patient payment
 
       case Routes.addNewCard:
-        return MaterialPageRoute(builder: (_) => const AddNewCardScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const AddNewCardScreen(),
+        );
       case Routes.pay:
         return MaterialPageRoute(
           builder: (_) => PaymentScreen(

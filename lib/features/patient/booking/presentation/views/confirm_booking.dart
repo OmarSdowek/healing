@@ -57,7 +57,9 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
 
   @override
   Widget build(BuildContext context) {
-    final fee = widget.doctor.consultationFee.toStringAsFixed(2);
+    final fee = widget.doctor.consultationFee > 0
+        ? widget.doctor.consultationFee.toStringAsFixed(2)
+        : '—';
 
     return BlocProvider(
       create: (_) => sl<BookingCubit>(),
@@ -69,18 +71,19 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
               id: state.appointment.id,
               title: "Appointment Booked ✅",
               body:
-                  "Your appointment with Dr. ${state.appointment.doctorName} on ${state.appointment.appointmentDate} at ${state.appointment.startTime.substring(0, 5)} is confirmed.",
+                  "Your appointment with Dr. ${widget.doctor.fullName} on ${widget.date} at ${_fmt(widget.startTime)} is confirmed.",
             );
 
             Navigator.pushNamed(
               context,
               Routes.addNewCard,
               arguments: {
-                'doctorName': state.appointment.doctorName,
-                'speciality': state.appointment.doctorSpecialization,
+                // Use DoctorEntity directly — API response may have empty fields
+                'doctorName': widget.doctor.fullName,
+                'speciality': widget.doctor.specialization,
                 'doctorImage': _imageUrl,
-                'date': state.appointment.appointmentDate,
-                'startTime': state.appointment.startTime,
+                'date': widget.date,
+                'startTime': widget.startTime,
                 'fees': fee,
                 'paymentMethod': _paymentLabel(),
                 'confirmationNumber': state.appointment.confirmationNumber,

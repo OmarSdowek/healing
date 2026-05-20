@@ -109,6 +109,8 @@ class ApiEndpoints {
       "/api/patients/$patientId/prescriptions";
   static String getActivePrescriptions(int patientId) =>
       "/api/patients/$patientId/prescriptions/active";
+  static String downloadPrescriptionPdf(int patientId, String prescriptionId) =>
+      "/api/patients/$patientId/prescriptions/$prescriptionId/pdf";
 
   // ─── Notifications ─────────────────────────────────────────────────────────
   static const String getNotifications = "/api/notifications";
@@ -131,7 +133,7 @@ class ApiEndpoints {
   // ─── Payment ───────────────────────────────────────────────────────────────
   static const String createInvoice = "/api/invoices";
   static const String invoices = "/api/Invoices";
-  static String issueInvoice(int invoiceId) =>
+  static String issueInvoice(String invoiceId) =>
       "/api/invoices/$invoiceId/issue";
   static String invoiceById(String id) => "/api/Invoices/$id";
   static String invoiceLineItems(String invoiceId) =>
@@ -139,10 +141,10 @@ class ApiEndpoints {
   static String invoiceIssue(String invoiceId) =>
       "/api/Invoices/$invoiceId/issue";
   static String invoicePdf(String invoiceId) => "/api/Invoices/$invoiceId/pdf";
-  static String createPaymentIntent(int invoiceId) =>
+  static String createPaymentIntent(String invoiceId) =>
       "/api/payments/intent/$invoiceId";
   static const String paymentsIntent = "/api/Payments/intent";
-  static String confirmCashPayment(int invoiceId) =>
+  static String confirmCashPayment(String invoiceId) =>
       "/api/payments/cash/$invoiceId";
   static const String paymentsCash = "/api/Payments/cash";
   static const String paymentsWebhook = "/api/Payments/webhook";

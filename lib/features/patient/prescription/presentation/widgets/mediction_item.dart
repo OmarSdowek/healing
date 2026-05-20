@@ -24,7 +24,7 @@ class MedicationItem extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -48,7 +48,7 @@ class MedicationItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

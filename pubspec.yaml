@@ -46,6 +46,9 @@ dependencies:
   dotted_border: ^3.1.0
   get_it: ^9.2.1
   flutter_local_notifications: ^18.0.1
+  path_provider: ^2.1.5
+  open_file: ^3.5.11
+  flutter_stripe: ^9.6.0
 
 dev_dependencies:
   flutter_test:

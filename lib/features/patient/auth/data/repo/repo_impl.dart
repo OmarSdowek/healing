@@ -164,8 +164,7 @@ class RepoImpl implements AuthRepoInterface {
   }
 
   @override
-  Future<Either<Failure, MeDataModel>> meData() async {
-    try {
+  Future<Either<Failure, MeDataModel>> meData() async {    try {
       print("🔥 RepoImpl: meData() called");
       final response = await _api.get(ApiEndpoints.patientMe);
 
@@ -208,4 +207,22 @@ class RepoImpl implements AuthRepoInterface {
     }
   }
 
+  @override
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      await _api.post(
+        ApiEndpoints.changePassword,
+        data: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+        },
+      );
+      return const Right(unit);
+    } on DioException catch (e) {
+      return Left(Failure(ErrorHandler.handle(e).message));
+    }
+  }
 }

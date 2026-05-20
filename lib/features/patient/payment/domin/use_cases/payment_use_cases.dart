@@ -23,7 +23,7 @@ class IssueInvoiceUseCase {
   final PaymentRepo repo;
   IssueInvoiceUseCase(this.repo);
 
-  Future<Either<Failure, InvoiceEntity>> call(int invoiceId) =>
+  Future<Either<Failure, InvoiceEntity>> call(String invoiceId) =>
       repo.issueInvoice(invoiceId);
 }
 
@@ -31,7 +31,7 @@ class CreatePaymentIntentUseCase {
   final PaymentRepo repo;
   CreatePaymentIntentUseCase(this.repo);
 
-  Future<Either<Failure, PaymentIntentEntity>> call(int invoiceId) =>
+  Future<Either<Failure, PaymentIntentEntity>> call(String invoiceId) =>
       repo.createPaymentIntent(invoiceId);
 }
 
@@ -39,6 +39,7 @@ class ConfirmCashPaymentUseCase {
   final PaymentRepo repo;
   ConfirmCashPaymentUseCase(this.repo);
 
-  Future<Either<Failure, PaymentConfirmEntity>> call(int invoiceId) =>
-      repo.confirmCashPayment(invoiceId);
+  Future<Either<Failure, PaymentConfirmEntity>> call(
+          String invoiceId, double amount) =>
+      repo.confirmCashPayment(invoiceId, amount);
 }

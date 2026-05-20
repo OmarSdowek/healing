@@ -40,6 +40,11 @@ String? resolveImageUrl(String? url) {
   // Must be a valid http/https URL
   if (!resolved.startsWith('http')) return null;
 
+  // Reject obvious placeholder values from Swagger/API (e.g. "string", "url", "image")
+  final path = Uri.tryParse(resolved)?.path ?? '';
+  const placeholders = {'string', 'url', 'image', 'photo', 'picture', 'null', 'undefined'};
+  if (placeholders.contains(path.replaceAll('/', '').toLowerCase())) return null;
+
   return resolved;
 }
 

@@ -19,7 +19,7 @@ class DoctorNotesSection extends StatelessWidget {
       width: context.screenWidth,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.yellowAccent.withOpacity(0.35),
+        color: Colors.yellowAccent.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(context.r(12)),
         boxShadow: [
           BoxShadow(
