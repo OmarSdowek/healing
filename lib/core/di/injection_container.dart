@@ -1,6 +1,18 @@
 import 'package:get_it/get_it.dart';
 import 'package:healing/core/network/api_service.dart';
 
+// ── Doctor Auth ────────────────────────────────────────────────────────────────
+import '../../features/doctor/auth/data/repositories/doctor_auth_repository_impl.dart';
+import '../../features/doctor/auth/domain/repositories/doctor_auth_repository.dart';
+import '../../features/doctor/auth/domain/usecases/doctor_change_password_usecase.dart';
+import '../../features/doctor/auth/domain/usecases/doctor_forgot_password_usecase.dart';
+import '../../features/doctor/auth/domain/usecases/doctor_login_usecase.dart';
+import '../../features/doctor/auth/domain/usecases/doctor_logout_usecase.dart';
+import '../../features/doctor/auth/domain/usecases/doctor_register_usecase.dart';
+import '../../features/doctor/auth/domain/usecases/doctor_reset_password_usecase.dart';
+import '../../features/doctor/auth/domain/usecases/doctor_verify_email_usecase.dart';
+import '../../features/doctor/auth/presentatiion/cubit/doctor_auth_cubit.dart';
+
 // Auth Repo
 import 'package:healing/features/patient/auth/data/repo/repo_impl.dart';
 import '../../features/patient/auth/domin/repo/auth_repo_interface.dart';
@@ -85,6 +97,44 @@ final sl = GetIt.instance;
 Future<void> init() async {
   // ================= CORE =================
   sl.registerLazySingleton<ApiService>(() => ApiService());
+
+  // ================= DOCTOR AUTH =================
+
+  sl.registerLazySingleton<DoctorAuthRepository>(
+    () => DoctorAuthRepositoryImpl(sl<ApiService>()),
+  );
+  sl.registerLazySingleton<DoctorLoginUseCase>(
+    () => DoctorLoginUseCase(sl<DoctorAuthRepository>()),
+  );
+  sl.registerLazySingleton<DoctorRegisterUseCase>(
+    () => DoctorRegisterUseCase(sl<DoctorAuthRepository>()),
+  );
+  sl.registerLazySingleton<DoctorVerifyEmailUseCase>(
+    () => DoctorVerifyEmailUseCase(sl<DoctorAuthRepository>()),
+  );
+  sl.registerLazySingleton<DoctorForgotPasswordUseCase>(
+    () => DoctorForgotPasswordUseCase(sl<DoctorAuthRepository>()),
+  );
+  sl.registerLazySingleton<DoctorResetPasswordUseCase>(
+    () => DoctorResetPasswordUseCase(sl<DoctorAuthRepository>()),
+  );
+  sl.registerLazySingleton<DoctorLogoutUseCase>(
+    () => DoctorLogoutUseCase(sl<DoctorAuthRepository>()),
+  );
+  sl.registerLazySingleton<DoctorChangePasswordUseCase>(
+    () => DoctorChangePasswordUseCase(sl<DoctorAuthRepository>()),
+  );
+  sl.registerFactory<DoctorAuthCubit>(
+    () => DoctorAuthCubit(
+      sl<DoctorLoginUseCase>(),
+      sl<DoctorRegisterUseCase>(),
+      sl<DoctorVerifyEmailUseCase>(),
+      sl<DoctorForgotPasswordUseCase>(),
+      sl<DoctorResetPasswordUseCase>(),
+      sl<DoctorLogoutUseCase>(),
+      sl<DoctorChangePasswordUseCase>(),
+    ),
+  );
 
   // ================= REPOSITORIES =================
 

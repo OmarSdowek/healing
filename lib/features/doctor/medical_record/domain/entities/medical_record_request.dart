@@ -79,7 +79,7 @@ class AddVitalsRequest {
   final double? oxygenSaturation;
   final double? weight;
   final double? height;
-  final String? recordedBy;
+  final String recordedBy;
 
   AddVitalsRequest({
     this.temperature,
@@ -90,7 +90,7 @@ class AddVitalsRequest {
     this.oxygenSaturation,
     this.weight,
     this.height,
-    this.recordedBy,
+    required this.recordedBy,
   });
 
   Map<String, dynamic> toJson() => {
@@ -104,6 +104,6 @@ class AddVitalsRequest {
         if (oxygenSaturation != null) 'oxygenSaturation': oxygenSaturation,
         if (weight != null) 'weight': weight,
         if (height != null) 'height': height,
-        if (recordedBy != null) 'recordedBy': recordedBy,
+        'recordedBy': recordedBy,
       };
 }

@@ -8,11 +8,11 @@ import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/utils/vaidation.dart';
 import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_button.dart';
+import '../../../../../core/di/injection_container.dart';
 import '../../../../../core/route/routes.dart';
 import '../../../../../core/widgets/custom_header.dart';
 import '../../../../../core/widgets/custom_text_feild.dart';
 import '../cubit/doctor_auth_cubit.dart';
-import '../cubit/doctor_auth_cubit_factory.dart';
 
 class DoctorSignIn extends StatefulWidget {
   const DoctorSignIn({super.key});
@@ -43,12 +43,12 @@ class _DoctorSignInState extends State<DoctorSignIn> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => DoctorAuthCubitFactory.create(),
+      create: (_) => sl<DoctorAuthCubit>(),
       child: Scaffold(
         body: SafeArea(
           child: BlocConsumer<DoctorAuthCubit, DoctorAuthState>(
             listener: (context, state) {
-              if (state is DoctorAuthSuccess) {
+              if (state is DoctorLoginSuccess) {
                 Navigator.pushReplacementNamed(context, Routes.doctorHome);
               } else if (state is DoctorAuthError) {
                 AppSnackBar.showError(context, state.message);

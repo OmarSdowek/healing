@@ -119,19 +119,25 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => DoctorSignUpScreen());
 
       case Routes.doctorVerifyEmail:
-        return MaterialPageRoute(builder: (_) => DoctorOtpEmail());
+        final dvArgs = settings.arguments as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(
+          builder: (_) => DoctorOtpEmail(
+            token: dvArgs['token'] as String? ?? '',
+            email: dvArgs['email'] as String? ?? '',
+          ),
+        );
 
       case Routes.doctorForgotPassword:
-        return MaterialPageRoute(builder: (_) => DoctorForgotPassword());
+        return MaterialPageRoute(builder: (_) => const DoctorForgotPassword());
 
       case Routes.doctorResetPassword:
-        return MaterialPageRoute(builder: (_) => DoctorResetPassword());
+        return MaterialPageRoute(builder: (_) => const DoctorResetPassword());
 
       case Routes.doctorSetNewPassword:
-        return MaterialPageRoute(builder: (_) => DoctorSetNewPassword());
+        return MaterialPageRoute(builder: (_) => const DoctorSetNewPassword());
 
       case Routes.doctorVerifyCode:
-        return MaterialPageRoute(builder: (_) => DoctorVerifyPassword());
+        return MaterialPageRoute(builder: (_) => const DoctorVerifyPassword());
 
       // patienthome
 

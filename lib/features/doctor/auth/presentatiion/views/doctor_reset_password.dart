@@ -1,29 +1,17 @@
+// This screen is shown after forgot password — user enters the reset token
+// received via email. We reuse DoctorSetNewPassword for the actual reset.
+// This screen just navigates to set new password.
 import 'package:flutter/material.dart';
+import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
+import 'package:healing/core/constant/assets_manger.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/widgets/custom_button.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-import '../../../../../core/constant/app_colors.dart';
-import '../../../../../core/constant/assets_manger.dart';
-import '../../../../../core/widgets/custom_header.dart';
+import 'package:healing/core/widgets/custom_header.dart';
 import '../../../../../core/route/routes.dart';
 
-class DoctorResetPassword extends StatefulWidget {
-  DoctorResetPassword({super.key});
-
-  @override
-  State<DoctorResetPassword> createState() => _DoctorResetPasswordState();
-}
-
-class _DoctorResetPasswordState extends State<DoctorResetPassword> {
-  late TextEditingController pinController ;
-
-
-  @override
-  void initState() {
-    pinController = TextEditingController();
-    super.initState();
-  }
+class DoctorResetPassword extends StatelessWidget {
+  const DoctorResetPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,85 +21,47 @@ class _DoctorResetPasswordState extends State<DoctorResetPassword> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
-              /// 🔹 Header
-              const CustomHeader(title: "Reset Password"),
-
+              const CustomHeader(title: 'Reset Password'),
               context.verticalSpace(30),
 
-              /// 🔹 Logo
               Center(
-                child: Image.asset(
-                  AssetsManger.authLogo,
-                  height: 150,
-                ),
+                child: Image.asset(AssetsManger.authLogo, height: 150),
               ),
-
               context.verticalSpace(20),
 
-              /// 🔹 Title
-              Text(
-                "Verify Code",
-                style: AppTextStyles.semiBold24dark,
-              ),
-
+              Text('Check Your Email', style: AppTextStyles.semiBold24dark),
               context.verticalSpace(10),
 
-              /// 🔹 Subtitle
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Text(
-                  "We send a code to example@gmail.com",
+                  'We sent a password reset link to your email.\nOpen it and copy the reset token, then press Continue.',
                   style: AppTextStyles.semiBold16Black,
                   textAlign: TextAlign.center,
                 ),
               ),
+              context.verticalSpace(40),
 
-              context.verticalSpace(30),
-
-              /// 🔹 PIN CODE (UPDATED)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: MaterialPinField(
-                  length: 6,
-                  onCompleted: (pin) {},
-                  onChanged: (value) {},
-                  theme: MaterialPinTheme(
-                    shape: MaterialPinShape.outlined,
-                    cellSize: Size(56, 64),
-                    borderRadius: BorderRadius.circular(4),
-                    fillColor: AppColors.otp,
-                  ),
-                ),
-              ),
-
-              context.verticalSpace(30),
-
-              /// 🔹 Confirm Button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomButton(
-                  text: "Confirm",
+                  text: 'Continue',
                   backgroundColor: AppColors.primary,
                   onPressed: () {
                     Navigator.pushNamed(context, Routes.doctorSetNewPassword);
                   },
                 ),
               ),
-
               context.verticalSpace(15),
 
-              /// 🔹 Resend Code
               TextButton(
-                onPressed: () {},
+                onPressed: () => Navigator.pop(context),
                 child: Text(
-                  "Resend Code",
-                  style: AppTextStyles.semiBold16Black.copyWith(
-                    color: AppColors.primary,
-                  ),
+                  'Back to Login',
+                  style: AppTextStyles.semiBold16Black
+                      .copyWith(color: AppColors.primary),
                 ),
               ),
-
               context.verticalSpace(20),
             ],
           ),

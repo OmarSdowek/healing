@@ -8,6 +8,7 @@ import '../../../../../core/network/token_storage.dart';
 import '../../domain/repositories/doctor_auth_repository.dart';
 import '../models/doctor_auth_response.dart';
 import '../models/doctor_login_request.dart';
+import '../models/doctor_register_request.dart';
 
 class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
   final ApiService _api;
@@ -23,20 +24,43 @@ class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
         ApiEndpoints.login,
         data: request.toJson(),
       );
-
       final auth = DoctorAuthResponse.fromJson(response.data);
-
-      // Clear old tokens first to avoid stale doctor_id
       await TokenStorage.clearTokens();
-
-      // Save new tokens and doctor ID from JWT
       await TokenStorage.saveTokens(
         accessToken: auth.accessToken,
         refreshToken: auth.refreshToken,
         doctorId: auth.user.doctorId,
       );
-
       return Right(auth);
+    } on DioException catch (e) {
+      return Left(Failure(ErrorHandler.handle(e).message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, DoctorAuthResponse>> register(
+    DoctorRegisterRequest request,
+  ) async {
+    try {
+      final response = await _api.post(
+        ApiEndpoints.register,
+        data: request.toJson(),
+      );
+      final auth = DoctorAuthResponse.fromJson(response.data);
+      return Right(auth);
+    } on DioException catch (e) {
+      return Left(Failure(ErrorHandler.handle(e).message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> verifyEmail(String token) async {
+    try {
+      await _api.get(
+        ApiEndpoints.verifyEmail,
+        queryParameters: {'token': token},
+      );
+      return const Right(unit);
     } on DioException catch (e) {
       return Left(Failure(ErrorHandler.handle(e).message));
     }
@@ -45,10 +69,12 @@ class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
   @override
   Future<Either<Failure, Unit>> logout() async {
     try {
-      await _api.post(ApiEndpoints.logout);
+      final refreshToken = await TokenStorage.getRefreshToken();
+      await _api.post(ApiEndpoints.logout, data: {'refreshToken': refreshToken});
       await TokenStorage.clearTokens();
       return const Right(unit);
     } on DioException catch (e) {
+      await TokenStorage.clearTokens();
       return Left(Failure(ErrorHandler.handle(e).message));
     }
   }
@@ -56,7 +82,7 @@ class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
   @override
   Future<Either<Failure, Unit>> forgotPassword(String email) async {
     try {
-      await _api.post(ApiEndpoints.forgotPassword, data: {"email": email});
+      await _api.post(ApiEndpoints.forgotPassword, data: {'email': email});
       return const Right(unit);
     } on DioException catch (e) {
       return Left(Failure(ErrorHandler.handle(e).message));
@@ -71,7 +97,7 @@ class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
     try {
       await _api.post(
         ApiEndpoints.resetPassword,
-        data: {"token": token, "newPassword": newPassword},
+        data: {'token': token, 'newPassword': newPassword},
       );
       return const Right(unit);
     } on DioException catch (e) {
@@ -88,8 +114,8 @@ class DoctorAuthRepositoryImpl implements DoctorAuthRepository {
       await _api.post(
         ApiEndpoints.changePassword,
         data: {
-          "currentPassword": currentPassword,
-          "newPassword": newPassword,
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
         },
       );
       return const Right(unit);

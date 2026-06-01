@@ -31,14 +31,41 @@ class _AddVitalsScreenState extends State<AddVitalsScreen> {
 
   int? _recordId;
   String? _patientName;
+  String _doctorName = 'Doctor';
+  bool _argsLoaded = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    _recordId = args?['recordId'] as int?;
-    _patientName = args?['patientName'] as String? ?? 'Patient';
+    if (!_argsLoaded) {
+      _argsLoaded = true;
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      _recordId = args?['recordId'] as int?;
+      _patientName = args?['patientName'] as String? ?? 'Patient';
+      // Doctor name passed from previous screen if available
+      final passedDoctorName = args?['doctorName'] as String?;
+      if (passedDoctorName != null && passedDoctorName.isNotEmpty) {
+        _doctorName = passedDoctorName;
+      } else {
+        // Fetch doctor name from /api/Auth/me in background
+        _fetchDoctorName();
+      }
+    }
+  }
+
+  Future<void> _fetchDoctorName() async {
+    try {
+      final api = ApiService();
+      final response = await api.get('/api/Auth/me');
+      final data = response.data;
+      final name = data is Map ? data['fullName']?.toString() : null;
+      if (name != null && name.isNotEmpty && mounted) {
+        setState(() => _doctorName = 'Dr. $name');
+      }
+    } catch (_) {
+      // fallback stays as 'Doctor'
+    }
   }
 
   @override
@@ -196,6 +223,7 @@ class _AddVitalsScreenState extends State<AddVitalsScreen> {
                                                     _weightCtrl.text),
                                                 height: double.tryParse(
                                                     _heightCtrl.text),
+                                                recordedBy: _doctorName,
                                               ),
                                             );
                                       },
