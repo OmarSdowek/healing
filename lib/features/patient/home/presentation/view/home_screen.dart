@@ -95,6 +95,113 @@ class HomeScreen extends StatelessWidget {
 
                 context.verticalSpace(20),
 
+                // ── AI Symptom Checker Banner ────────────────────────────
+                GestureDetector(
+                  onTap: () =>
+                      Navigator.pushNamed(context, Routes.symptomChecker),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primary,
+                          AppColors.primary.withOpacity(0.75),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.auto_awesome,
+                            color: Colors.white, size: 28),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '🩺 AI Symptom Checker',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'Describe your symptoms and get a preliminary analysis',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.85),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios,
+                            color: Colors.white, size: 16),
+                      ],
+                    ),
+                  ),
+                ),
+
+                context.verticalSpace(12),
+
+                // ── Healing AI Assistant Banner ───────────────────────────
+                GestureDetector(
+                  onTap: () =>
+                      Navigator.pushNamed(context, Routes.aiAssistant),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.chat_bubble_outline_rounded,
+                            color: Colors.white, size: 28),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '✨ Healing AI Assistant',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'Chat with your personal AI health assistant',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.85),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios,
+                            color: Colors.white, size: 16),
+                      ],
+                    ),
+                  ),
+                ),
+
+                context.verticalSpace(20),
+
                 /// Departments/Specialities Chips
                 BlocBuilder<HomeCubit, HomeState>(
                   builder: (context, state) {

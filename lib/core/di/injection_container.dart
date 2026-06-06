@@ -13,6 +13,15 @@ import '../../features/doctor/auth/domain/usecases/doctor_reset_password_usecase
 import '../../features/doctor/auth/domain/usecases/doctor_verify_email_usecase.dart';
 import '../../features/doctor/auth/presentatiion/cubit/doctor_auth_cubit.dart';
 
+// ── AI Assistant ───────────────────────────────────────────────────────────────
+import 'package:dio/dio.dart';
+import 'package:healing/core/services/gemini_service.dart';
+import '../../features/healing_ai_assestant/data/data_source/assistant_remote_data_source.dart';
+import '../../features/healing_ai_assestant/data/repo/assistant_repo_impl.dart';
+import '../../features/healing_ai_assestant/domin/repo/assistant_repo.dart';
+import '../../features/healing_ai_assestant/domin/use_case/get_ai_response_usecase.dart';
+import '../../features/healing_ai_assestant/presenatation/cubit/assistant_cubit.dart';
+
 // Auth Repo
 import 'package:healing/features/patient/auth/data/repo/repo_impl.dart';
 import '../../features/patient/auth/domin/repo/auth_repo_interface.dart';
@@ -342,5 +351,33 @@ Future<void> init() async {
       sl<prescription_uc.GetPrescriptionsUseCase>(),
       sl<DownloadPrescriptionPdfUseCase>(),
     ),
+  );
+
+  // ================= Ai =================
+
+  sl.registerLazySingleton<Dio>(() {
+    final dio = Dio();
+    dio.options.baseUrl = kGroqBaseUrl;
+    dio.options.headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $kGroqApiKey',
+    };
+    return dio;
+  });
+
+  sl.registerLazySingleton<AssistantRemoteDataSource>(
+        () => AssistantRemoteDataSourceImpl(sl<Dio>()),
+  );
+
+  sl.registerLazySingleton<AssistantRepository>(
+        () => AssistantRepositoryImpl(sl<AssistantRemoteDataSource>()),
+  );
+
+  sl.registerLazySingleton<GetAIResponseUseCase>(
+        () => GetAIResponseUseCase(sl<AssistantRepository>()),
+  );
+
+  sl.registerFactory<AssistantCubit>(
+        () => AssistantCubit(sl<GetAIResponseUseCase>()),
   );
 }

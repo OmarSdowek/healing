@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/services/gemini_service.dart';
+import 'package:healing/core/widgets/ai_summary_sheet.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import 'package:healing/core/widgets/custom_header.dart';
 import 'package:healing/features/patient/medical_report/domin/entity/prescription_entity.dart';
@@ -100,6 +102,46 @@ class PrescriptionDetailScreen extends StatelessWidget {
                   ),
 
                 context.verticalSpace(30),
+
+                // ── Explain Prescription (AI) ────────────────────────────
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.auto_awesome,
+                        color: AppColors.primary, size: 18),
+                    label: const Text(
+                      'Explain Prescription',
+                      style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () => AiSummarySheet.show(
+                      context,
+                      title: 'Prescription Explanation',
+                      generateFn: () => GeminiService.explainPrescription(
+                        medications: prescription.medications
+                            .map((m) => {
+                                  'name': m.name,
+                                  'dosage': m.dosage,
+                                  'frequency': m.form,
+                                  'duration': '${m.durationDays} days',
+                                })
+                            .toList(),
+                        doctorNotes: prescription.doctorNotes.isNotEmpty
+                            ? prescription.doctorNotes
+                            : null,
+                      ),
+                    ),
+                  ),
+                ),
+
+                context.verticalSpace(16),
 
                 // ── Download button ──────────────────────────────────────
                 BlocBuilder<PrescriptionCubit, PrescriptionState>(

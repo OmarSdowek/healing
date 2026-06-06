@@ -5,6 +5,8 @@ import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
 import 'package:healing/core/network/api_service.dart';
 import 'package:healing/core/route/routes.dart';
+import 'package:healing/core/services/gemini_service.dart';
+import 'package:healing/core/widgets/ai_summary_sheet.dart';
 import 'package:healing/core/widgets/app_snack_bar.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import 'package:healing/core/widgets/custom_header.dart';
@@ -165,6 +167,48 @@ class _CreateMedicalRecordScreenState
                           ),
 
                           context.verticalSpace(32),
+
+                          // ── AI Summary Button ──────────────────────────
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.auto_awesome,
+                                color: AppColors.primary, size: 18),
+                            label: const Text(
+                              '✨ Generate AI Summary',
+                              style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 48),
+                              side: const BorderSide(color: AppColors.primary),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                            onPressed: () {
+                              final diagnosis =
+                                  _diagnosisCtrl.text.trim();
+                              if (diagnosis.isEmpty) {
+                                AppSnackBar.showWarning(context,
+                                    'Please enter the diagnosis first.');
+                                return;
+                              }
+                              AiSummarySheet.show(
+                                context,
+                                title: 'Patient Visit Summary',
+                                generateFn: () =>
+                                    GeminiService.generateMedicalSummary(
+                                  patientName: widget.patientName,
+                                  diagnosis: diagnosis,
+                                  clinicalNotes:
+                                      _clinicalNotesCtrl.text.trim(),
+                                  treatmentPlan:
+                                      _treatmentPlanCtrl.text.trim(),
+                                ),
+                              );
+                            },
+                          ),
+
+                          context.verticalSpace(12),
 
                           isLoading
                               ? const Center(

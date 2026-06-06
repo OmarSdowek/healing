@@ -49,6 +49,8 @@ import '../../features/patient/medical_report/presentation/view/medical_report_s
 import '../../features/patient/notifications/presentation/view/patient_notifications_screen.dart';
 import '../../features/patient/payment/presenatation/view/add_new_card.dart';
 import '../../features/patient/prescription/presentation/view/prescription_screen.dart';
+import '../../features/patient/symptom_checker/presentation/view/symptom_checker_screen.dart';
+import '../../features/healing_ai_assestant/presenatation/screens/welcome_screen.dart';
 import '../../features/patient/profile/presentation/view/personal_information.dart';
 import '../../features/patient/search/presentation/view/search.dart';
 import '../../features/patient/settings/presenatation/views/faqs_screen.dart';
@@ -287,6 +289,14 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const UpComingOppointment());
       case Routes.prescriptionDetails:
         return MaterialPageRoute(builder: (_) => const PrescriptionScreen());
+
+      case Routes.symptomChecker:
+        return MaterialPageRoute(
+            builder: (_) => const SymptomCheckerScreen());
+
+      case Routes.aiAssistant:
+        return MaterialPageRoute(
+            builder: (_) => const WelcomeScreen());
       case Routes.appointmentConfirmation:
         final args = settings.arguments as Map<String, dynamic>?;
         final doctor = args?['doctor'] as DoctorEntity?;

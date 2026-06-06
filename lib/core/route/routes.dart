@@ -83,6 +83,9 @@ class Routes {
   static const String appointmentConfirmation = "/appointment_confirmation";
 
   //prescription
-
   static const String prescriptionDetails = "/prescription_details";
+
+  // AI
+  static const String symptomChecker = "/symptom_checker";
+  static const String aiAssistant = "/ai_assistant";
 }

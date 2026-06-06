@@ -4,6 +4,8 @@ import 'package:healing/core/constant/app_colors.dart';
 import 'package:healing/core/constant/app_text_style.dart';
 import 'package:healing/core/di/injection_container.dart';
 import 'package:healing/core/helper/extentions/media_query.dart';
+import 'package:healing/core/services/gemini_service.dart';
+import 'package:healing/core/widgets/ai_summary_sheet.dart';
 import 'package:healing/core/widgets/custom_button.dart';
 import 'package:healing/core/widgets/custom_header.dart';
 import 'package:healing/core/widgets/doctor_avatar.dart';
@@ -161,6 +163,31 @@ class MedicalReportDetailScreen extends StatelessWidget {
                       )),
                   context.verticalSpace(20),
                 ],
+              ),
+            ),
+          ),
+          // ── AI Summary Button ──────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: CustomButton(
+              text: '✨ Generate AI Summary',
+              backgroundColor: AppColors.primary.withOpacity(0.1),
+              textColor: AppColors.primary,
+              height: 48,
+              onPressed: () => AiSummarySheet.show(
+                context,
+                title: 'Medical Record Summary',
+                generateFn: () => GeminiService.generateMedicalSummary(
+                  diagnosis: r.title,
+                  clinicalNotes: r.doctorRecommendations.isNotEmpty
+                      ? r.doctorRecommendations
+                      : null,
+                  vitals: r.metrics.isNotEmpty
+                      ? r.metrics
+                          .map((m) => '${m.name}: ${m.value}${m.unit}')
+                          .join(', ')
+                      : null,
+                ),
               ),
             ),
           ),
